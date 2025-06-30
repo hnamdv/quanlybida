@@ -4,6 +4,12 @@
  */
 package bida;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import XJDBC.connect;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 /**
  *
  * @author Admin
@@ -13,8 +19,16 @@ public class Bida {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+        public static void main(String[] args) {
+              String sql = "Select * from NHANVIEN ";
+            try (Connection con = connect.openConnection();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+           
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
-    
-}
