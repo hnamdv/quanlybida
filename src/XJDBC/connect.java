@@ -21,7 +21,7 @@ public class connect {
 
     public static Connection openConnection() {
         String driver = "com.mysql.cj.jdbc.Driver";
-        String dburl = "jdbc:mysql://localhost:3306/PolyCafe?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+        String dburl = "jdbc:mysql://localhost:3306/QuanLybida?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
         String username = "admin";
         String password = "12345";
 
