@@ -12,24 +12,24 @@ import java.sql.Timestamp;
  * @author Admin
  */
 public class anh {
- 
-     public static void main(String[] args) {
-        port(8080); // Mở cổng 8080
+   private static boolean started = false;
 
+    public static void startServer() {
+        if (started) return; // 1 lan 
+        port(8080);
         get("/chamcong", (req, res) -> {
             String maNV = req.queryParams("maNV");
-            if (maNV == null) return "Thiếu mã nhân viên";
-
+            if (maNV == null || maNV.isEmpty()) return "Thiếu mã nhân viên";
             Timestamp now = new Timestamp(System.currentTimeMillis());
-
             chamcongdao dao = new chamcongdao();
             if (!dao.daChamCongHomNay(maNV)) {
                 dao.insertChamCong(maNV, now);
-                return "Chấm công vào thành công";
+                return "✅ Chấm công vào thành công!";
             } else {
                 dao.updateGioRa(maNV, now);
-                return "Chấm công ra thành công";
+                return "✅ Chấm công ra thành công!";
             }
         });
+        started = true;
     }
 }

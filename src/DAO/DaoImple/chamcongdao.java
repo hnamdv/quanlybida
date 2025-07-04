@@ -24,6 +24,7 @@ public class chamcongdao {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maNV);
             stmt.setTimestamp(2, gioVao);
+            
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             System.err.println("Lỗi insert chấm công: " + e.getMessage());
