@@ -4,10 +4,13 @@
  */
 package UI;
 
+import UI.Panel.maqr;
+import UI.Panel.quetmaqr;
 import Xauth.phanquyen;
 import Xauth.phanquyen.SessionData;
 import com.formdev.flatlaf.FlatLightLaf;
 import img.text;
+import java.awt.BorderLayout;
 import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -36,9 +39,11 @@ public class nhanvien extends javax.swing.JFrame {
         );
         lblmnv.setText("Mã NV: " + phanquyen.user.getMaNV());
     }
+      
+         
     }
     private boolean isDarkTheme = false;
-
+         
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -268,7 +273,10 @@ public class nhanvien extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-
+    card.revalidate();
+       card.repaint();
+       card.removeAll();
+        card.add(new maqr() );  
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -290,6 +298,10 @@ public class nhanvien extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+            card.revalidate();
+       card.repaint();
+       card.removeAll();
+        card.add(new quetmaqr() );      
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

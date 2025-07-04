@@ -3,11 +3,33 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package img;
+import DAO.DaoImple.chamcongdao;
+import static spark.Spark.*;
+import java.sql.Timestamp;
 
 /**
  *
  * @author Admin
  */
 public class anh {
-    
+ 
+     public static void main(String[] args) {
+        port(8080); // Mở cổng 8080
+
+        get("/chamcong", (req, res) -> {
+            String maNV = req.queryParams("maNV");
+            if (maNV == null) return "Thiếu mã nhân viên";
+
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+
+            chamcongdao dao = new chamcongdao();
+            if (!dao.daChamCongHomNay(maNV)) {
+                dao.insertChamCong(maNV, now);
+                return "Chấm công vào thành công";
+            } else {
+                dao.updateGioRa(maNV, now);
+                return "Chấm công ra thành công";
+            }
+        });
+    }
 }
