@@ -30,36 +30,36 @@ public class maqr extends javax.swing.JPanel {
      */
     public maqr() {
         initComponents();
-         setPreferredSize(new Dimension(300, 300));
+        setPreferredSize(new Dimension(300, 300));
         setLayout(new BorderLayout());
         anh.startServer();
         showQR();
-    
+
     }
     private String maNV;
-private void showQR() {
-    
-    try {
-        if (phanquyen.user == null) {
-            add(new JLabel("Không có dữ liệu người dùng"));
-            return;
-        }
-        String maNV = phanquyen.user.getMaNV();
-        if (maNV == null || maNV.trim().isEmpty()) {
-            add(new JLabel("Mã nhân viên rỗng"));
-            return;
-        }
-  String qrContent = "https://ff68-42-117-147-170.ngrok-free.app/chamcong?maNV=" + maNV;
-        BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
-        JLabel label = new JLabel(new ImageIcon(qrImage));
-        label.setHorizontalAlignment(JLabel.CENTER);
-        add(label, BorderLayout.CENTER);
-    } catch (Exception e) {
-        e.printStackTrace();
-        add(new JLabel("Lỗi tạo mã QR"));
-    }
-}
 
+    private void showQR() {
+
+        try {
+            if (phanquyen.user == null) {
+                add(new JLabel("Không có dữ liệu người dùng"));
+                return;
+            }
+            String maNV = phanquyen.user.getMaNV();
+            if (maNV == null || maNV.trim().isEmpty()) {
+                add(new JLabel("Mã nhân viên rỗng"));
+                return;
+            }
+            String qrContent = "https://ff68-42-117-147-170.ngrok-free.app/chamcong?maNV=" + maNV;
+            BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
+            JLabel label = new JLabel(new ImageIcon(qrImage));
+            label.setHorizontalAlignment(JLabel.CENTER);
+            add(label, BorderLayout.CENTER);
+        } catch (Exception e) {
+            e.printStackTrace();
+            add(new JLabel("Lỗi tạo mã QR"));
+        }
+    }
 
     private BufferedImage generateQRImage(String text, int width, int height) throws WriterException {
         Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();

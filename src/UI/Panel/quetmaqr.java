@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package UI.Panel;
+
 import DAO.DaoImple.chamcongdao;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
@@ -15,38 +16,42 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+
 /**
  *
  * @author Admin
  */
 public class quetmaqr extends javax.swing.JPanel implements Runnable {
-  private Webcam webcam;
+
+    private Webcam webcam;
     private Thread thread;
     private chamcongdao dao = new chamcongdao();
 
     /**
      * Creates new form quetmaqr
      */
-     public quetmaqr() {
+    public quetmaqr() {
         initComponents();
         setLayout(new BorderLayout());
         webcam = Webcam.getDefault();
-if (webcam == null) {
-    JOptionPane.showMessageDialog(this, "Không tìm thấy webcam!");
-    return;
-}
+        if (webcam == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy webcam!");
+            return;
+        }
         WebcamPanel panel = new WebcamPanel(webcam);
         add(panel, BorderLayout.CENTER);
         thread = new Thread(this);
         thread.start();
     }
 
-  @Override
+    @Override
     public void run() {
         while (true) {
             try {
                 BufferedImage image = webcam.getImage();
-                if (image == null) continue;
+                if (image == null) {
+                    continue;
+                }
 
                 LuminanceSource source = new BufferedImageLuminanceSource(image);
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
@@ -83,7 +88,7 @@ if (webcam == null) {
     private boolean daMoCa(String maNV) {
         // Kiểm tra trong DAO xem hôm nay đã có giờ vào chưa
         return dao.daMoCa(maNV);
-    } 
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
