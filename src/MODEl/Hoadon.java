@@ -8,12 +8,28 @@ package MODEl;
  *
  * @author Admin
  */
-
 import java.sql.Date;
 import java.sql.Timestamp;
 
-
 public class Hoadon {
+
+    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, double tongTien, String trangThai, Date ngayTao, double tienGio, double giamGia, double tienDV, String ghiChu) {
+        this.maHD = maHD;
+        this.maNV = maNV;
+        this.maBan = maBan;
+        this.thoiGianBatDau = thoiGianBatDau;
+        this.thoiGianKetThuc = thoiGianKetThuc;
+        this.tongTien = tongTien;
+        this.trangThai = trangThai;
+        this.ngayTao = ngayTao;
+        this.tienGio = tienGio;
+        this.giamGia = giamGia;
+        this.tienDV = tienDV;
+        this.ghiChu = ghiChu;
+    }
+
+    public Hoadon() {
+    }
 
     public String getMaHD() {
         return maHD;
@@ -79,20 +95,38 @@ public class Hoadon {
         this.ngayTao = ngayTao;
     }
 
-    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, double tongTien, String trangThai, Date ngayTao) {
-        this.maHD = maHD;
-        this.maNV = maNV;
-        this.maBan = maBan;
-        this.thoiGianBatDau = thoiGianBatDau;
-        this.thoiGianKetThuc = thoiGianKetThuc;
-        this.tongTien = tongTien;
-        this.trangThai = trangThai;
-        this.ngayTao = ngayTao;
+    public double getTienGio() {
+        return tienGio;
     }
 
-    public Hoadon() {
+    public void setTienGio(double tienGio) {
+        this.tienGio = tienGio;
     }
-     private String maHD;
+
+    public double getGiamGia() {
+        return giamGia;
+    }
+
+    public void setGiamGia(double giamGia) {
+        this.giamGia = giamGia;
+    }
+
+    public double getTienDV() {
+        return tienDV;
+    }
+
+    public void setTienDV(double tienDV) {
+        this.tienDV = tienDV;
+    }
+
+    public String getGhiChu() {
+        return ghiChu;
+    }
+
+    public void setGhiChu(String ghiChu) {
+        this.ghiChu = ghiChu;
+    }
+    private String maHD;
     private String maNV;
     private String maBan;
     private Timestamp thoiGianBatDau;
@@ -100,4 +134,9 @@ public class Hoadon {
     private double tongTien;
     private String trangThai;
     private Date ngayTao;
+    private double tienGio;
+    private double giamGia;
+    private double tienDV;
+    private String ghiChu;
+
 }
