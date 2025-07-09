@@ -9,6 +9,8 @@ import XJDBC.connect;
 import java.sql.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,7 +18,43 @@ import java.time.LocalDateTime;
  */
 
 public class chamcongdao {
-    
+    // Trả về tất cả
+public List<chamcong> findAll() {
+    String sql = "SELECT * FROM ChamCong";
+    return selectBySql(sql);
+}
+
+// Trả về theo mã nhân viên
+public List<chamcong> findByMaNV(String maNV) {
+    String sql = "SELECT * FROM ChamCong WHERE MaNV = ?";
+    return selectBySql(sql, maNV);
+}
+private List<chamcong> selectBySql(String sql, Object... args) {
+    List<chamcong> list = new ArrayList<>();
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)
+    ) {
+        for (int i = 0; i < args.length; i++) {
+            stmt.setObject(i + 1, args[i]);
+        }
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            chamcong cc = new chamcong();
+            cc.setMaCC(rs.getInt("MaCC"));
+            cc.setMaNV(rs.getString("MaNV"));
+            cc.setGioVao(rs.getTimestamp("GioVao"));
+            cc.setGioRa(rs.getTimestamp("GioRa"));
+            list.add(cc);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
     // Chấm công vào
     public boolean insertChamCong(String maNV, Timestamp gioVao) {
         String sql = "INSERT INTO ChamCong (MaNV, GioVao, Ngay) VALUES (?, ?, CURDATE())";
@@ -45,6 +83,18 @@ public class chamcongdao {
             return false;
         }
     }
+        public boolean delete(int maCC) {
+        String sql = "DELETE FROM ChamCong WHERE MaCC = ?";
+        try (Connection conn = connect.openConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, maCC);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public chamcong findTodayRecord(String maNV) {
         String sql = "SELECT * FROM ChamCong WHERE MaNV = ? AND Ngay = CURDATE()";

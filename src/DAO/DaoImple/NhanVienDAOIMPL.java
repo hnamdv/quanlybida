@@ -17,6 +17,7 @@ import static java.util.Collections.list;
  */
 public class NhanVienDAOIMPL {
     
+    
     public List<Nhanvien> getAll() {
         List<Nhanvien> list = new ArrayList<>();
         String sql = "SELECT * FROM NhanVien";

@@ -13,11 +13,18 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import img.anh;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -30,36 +37,58 @@ public class maqr extends javax.swing.JPanel {
      */
     public maqr() {
         initComponents();
-        setPreferredSize(new Dimension(300, 300));
-        setLayout(new BorderLayout());
-        anh.startServer();
+        // Thiết lập layout chính xác
+    jPanelQR.setLayout(new GridBagLayout()); // dùng layout căn giữa
+    jPanelQR.setPreferredSize(new Dimension(300, 300));
+    jPanelQR.setBorder(BorderFactory.createTitledBorder("Mã QR Chấm Công")); // viền có tiêu đề
+
+    anh.startServer();
+
+    // Hiển thị QR
+    SwingUtilities.invokeLater(() -> {
         showQR();
+    });
 
     }
     private String maNV;
 
     private void showQR() {
+    try {
+        String maNV = phanquyen.user.getMaNV();
+        String qrContent = "https://7a353b71daf5.ngrok-free.app/chamcong?maNV=" + maNV;
 
-        try {
-            if (phanquyen.user == null) {
-                add(new JLabel("Không có dữ liệu người dùng"));
-                return;
-            }
-            String maNV = phanquyen.user.getMaNV();
-            if (maNV == null || maNV.trim().isEmpty()) {
-                add(new JLabel("Mã nhân viên rỗng"));
-                return;
-            }
-            String qrContent = "https://ff68-42-117-147-170.ngrok-free.app/chamcong?maNV=" + maNV;
-            BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
-            JLabel label = new JLabel(new ImageIcon(qrImage));
-            label.setHorizontalAlignment(JLabel.CENTER);
-            add(label, BorderLayout.CENTER);
-        } catch (Exception e) {
-            e.printStackTrace();
-            add(new JLabel("Lỗi tạo mã QR"));
-        }
+        BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
+
+        JLabel label = new JLabel(new ImageIcon(qrImage));
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setVerticalAlignment(JLabel.CENTER);
+
+        jPanelQR.removeAll();
+
+        // Dùng GridBagLayout để căn giữa
+        jPanelQR.setLayout(new GridBagLayout());
+        jPanelQR.add(label, new GridBagConstraints());
+
+        jPanelQR.revalidate();
+        jPanelQR.repaint();
+        JLabel nameLabel = new JLabel("Nhân viên: " + phanquyen.user.getHoTen());
+nameLabel.setHorizontalAlignment(JLabel.CENTER);
+nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+nameLabel.setForeground(Color.DARK_GRAY);
+
+// Panel tạm chứa QR + tên
+JPanel panelWrapper = new JPanel(new BorderLayout());
+panelWrapper.setOpaque(false); // không đè màu
+panelWrapper.add(label, BorderLayout.CENTER);
+panelWrapper.add(nameLabel, BorderLayout.SOUTH);
+
+jPanelQR.add(panelWrapper, new GridBagConstraints());
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
     private BufferedImage generateQRImage(String text, int width, int height) throws WriterException {
         Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
@@ -85,19 +114,76 @@ public class maqr extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanelQR = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jPanelQRLayout = new javax.swing.GroupLayout(jPanelQR);
+        jPanelQR.setLayout(jPanelQRLayout);
+        jPanelQRLayout.setHorizontalGroup(
+            jPanelQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanelQRLayout.setVerticalGroup(
+            jPanelQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 759, Short.MAX_VALUE)
+        );
+
+        jButton1.setText("Thủ Công");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Lịch Sử");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanelQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(106, 106, 106)
+                .addComponent(jButton1)
+                .addGap(45, 45, 45)
+                .addComponent(jButton2)
+                .addContainerGap(990, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(47, 47, 47)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addGap(18, 18, 18)
+                .addComponent(jPanelQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+                               ThuCong form = new ThuCong();
+form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
+                                                                                                     // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+                           lichsu form = new lichsu();
+form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
+                   // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JPanel jPanelQR;
     // End of variables declaration//GEN-END:variables
 }
