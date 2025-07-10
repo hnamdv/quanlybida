@@ -26,18 +26,17 @@ public class dangnhap extends javax.swing.JFrame {
     public dangnhap() {
         initComponents();
         setLocationRelativeTo(null);
-        try (BufferedReader br = new BufferedReader(new FileReader("remember.txt"))) {
-    String user = br.readLine();
-    String pass = br.readLine();
+    try (BufferedReader br = new BufferedReader(new FileReader("remember.txt"))) {
+        String user = br.readLine();
+        String pass = br.readLine();
 
-    if (user != null && pass != null) {
-        txttk.setText(user);
-        txtmk.setText(pass);
-        cbkluu.setSelected(true);
+        if (user != null && pass != null) {
+            txttk.setText(user); 
+            txtmk.setText(pass); 
+            cbkluu.setSelected(true); 
+        }
+    } catch (IOException e) {
     }
-} catch (IOException e) {
-    // Không có file thì không làm gì
-}
 
     }
 
@@ -51,7 +50,6 @@ public class dangnhap extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         txttk = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -65,9 +63,6 @@ public class dangnhap extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/đăng nhập.png"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 10, 140, 150));
         jPanel1.add(txttk, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 230, 300, 40));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -222,7 +217,6 @@ if (nv != null) {
     private javax.swing.JCheckBox cbkluu;
     private javax.swing.JCheckBox cbmat;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
