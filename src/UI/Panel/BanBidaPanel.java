@@ -5,10 +5,12 @@
 package UI.Panel;
 
 import DAO.DaoImple.BanbidaDAO;
+import DAO.DaoImple.BookingDAO;
 import DAO.DaoImple.DichVuDAO;
 import DAO.DaoImple.HoaDonDAO;
 import DAO.DaoImple.LoaibanDAO;
 import MODEl.Banbida;
+import MODEl.Booking;
 import MODEl.Hoadon;
 import MODEl.Loaiban;
 import java.awt.Color;
@@ -20,6 +22,7 @@ import javax.swing.JOptionPane;
 import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.sql.Timestamp;
 
 /**
  *
@@ -52,6 +55,7 @@ private void loadDanhSachBan() {
         try {
             BanbidaDAO banDAO = new BanbidaDAO();
             LoaibanDAO loaibanDAO = new LoaibanDAO();
+            BookingDAO bookingDAO = new BookingDAO();  // đặt ở đây 1 lần, dùng lại
 
             List<Banbida> danhSachBan = banDAO.getAll();
             Map<String, Loaiban> loaibanMap = loaibanDAO.getMapLoaiBan();
@@ -75,27 +79,43 @@ private void loadDanhSachBan() {
                 JButton btnBan = new JButton(tenBan);
                 btnBan.setPreferredSize(new Dimension(100, 80));
 
-                // Màu theo tình trạng
-                switch (tinhTrang) {
-                    case "DangSuDung" -> {
-                        btnBan.setBackground(new Color(0, 255, 0));
-                        btnBan.setForeground(Color.WHITE);
-                    }
-                    case "Trong" -> {
-                        btnBan.setBackground(Color.WHITE);
-                        btnBan.setForeground(Color.BLACK);
-                    }
-                    case "DatTruoc" -> {
-                        btnBan.setBackground(new Color(255, 255, 102));
-                        btnBan.setForeground(Color.BLACK);
-                    }
-                    case "BaoTri" -> {
-                        btnBan.setBackground(new Color(153, 153, 153));
-                        btnBan.setForeground(Color.WHITE);
-                    }
-                    default -> {
-                        btnBan.setBackground(Color.LIGHT_GRAY);
-                        btnBan.setForeground(Color.BLACK);
+                // Kiểm tra nếu bàn đã được đặt trước (trạng thái vẫn là "Trong" nhưng đã có booking)
+                Booking thongTinBooking = bookingDAO.getBookingGanNhat(maBan);
+
+                boolean daDatTruoc = false;
+                if (thongTinBooking != null && thongTinBooking.getTrangThai().equals("ChuaNhan")) {
+                    daDatTruoc = true;
+                }
+
+                // Màu theo tình trạng + đặt trước
+                if ("BaoTri".equals(tinhTrang)) {
+                    btnBan.setBackground(new Color(153, 153, 153));
+                    btnBan.setForeground(Color.WHITE);
+                    btnBan.setToolTipText("Bàn đang bảo trì");
+                } else if (daDatTruoc) {
+                    btnBan.setBackground(Color.ORANGE);
+                    btnBan.setForeground(Color.BLACK);
+                    btnBan.setToolTipText("<html><b>Đã đặt trước</b><br>"
+                            + "Khách: " + thongTinBooking.getTenKhach() + "<br>"
+                            + "SĐT: " + thongTinBooking.getSdt() + "<br>"
+                            + "Nhận lúc: " + thongTinBooking.getGioNhan() + "</html>");
+                } else {
+                    switch (tinhTrang) {
+                        case "DangSuDung" -> {
+                            btnBan.setBackground(new Color(0, 255, 0));
+                            btnBan.setForeground(Color.WHITE);
+                            btnBan.setToolTipText("Đang sử dụng");
+                        }
+                        case "Trong" -> {
+                            btnBan.setBackground(Color.WHITE);
+                            btnBan.setForeground(Color.BLACK);
+                            btnBan.setToolTipText("Bàn trống");
+                        }
+                        default -> {
+                            btnBan.setBackground(Color.LIGHT_GRAY);
+                            btnBan.setForeground(Color.BLACK);
+                            btnBan.setToolTipText("Không rõ trạng thái");
+                        }
                     }
                 }
 
@@ -210,13 +230,12 @@ private void loadDanhSachBan() {
             jComboBox1.removeAllItems();
             for (String TenDV : dsTenDV) {
                 jComboBox1.addItem(TenDV);
-}
-            }catch (Exception e) {
-        e.printStackTrace();
-        System.err.println("Lỗi khi tải danh sách thẻ bàn trống: " + e.getMessage());
-    }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Lỗi khi tải danh sách thẻ bàn trống: " + e.getMessage());
         }
-    
+    }
 
     ///
     /**
