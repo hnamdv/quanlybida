@@ -16,7 +16,41 @@ import static java.util.Collections.list;
  * @author Admin
  */
 public class NhanVienDAOIMPL {
-    
+    public boolean insert(Nhanvien nv) {
+    String sql = "INSERT INTO NhanVien (MaNV, HoTen, GioiTinh, NgaySinh, SDT, Email, ChucVu, MatKhau, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        ps.setString(1, nv.getMaNV());
+        ps.setString(2, nv.getHoTen());
+        ps.setString(3, nv.getGioiTinh());
+        ps.setDate(4, nv.getNgaySinh());
+        ps.setString(5, nv.getSdt());
+        ps.setString(6, nv.getEmail());
+        ps.setString(7, nv.getChucVu());
+        ps.setString(8, nv.getMatKhau());
+        ps.setBoolean(9, nv.isTrangThai());
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+public boolean delete(String maNV) {
+    String sql = "DELETE FROM NhanVien WHERE MaNV = ?";
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        ps.setString(1, maNV);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
     
     public List<Nhanvien> getAll() {
         List<Nhanvien> list = new ArrayList<>();
@@ -40,7 +74,7 @@ public class NhanVienDAOIMPL {
         rs.getBoolean("TrangThai")
     );
     list.add(nv);
-                list.add(nv);
+               
             }
         } catch (Exception e) {
             System.err.println("Lỗi lấy dữ liệu nhân viên: " + e.getMessage());
