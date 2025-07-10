@@ -4,6 +4,8 @@
  */
 package UI;
 
+import UI.Panel.BanBidaPanel;
+import UI.Panel.BookingPanel;
 import UI.Panel.maqr;
 import UI.Panel.quetmaqr;
 import Xauth.phanquyen;
@@ -315,7 +317,10 @@ new dangnhap().setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-
+            card.revalidate();
+       card.repaint();
+       card.removeAll();
+        card.add(new BookingPanel());  
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed

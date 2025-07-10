@@ -29,9 +29,10 @@ public class BookingPanel extends javax.swing.JPanel {
 
     private void loadDanhSachBan() {
         List<Banbida> danhSachBan = new BanbidaDAO().getAll();
-        cbBan.removeAllItems(); // cbBan là JComboBox đã được khởi tạo
         for (Banbida b : danhSachBan) {
-            cbBan.addItem(b.getMaBan()); // hoặc b.getTenBan()
+            if (b.getTinhTrang().equalsIgnoreCase("Trong")) {
+                cbBan.addItem(b.getMaBan());
+            }
         }
     }
 
