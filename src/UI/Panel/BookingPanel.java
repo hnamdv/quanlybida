@@ -24,6 +24,7 @@ public class BookingPanel extends javax.swing.JPanel {
      */
     public BookingPanel() {
         initComponents();
+        loadTable();
         loadDanhSachBan();
     }
 
@@ -37,6 +38,8 @@ public class BookingPanel extends javax.swing.JPanel {
     }
 
     private void insertBooking() {
+        String maBooking = txtma.getText();
+        String trangthai = cbbtrangthai.getSelectedItem().toString();
         String maBan = cbBan.getSelectedItem().toString();
         String tenKhach = txtTenKhach.getText();
         String sdt = txtSDT.getText();
@@ -51,9 +54,9 @@ public class BookingPanel extends javax.swing.JPanel {
         }
 
         Booking b = new Booking(
-                "BK" + System.currentTimeMillis(),
+                "BK" + maBooking , 
                 maBan, tenKhach, sdt,
-                gioDat, gioNhan, "ChuaNhan"
+                gioDat, gioNhan, trangthai 
         );
 
         dao.insert(b);
@@ -105,6 +108,9 @@ public class BookingPanel extends javax.swing.JPanel {
         txtTenKhach = new javax.swing.JTextField();
         cbBan = new javax.swing.JComboBox<>();
         dcGioDat = new com.toedter.calendar.JDateChooser();
+        txtma = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        cbbtrangthai = new javax.swing.JComboBox<>();
 
         setPreferredSize(new java.awt.Dimension(1620, 1080));
 
@@ -140,6 +146,12 @@ public class BookingPanel extends javax.swing.JPanel {
             }
         });
 
+        txtma.setText("jTextField1");
+
+        jLabel6.setText("jLabel6");
+
+        cbbtrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Namdz", "Namcutre", " " }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -159,17 +171,21 @@ public class BookingPanel extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel6))
                         .addGap(16, 16, 16)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtTenKhach)
-                            .addComponent(dcGioNhan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtSDT))))
+                            .addComponent(dcGioNhan, javax.swing.GroupLayout.DEFAULT_SIZE, 880, Short.MAX_VALUE)
+                            .addComponent(txtSDT)
+                            .addComponent(txtma))))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(118, 118, 118)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(cbbtrangthai, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addGap(344, 344, 344))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,9 +210,15 @@ public class BookingPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel5)
                     .addComponent(dcGioNhan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(43, 43, 43)
-                .addComponent(jButton1)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addGap(9, 9, 9)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(cbbtrangthai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -216,7 +238,7 @@ public class BookingPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(104, Short.MAX_VALUE))
+                .addContainerGap(490, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -228,6 +250,7 @@ public class BookingPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbBan;
+    private javax.swing.JComboBox<String> cbbtrangthai;
     private com.toedter.calendar.JDateChooser dcGioDat;
     private com.toedter.calendar.JDateChooser dcGioNhan;
     private javax.swing.JButton jButton1;
@@ -236,10 +259,12 @@ public class BookingPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblBooking;
     private javax.swing.JTextField txtSDT;
     private javax.swing.JTextField txtTenKhach;
+    private javax.swing.JTextField txtma;
     // End of variables declaration//GEN-END:variables
 }
