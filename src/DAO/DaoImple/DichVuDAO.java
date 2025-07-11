@@ -23,7 +23,7 @@ public class DichVuDAO {
          ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
-            list.add(rs.getString("TenDV")); // chỉ lấy tên dịch vụ
+            list.add(rs.getString("TenDV")); 
         }
 
     } catch (Exception e) {
