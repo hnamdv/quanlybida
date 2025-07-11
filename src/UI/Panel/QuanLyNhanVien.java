@@ -22,7 +22,9 @@ public class QuanLyNhanVien extends javax.swing.JPanel {
      */
     public QuanLyNhanVien() {
         initComponents();
-        
+           phanQuyenNhanVienUI();
+           DefaultTableModel model = (DefaultTableModel) tbl.getModel();
+
     }
     private void setForm(Nhanvien nv) {
     txtMa.setText(nv.getMaNV());
@@ -31,15 +33,15 @@ public class QuanLyNhanVien extends javax.swing.JPanel {
     cbb.setSelectedItem(nv.getChucVu());
 
 }
-    private Nhanvien getForm() {
+   private Nhanvien getForm() {
     Nhanvien nv = new Nhanvien();
-    txtMa.setText(nv.getMaNV());
-    txtTen.setText(nv.getHoTen());
-    sdt.setText(nv.getSdt());
-    cbb.setSelectedItem(nv.getChucVu());
-
+    nv.setMaNV(txtMa.getText());
+    nv.setHoTen(txtTen.getText());
+    nv.setSdt(sdt.getText());
+    nv.setChucVu(cbb.getSelectedItem().toString());
     return nv;
 }
+
 
 
    private void phanQuyenNhanVienUI() {
