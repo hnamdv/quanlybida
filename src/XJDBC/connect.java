@@ -23,7 +23,7 @@ public class connect {
         String driver = "com.mysql.cj.jdbc.Driver";
      String dburl = "jdbc:mysql://localhost:3306/QuanLybida?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
 
-        String username = "admin";
+        String username = "root";
         String password = "12345";
 
         try {

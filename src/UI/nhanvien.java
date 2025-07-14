@@ -6,6 +6,7 @@ package UI;
 
 import UI.Panel.BanBidaPanel;
 import UI.Panel.BookingPanel;
+import UI.Panel.ThuCong;
 import UI.Panel.maqr;
 import UI.Panel.quetmaqr;
 import Xauth.phanquyen;
@@ -274,7 +275,9 @@ public class nhanvien extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
- 
+                                 douong form = new douong();
+form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
+                        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked

@@ -11,6 +11,7 @@ import DAO.DaoImple.HoaDonDAO;
 import DAO.DaoImple.LoaibanDAO;
 import MODEl.Banbida;
 import MODEl.Booking;
+import MODEl.Dichvu;
 import MODEl.Hoadon;
 import MODEl.Loaiban;
 import java.awt.Color;
@@ -226,10 +227,10 @@ private void loadDanhSachBan() {
     private void loadDichVuVaoComboBox() {
         DichVuDAO dao = new DichVuDAO();
         try {
-            List<String> dsTenDV = dao.getAllTenDichVu();
+            List<Dichvu> dsTenDV = dao.getAll();
             jComboBox1.removeAllItems();
-            for (String TenDV : dsTenDV) {
-                jComboBox1.addItem(TenDV);
+            for (Dichvu TenDV : dsTenDV) {
+                jComboBox1.add(this);
             }
         } catch (Exception e) {
             e.printStackTrace();
