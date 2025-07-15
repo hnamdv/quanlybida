@@ -55,7 +55,7 @@ public class maqr extends javax.swing.JPanel {
     private void showQR() {
     try {
         String maNV = phanquyen.user.getMaNV();
-        String qrContent = "https://7a353b71daf5.ngrok-free.app/chamcong?maNV=" + maNV;
+        String qrContent = "https://a6d93a1f586f.ngrok-free.app/chamcong?maNV=" + maNV;
 
         BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
 

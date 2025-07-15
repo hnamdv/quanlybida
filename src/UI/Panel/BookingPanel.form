@@ -24,7 +24,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="638" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanel1" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -37,7 +37,7 @@
                   <Component id="jScrollPane1" min="-2" pref="590" max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="490" max="32767" attributes="0"/>
+              <EmptySpace pref="484" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -103,7 +103,7 @@
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="txtTenKhach" max="32767" attributes="0"/>
-                              <Component id="dcGioNhan" pref="880" max="32767" attributes="0"/>
+                              <Component id="dcGioNhan" pref="868" max="32767" attributes="0"/>
                               <Component id="txtSDT" max="32767" attributes="0"/>
                               <Component id="txtma" alignment="0" max="32767" attributes="0"/>
                           </Group>
