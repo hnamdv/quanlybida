@@ -118,6 +118,10 @@ jPanelQR.add(panelWrapper, new GridBagConstraints());
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanelQR.setBackground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanelQRLayout = new javax.swing.GroupLayout(jPanelQR);
         jPanelQR.setLayout(jPanelQRLayout);
         jPanelQRLayout.setHorizontalGroup(
@@ -129,6 +133,8 @@ jPanelQR.add(panelWrapper, new GridBagConstraints());
             .addGap(0, 759, Short.MAX_VALUE)
         );
 
+        jButton1.setBackground(new java.awt.Color(0, 102, 102));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Thủ Công");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,6 +142,8 @@ jPanelQR.add(panelWrapper, new GridBagConstraints());
             }
         });
 
+        jButton2.setBackground(new java.awt.Color(0, 102, 102));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Lịch Sử");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
