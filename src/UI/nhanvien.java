@@ -6,6 +6,8 @@ package UI;
 
 import UI.Panel.BanBidaPanel;
 import UI.Panel.BookingPanel;
+import UI.Panel.QuanLyNhanVien;
+import UI.Panel.SuaChuaPanel;
 import UI.Panel.ThuCong;
 import UI.Panel.maqr;
 import UI.Panel.quetmaqr;
@@ -30,23 +32,22 @@ public class nhanvien extends javax.swing.JFrame {
      */
     public nhanvien() {
         initComponents();
-             try {
+        try {
             UIManager.setLookAndFeel(new FlatLightLaf()); // Giao diện sáng
             // UIManager.setLookAndFeel(new FlatDarkLaf()); // Giao diện tối
         } catch (Exception ex) {
             ex.printStackTrace();
-        }   
+        }
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-         if (phanquyen.isLogin()) {
-        lblchucvu.setText("Chức vụ: " + phanquyen.user.getChucVu()
-        );
-        lblmnv.setText("Mã NV: " + phanquyen.user.getMaNV());
-    }
-      
-         
+        if (phanquyen.isLogin()) {
+            lblchucvu.setText("Chức vụ: " + phanquyen.user.getChucVu()
+            );
+            lblmnv.setText("Mã NV: " + phanquyen.user.getMaNV());
+        }
+
     }
     private boolean isDarkTheme = false;
-         
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -174,14 +175,14 @@ public class nhanvien extends javax.swing.JFrame {
             }
         });
 
-        btntheme.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Contrast.png"))); // NOI18N
+        btntheme.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\OneDrive\\Documents\\NetBeansProjects\\bida1\\quanlybida1\\src\\icon\\Contrast.png")); // NOI18N
         btntheme.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnthemeActionPerformed(evt);
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/đăng nhập.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\OneDrive\\Documents\\NetBeansProjects\\bida1\\quanlybida1\\src\\icon\\đăng nhập.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -277,10 +278,10 @@ public class nhanvien extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-    card.revalidate();
-       card.repaint();
-       card.removeAll();
-        card.add(new maqr() );  
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new maqr());
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -290,79 +291,79 @@ public class nhanvien extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-                                 douong form = new douong();
-form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
-                        
+        douong form = new douong();
+        form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
-        card.revalidate();
-       card.repaint();
-       card.removeAll();
-        card.add(new text() );        // TODO add your handling code here:
+            // TODO add your handling code here:
     }//GEN-LAST:event_jButton4MouseClicked
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-            card.revalidate();
-       card.repaint();
-       card.removeAll();
-        card.add(new BanBidaPanel() );      
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new BanBidaPanel());
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new SuaChuaPanel());
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-   
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
- phanquyen.clear();
+        phanquyen.clear();
 
-File f = new File("remember.txt");
-if (f.exists()) {
-    f.delete();
-}
+        File f = new File("remember.txt");
+        if (f.exists()) {
+            f.delete();
+        }
 
-this.dispose();
-new dangnhap().setVisible(true);
+        this.dispose();
+        new dangnhap().setVisible(true);
 
-  
+
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-            card.revalidate();
-       card.repaint();
-       card.removeAll();
-        card.add(new BookingPanel());  
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new BookingPanel());
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
- 
+
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void btnthemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemeActionPerformed
         // TODO add your handling code here:
-         try {
-        if (isDarkTheme) {
-            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
-            isDarkTheme = false;
-        } else {
-            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
-            isDarkTheme = true;
+        try {
+            if (isDarkTheme) {
+                UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+                isDarkTheme = false;
+            } else {
+                UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+                isDarkTheme = true;
+            }
+
+            // Cập nhật toàn bộ giao diện
+            SwingUtilities.updateComponentTreeUI(this);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-        // Cập nhật toàn bộ giao diện
-        SwingUtilities.updateComponentTreeUI(this);
-
-    } catch (Exception ex) {
-        ex.printStackTrace();
-    }
     }//GEN-LAST:event_btnthemeActionPerformed
 
     /**

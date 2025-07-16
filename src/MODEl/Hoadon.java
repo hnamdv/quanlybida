@@ -12,21 +12,35 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Hoadon {
+public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBD, Timestamp thoiGianKT,
+              double tongTien, String trangThai, Date ngayTao,
+              double tienGio, double giamGia, double tienDV, String ghiChu) {
+    this.maHD = maHD;
+    this.maNV = maNV;
+    this.maBan = maBan;
+    this.thoiGianBD = thoiGianBD;
+    this.thoiGianKT = thoiGianKT;
+    this.tongTien = tongTien;
+    this.trangThai = trangThai;
+    this.ngayTao = ngayTao;
+    this.tienGio = tienGio;
+    this.giamGia = giamGia;
+    this.tienDV = tienDV;
+    this.ghiChu = ghiChu;
+}
+public Timestamp getThoiGianBD() {
+    return thoiGianBD;
+}
+public void setThoiGianBD(Timestamp thoiGianBD) {
+    this.thoiGianBD = thoiGianBD;
+}
 
-    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, double tongTien, String trangThai, Date ngayTao, double tienGio, double giamGia, double tienDV, String ghiChu) {
-        this.maHD = maHD;
-        this.maNV = maNV;
-        this.maBan = maBan;
-        this.thoiGianBatDau = thoiGianBatDau;
-        this.thoiGianKetThuc = thoiGianKetThuc;
-        this.tongTien = tongTien;
-        this.trangThai = trangThai;
-        this.ngayTao = ngayTao;
-        this.tienGio = tienGio;
-        this.giamGia = giamGia;
-        this.tienDV = tienDV;
-        this.ghiChu = ghiChu;
-    }
+public Timestamp getThoiGianKT() {
+    return thoiGianKT;
+}
+public void setThoiGianKT(Timestamp thoiGianKT) {
+    this.thoiGianKT = thoiGianKT;
+}
 
     public Hoadon() {
     }
@@ -55,22 +69,7 @@ public class Hoadon {
         this.maBan = maBan;
     }
 
-    public Timestamp getThoiGianBatDau() {
-        return thoiGianBatDau;
-    }
-
-    public void setThoiGianBatDau(Timestamp thoiGianBatDau) {
-        this.thoiGianBatDau = thoiGianBatDau;
-    }
-
-    public Timestamp getThoiGianKetThuc() {
-        return thoiGianKetThuc;
-    }
-
-    public void setThoiGianKetThuc(Timestamp thoiGianKetThuc) {
-        this.thoiGianKetThuc = thoiGianKetThuc;
-    }
-
+   
     public double getTongTien() {
         return tongTien;
     }
@@ -129,8 +128,9 @@ public class Hoadon {
     private String maHD;
     private String maNV;
     private String maBan;
-    private Timestamp thoiGianBatDau;
-    private Timestamp thoiGianKetThuc;
+    private Timestamp thoiGianBD;
+private Timestamp thoiGianKT;
+
     private double tongTien;
     private String trangThai;
     private Date ngayTao;

@@ -4,6 +4,7 @@
  */
 package DAO.DaoImple;
 
+import MODEl.Banbida;
 import MODEl.Suachua;
 import XJDBC.connect;
 import java.sql.*;
@@ -16,9 +17,14 @@ import java.util.List;
  */
 public class SuachuaDAO {
 
-    public List<Suachua> getAll() {
+    public List<Suachua> getAllBanDangSua() {
         List<Suachua> list = new ArrayList<>();
-        String sql = "SELECT * FROM SUACHUA";
+        String sql = """
+        SELECT s.MaSC, s.MaBan, s.MoTaLoi, s.ChiPhi, s.NgaySua
+        FROM SUACHUA s
+        JOIN BANBIDA b ON s.MaBan = b.MaBan
+        WHERE b.TinhTrang IN ('DangSua', 'BaoTri')
+    """;
 
         try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -59,11 +65,11 @@ public class SuachuaDAO {
 
     public List<Suachua> getByNgaySua(Date ngay) {
         List<Suachua> list = new ArrayList<>();
-        String sql = "SELECT * FROM SUACHUA WHERE NgaySua = ?";
+        String sql = "SELECT * FROM SUACHUA WHERE DATE(NgaySua) = ?";
 
         try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setDate(1, ngay);
+            ps.setDate(1, ngay);  // vẫn giữ nguyên
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -105,6 +111,17 @@ public class SuachuaDAO {
         }
 
         return null;
+    }
+
+    public void capNhatTinhTrang(String maBan, String tinhTrangMoi) {
+        String sql = "UPDATE BANBIDA SET TinhTrang = ? WHERE MaBan = ?";
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, tinhTrangMoi);
+            ps.setString(2, maBan);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
