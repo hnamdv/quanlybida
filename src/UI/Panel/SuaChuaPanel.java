@@ -29,7 +29,7 @@ public class SuaChuaPanel extends javax.swing.JPanel {
 
     private void loadAll() {
         SuachuaDAO dao = new SuachuaDAO();
-        List<Suachua> list = dao.getAll();
+        List<Suachua> list = dao.getAllBanDangSua();
         model.setRowCount(0); // Xóa hết dòng cũ
         for (Suachua s : list) {
             model.addRow(new Object[]{

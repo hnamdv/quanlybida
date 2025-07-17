@@ -19,6 +19,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
+import java.net.InetAddress;
 import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -52,58 +53,59 @@ public class maqr extends javax.swing.JPanel {
     }
     private String maNV;
 
-    private void showQR() {
-    try {
-        String maNV = phanquyen.user.getMaNV();
-        String qrContent = "https://a6d93a1f586f.ngrok-free.app/chamcong?maNV=" + maNV;
+        private void showQR() {
+        try {
+            String maNV = phanquyen.user.getMaNV();
+    String ip = InetAddress.getLocalHost().getHostAddress();    
+    String qrContent = "http://" + ip + ":8080/chamcong?maNV=" + maNV;
 
-        BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
+            BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
 
-        JLabel label = new JLabel(new ImageIcon(qrImage));
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setVerticalAlignment(JLabel.CENTER);
+            JLabel label = new JLabel(new ImageIcon(qrImage));
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setVerticalAlignment(JLabel.CENTER);
 
-        jPanelQR.removeAll();
+            jPanelQR.removeAll();
 
-        // Dùng GridBagLayout để căn giữa
-        jPanelQR.setLayout(new GridBagLayout());
-        jPanelQR.add(label, new GridBagConstraints());
+            // Dùng GridBagLayout để căn giữa
+            jPanelQR.setLayout(new GridBagLayout());
+            jPanelQR.add(label, new GridBagConstraints());
 
-        jPanelQR.revalidate();
-        jPanelQR.repaint();
-        JLabel nameLabel = new JLabel("Nhân viên: " + phanquyen.user.getHoTen());
-nameLabel.setHorizontalAlignment(JLabel.CENTER);
-nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-nameLabel.setForeground(Color.DARK_GRAY);
+            jPanelQR.revalidate();
+            jPanelQR.repaint();
+            JLabel nameLabel = new JLabel("Nhân viên: " + phanquyen.user.getHoTen());
+    nameLabel.setHorizontalAlignment(JLabel.CENTER);
+    nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    nameLabel.setForeground(Color.DARK_GRAY);
 
-// Panel tạm chứa QR + tên
-JPanel panelWrapper = new JPanel(new BorderLayout());
-panelWrapper.setOpaque(false); // không đè màu
-panelWrapper.add(label, BorderLayout.CENTER);
-panelWrapper.add(nameLabel, BorderLayout.SOUTH);
+    // Panel tạm chứa QR + tên
+    JPanel panelWrapper = new JPanel(new BorderLayout());
+    panelWrapper.setOpaque(false); // không đè màu
+    panelWrapper.add(label, BorderLayout.CENTER);
+    panelWrapper.add(nameLabel, BorderLayout.SOUTH);
 
-jPanelQR.add(panelWrapper, new GridBagConstraints());
+    jPanelQR.add(panelWrapper, new GridBagConstraints());
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
 
 
-    private BufferedImage generateQRImage(String text, int width, int height) throws WriterException {
-        Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
-        hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        private BufferedImage generateQRImage(String text, int width, int height) throws WriterException {
+            Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
+            hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 
-        BitMatrix matrix = new MultiFormatWriter().encode(
-                text,
-                BarcodeFormat.QR_CODE,
-                width,
-                height,
-                hintMap
-        );
+            BitMatrix matrix = new MultiFormatWriter().encode(
+                    text,
+                    BarcodeFormat.QR_CODE,
+                    width,
+                    height,
+                    hintMap
+            );
 
-        return MatrixToImageWriter.toBufferedImage(matrix);
-    }
+            return MatrixToImageWriter.toBufferedImage(matrix);
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -177,7 +179,7 @@ jPanelQR.add(panelWrapper, new GridBagConstraints());
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-                               ThuCong form = new ThuCong();
+                             NgayLuongNhanVien form = new NgayLuongNhanVien();
 form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
                                                                                                      // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed

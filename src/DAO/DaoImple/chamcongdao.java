@@ -140,4 +140,56 @@ public boolean daChamCongHomNay(String maNV) {
         return false;
     }
 }
+public chamcong findByNgay(String maNV, Date ngay) {
+    String sql = "SELECT * FROM ChamCong WHERE MaNV = ? AND DATE(GioVao) = ?";
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        ps.setString(1, maNV);
+        ps.setDate(2, new java.sql.Date(ngay.getTime())); 
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return new chamcong(
+                rs.getInt("MaCC"),
+                rs.getString("MaNV"),
+                rs.getTimestamp("GioVao"),
+                rs.getTimestamp("GioRa")
+            );
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+public List<chamcong> findByThangNam(String maNV, int thang, int nam) {
+    List<chamcong> list = new ArrayList<>();
+    String sql = "SELECT * FROM ChamCong WHERE MaNV = ? AND MONTH(GioVao) = ? AND YEAR(GioVao) = ?";
+
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        ps.setString(1, maNV);
+        ps.setInt(2, thang);
+        ps.setInt(3, nam);
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            chamcong cc = new chamcong(
+                rs.getInt("MaCC"),
+                rs.getString("MaNV"),
+                rs.getTimestamp("GioVao"),
+                rs.getTimestamp("GioRa")
+            );
+            list.add(cc);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
+
 }
