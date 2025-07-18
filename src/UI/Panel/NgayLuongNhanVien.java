@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
+import java.time.Year;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -26,14 +27,26 @@ public class NgayLuongNhanVien extends javax.swing.JFrame {
     /**
      * Creates new form NgayLuongNhanVien
      */
-    public NgayLuongNhanVien() {
-        initComponents();
-     loadDuLieuChamCong();
-    }
+   public NgayLuongNhanVien() {
+    initComponents();
+    initComboBoxThangNam();
+    loadDuLieuChamCong();
+    checkQuyen();
+    updateVisibility();
+}
+
     private TinhLuongService tinhLuongService = new TinhLuongService();
     
     private chamcongdao chamCongDAO = new chamcongdao();
-
+    private void checkQuyen() {
+    if (!phanquyen.check()) {
+      
+        btnluonh.setEnabled(false);
+        txtluongdatinh.setEnabled(false);
+        cbbthang.setEnabled(false);
+        cbbnam.setEnabled(false);
+    }
+}
 private void loadDuLieuChamCong() {
     String maNV = phanquyen.user.getMaNV();
     List<chamcong> list = chamCongDAO.findByMaNV(maNV);
@@ -52,6 +65,22 @@ private void loadDuLieuChamCong() {
         });
     }
 }
+    private void updateVisibility() {
+    boolean isNgay = rdngay.isSelected();
+    jDateChooser1.setVisible(isNgay);
+    cbbthang.setVisible(!isNgay);
+    cbbnam.setVisible(!isNgay);
+}
+private void initComboBoxThangNam() {
+    for (int y = 2020; y <= 2030; y++) {
+    cbbnam.addItem(String.valueOf(y)); 
+}
+
+   for (int i = 1; i <= 12; i++) {
+    cbbthang.addItem(String.valueOf(i));
+}
+}
+
     /**
      * 
      * 
@@ -64,14 +93,23 @@ private void loadDuLieuChamCong() {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        cbbthang = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
         txtmanv = new javax.swing.JTextField();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         btnluonh = new javax.swing.JButton();
         txtluongdatinh = new javax.swing.JTextField();
+        rdngay = new javax.swing.JRadioButton();
+        rdthang = new javax.swing.JRadioButton();
+        cbbnam = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        cbbthang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        getContentPane().add(cbbthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 200, -1, -1));
 
         tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -91,7 +129,11 @@ private void loadDuLieuChamCong() {
         });
         jScrollPane1.setViewportView(tbl);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 385, 1188, -1));
+
         txtmanv.setText("jTextField1");
+        getContentPane().add(txtmanv, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 70, 147, -1));
+        getContentPane().add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 197, 235, -1));
 
         btnluonh.setText("jButton1");
         btnluonh.addActionListener(new java.awt.event.ActionListener() {
@@ -99,44 +141,19 @@ private void loadDuLieuChamCong() {
                 btnluonhActionPerformed(evt);
             }
         });
+        getContentPane().add(btnluonh, new org.netbeans.lib.awtextra.AbsoluteConstraints(176, 315, -1, -1));
 
         txtluongdatinh.setText("jTextField1");
+        getContentPane().add(txtluongdatinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 320, 515, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(598, Short.MAX_VALUE)
-                .addComponent(txtluongdatinh, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(75, 75, 75))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(145, 145, 145)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtmanv)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(176, 176, 176)
-                        .addComponent(btnluonh)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(180, 180, 180)
-                .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
-                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(txtluongdatinh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(btnluonh)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        rdngay.setText("Ngày");
+        getContentPane().add(rdngay, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 158, 98, -1));
+
+        rdthang.setText("Tháng");
+        getContentPane().add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(336, 158, 98, -1));
+
+        cbbnam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        getContentPane().add(cbbnam, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -144,28 +161,49 @@ private void loadDuLieuChamCong() {
     private void btnluonhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnluonhActionPerformed
         // TODO add your handling code here:
        String maNV = txtmanv.getText().trim();
-    Date ngay = jDateChooser1.getDate();
-
-    if (maNV.isEmpty() || ngay == null) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên và chọn ngày.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+    if (maNV.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên.", "Thông báo", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    double luong = tinhLuongService.tinhLuongTheoNgay(maNV, ngay);
+    double luong = 0;
+
+    if (rdngay.isSelected()) {
+        Date ngay = jDateChooser1.getDate();
+        if (ngay == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        luong = tinhLuongService.tinhLuongTheoNgay(maNV, ngay);
+
+    } else if (rdthang.isSelected()) {
+        Integer thang = (Integer) cbbthang.getSelectedItem();
+        Integer nam = (Integer) cbbnam.getSelectedItem();
+        if (thang == null || nam == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tháng và năm.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+         luong = tinhLuongService.tinhLuongTheoThang(maNV, thang, nam, 20000);
+
+    }
+
     txtluongdatinh.setText(String.format("%.0f VNĐ", luong));
-    
 
     }//GEN-LAST:event_btnluonhActionPerformed
 
     private void tblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMouseClicked
         // TODO add your handling code here:
-         int row = tbl.getSelectedRow();
+     int row = tbl.getSelectedRow();
     if (row >= 0) {
-        String maNV = tbl.getValueAt(row, 1).toString(); 
+        String maNV = tbl.getValueAt(row, 1).toString();
         Timestamp gioVao = (Timestamp) tbl.getValueAt(row, 2);
 
         txtmanv.setText(maNV);
         jDateChooser1.setDate(new Date(gioVao.getTime()));
+        rdngay.setSelected(true);
+        updateVisibility();
     }
     }//GEN-LAST:event_tblMouseClicked
 
@@ -206,8 +244,13 @@ private void loadDuLieuChamCong() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnluonh;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> cbbnam;
+    private javax.swing.JComboBox<String> cbbthang;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rdngay;
+    private javax.swing.JRadioButton rdthang;
     private javax.swing.JTable tbl;
     private javax.swing.JTextField txtluongdatinh;
     private javax.swing.JTextField txtmanv;

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TinhLuongService {
 
-    private final double LUONG_CO_BAN = 20000; // VNĐ mỗi giờ
+    
     private final double HE_SO_TANG_CA = 1.5;
 
     private chamcongdao chamCongDAO = new chamcongdao();
@@ -28,13 +28,10 @@ public class TinhLuongService {
         chamcongdao dao = new chamcongdao();
     java.sql.Date sqlDate = new java.sql.Date(ngay.getTime());
 chamcong cc = dao.findByNgay(maNV, sqlDate);
-
-
         if (cc == null) {
             System.out.println("Chưa chấm công ngày này.");
             return 0;
         }
-
         Timestamp vao = (Timestamp) cc.getGioVao();
         Timestamp ra = (Timestamp) cc.getGioRa();
 
@@ -49,9 +46,6 @@ chamcong cc = dao.findByNgay(maNV, sqlDate);
         return hours * LUONG_MOT_GIO;
     }
 
-
-
-    // Tính lương theo tháng
     public long tinhLuongTheoThang(String maNV, int thang, int nam, int luongMotGio) {
         List<chamcong> danhSach = chamCongDAO.findByThangNam(maNV, thang, nam);
         long tongTien = 0;
