@@ -37,7 +37,6 @@ public class dangnhap extends javax.swing.JFrame {
         }
     } catch (IOException e) {
     }
-
     }
 
     /**

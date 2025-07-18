@@ -4,16 +4,30 @@
  */
 package UI.Panel;
 
+import DAO.DaoImple.NhanVienDAOIMPL;
 import DAO.DaoImple.chamcongdao;
 import LuongService.TinhLuongService;
+import MODEl.Nhanvien;
 import MODEl.chamcong;
 import Xauth.phanquyen;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Year;
+import javax.swing.JFileChooser;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -29,42 +43,45 @@ public class NgayLuongNhanVien extends javax.swing.JFrame {
      */
    public NgayLuongNhanVien() {
     initComponents();
+    String[] columnNames = {"Mã NV", "Họ tên", "Khoảng thời gian", "Số ngày công", "Lương"};
+DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+tbl.setModel(model);
+
     initComboBoxThangNam();
     loadDuLieuChamCong();
-    checkQuyen();
+ //   checkQuyen();
     updateVisibility();
 }
 
     private TinhLuongService tinhLuongService = new TinhLuongService();
     
     private chamcongdao chamCongDAO = new chamcongdao();
-    private void checkQuyen() {
-    if (!phanquyen.check()) {
+   // private void checkQuyen() {
+  //  if (!phanquyen.check()) {
       
-        btnluonh.setEnabled(false);
-        txtluongdatinh.setEnabled(false);
-        cbbthang.setEnabled(false);
-        cbbnam.setEnabled(false);
-    }
-}
+   //     btnluonh.setEnabled(false);
+    //    txtluongdatinh.setEnabled(false);
+     //   cbbthang.setEnabled(false);
+     //   cbbnam.setEnabled(false);
+   //}//}
 private void loadDuLieuChamCong() {
-    String maNV = phanquyen.user.getMaNV();
-    List<chamcong> list = chamCongDAO.findByMaNV(maNV);
-    fillTable(list);
+  //  String maNV = phanquyen.user.getMaNV();
+  //  List<chamcong> list = chamCongDAO.findByMaNV(maNV);
+  //  fillTable(list);
 }
 
-    private void fillTable(List<chamcong> list) {
-    DefaultTableModel model = (DefaultTableModel) tbl.getModel();
-    model.setRowCount(0);
-    for (chamcong cc : list) {
-        model.addRow(new Object[]{
-            cc.getMaCC(),
-            cc.getMaNV(),
-            cc.getGioVao(),
-            cc.getGioRa()
-        });
-    }
-}
+ //   private void fillTable(List<chamcong> list) {
+  //  DefaultTableModel model = (DefaultTableModel) tbl.getModel();
+ //   model.setRowCount(0);
+  //  for (chamcong cc : list) {
+   //     model.addRow(new Object[]{
+   //         cc.getMaCC(),
+    //        cc.getMaNV(),
+    //        cc.getGioVao(),
+     //       cc.getGioRa()
+     //   });
+   // }
+// }
     private void updateVisibility() {
     boolean isNgay = rdngay.isSelected();
     jDateChooser1.setVisible(isNgay);
@@ -72,13 +89,16 @@ private void loadDuLieuChamCong() {
     cbbnam.setVisible(!isNgay);
 }
 private void initComboBoxThangNam() {
-    for (int y = 2020; y <= 2030; y++) {
+cbbthang.removeAllItems();
+cbbnam.removeAllItems();
+
+for (int y = 2020; y <= 2030; y++) {
     cbbnam.addItem(String.valueOf(y)); 
 }
-
-   for (int i = 1; i <= 12; i++) {
+for (int i = 1; i <= 12; i++) {
     cbbthang.addItem(String.valueOf(i));
 }
+
 }
 
     /**
@@ -104,6 +124,7 @@ private void initComboBoxThangNam() {
         rdngay = new javax.swing.JRadioButton();
         rdthang = new javax.swing.JRadioButton();
         cbbnam = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -130,66 +151,107 @@ private void initComboBoxThangNam() {
         jScrollPane1.setViewportView(tbl);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 385, 1188, -1));
-
-        txtmanv.setText("jTextField1");
         getContentPane().add(txtmanv, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 70, 147, -1));
         getContentPane().add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 197, 235, -1));
 
-        btnluonh.setText("jButton1");
+        btnluonh.setText("Tính Lương");
         btnluonh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnluonhActionPerformed(evt);
             }
         });
         getContentPane().add(btnluonh, new org.netbeans.lib.awtextra.AbsoluteConstraints(176, 315, -1, -1));
-
-        txtluongdatinh.setText("jTextField1");
         getContentPane().add(txtluongdatinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 320, 515, -1));
 
         rdngay.setText("Ngày");
+        rdngay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdngayActionPerformed(evt);
+            }
+        });
         getContentPane().add(rdngay, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 158, 98, -1));
 
         rdthang.setText("Tháng");
+        rdthang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdthangActionPerformed(evt);
+            }
+        });
         getContentPane().add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(336, 158, 98, -1));
 
         cbbnam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(cbbnam, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
+
+        jButton1.setText("Lưu");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1080, 320, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnluonhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnluonhActionPerformed
         // TODO add your handling code here:
-       String maNV = txtmanv.getText().trim();
+
+          String maNV = txtmanv.getText().trim();
     if (maNV.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên.", "Thông báo", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
+    NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+    Nhanvien nv = dao.findById(maNV);
+    if (nv == null) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
     double luong = 0;
+    String thoiGian = "";
+    int soNgayCong = 0; // tùy theo cách tính bạn lấy từ đâu
+    Date ngay = null;
+    int thang = 0, nam = 0;
 
     if (rdngay.isSelected()) {
-        Date ngay = jDateChooser1.getDate();
+        ngay = jDateChooser1.getDate();
         if (ngay == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày.", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         luong = tinhLuongService.tinhLuongTheoNgay(maNV, ngay);
+        thoiGian = new SimpleDateFormat("dd/MM/yyyy").format(ngay);
 
     } else if (rdthang.isSelected()) {
-        Integer thang = (Integer) cbbthang.getSelectedItem();
-        Integer nam = (Integer) cbbnam.getSelectedItem();
-        if (thang == null || nam == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tháng và năm.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        try {
+            thang = Integer.parseInt(cbbthang.getSelectedItem().toString());
+            nam = Integer.parseInt(cbbnam.getSelectedItem().toString());
+
+            luong = tinhLuongService.tinhLuongTheoThang(maNV, thang, nam, 20000);
+            thoiGian = String.format("Tháng %02d/%d", thang, nam);
+                    chamcongdao daoo = new chamcongdao();
+            soNgayCong = daoo.demSoNgayCong(maNV, thang, nam);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Dữ liệu tháng/năm không hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-         luong = tinhLuongService.tinhLuongTheoThang(maNV, thang, nam, 20000);
-
     }
 
     txtluongdatinh.setText(String.format("%.0f VNĐ", luong));
+
+    DefaultTableModel model = (DefaultTableModel) tbl.getModel();
+    model.addRow(new Object[] {
+        nv.getMaNV(),
+        nv.getHoTen(),
+        thoiGian,
+        soNgayCong,
+        luong
+    });
+
+
 
     }//GEN-LAST:event_btnluonhActionPerformed
 
@@ -206,6 +268,67 @@ private void initComboBoxThangNam() {
         updateVisibility();
     }
     }//GEN-LAST:event_tblMouseClicked
+
+    private void rdngayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdngayActionPerformed
+        // TODO add your handling code here:
+          updateVisibility();
+    }//GEN-LAST:event_rdngayActionPerformed
+
+    private void rdthangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdthangActionPerformed
+  updateVisibility();        // TODO add your handling code here:
+    }//GEN-LAST:event_rdthangActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+         JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Chọn nơi lưu file PDF");
+    chooser.setSelectedFile(new File("bangluong.pdf"));
+
+    int userSelection = chooser.showSaveDialog(this);
+    if (userSelection != JFileChooser.APPROVE_OPTION) {
+        return;
+    }
+
+    File fileToSave = chooser.getSelectedFile();
+
+    try {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(fileToSave));
+        document.open();
+
+        // Tiêu đề
+        Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+        Paragraph title = new Paragraph("BẢNG LƯƠNG NHÂN VIÊN\n\n", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        // Bảng
+        PdfPTable pdfTable = new PdfPTable(tbl.getColumnCount());
+        pdfTable.setWidthPercentage(100);
+
+        // Header
+        for (int i = 0; i < tbl.getColumnCount(); i++) {
+            pdfTable.addCell(new PdfPCell(new Phrase(tbl.getColumnName(i))));
+        }
+
+        // Dữ liệu
+        for (int rows = 0; rows < tbl.getRowCount(); rows++) {
+            for (int cols = 0; cols < tbl.getColumnCount(); cols++) {
+                Object value = tbl.getValueAt(rows, cols);
+                pdfTable.addCell(value != null ? value.toString() : "");
+            }
+        }
+
+        document.add(pdfTable);
+        document.close();
+
+        JOptionPane.showMessageDialog(this, "Xuất PDF thành công: " + fileToSave.getAbsolutePath());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi xuất PDF.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -247,6 +370,7 @@ private void initComboBoxThangNam() {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cbbnam;
     private javax.swing.JComboBox<String> cbbthang;
+    private javax.swing.JButton jButton1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rdngay;

@@ -189,6 +189,27 @@ public List<chamcong> findByThangNam(String maNV, int thang, int nam) {
     }
     return list;
 }
+public int demSoNgayCong(String maNV, int thang, int nam) {
+    int soNgayCong = 0;
+    String sql = "SELECT COUNT(*) FROM ChamCong WHERE MaNV = ? AND MONTH(NgayLam) = ? AND YEAR(NgayLam) = ? AND TrangThai = 'Có mặt'";
+     try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql))
+             {
+
+        ps.setString(1, maNV);
+        ps.setInt(2, thang);
+        ps.setInt(3, nam);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            soNgayCong = rs.getInt(1);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return soNgayCong;
+}
 
 
 

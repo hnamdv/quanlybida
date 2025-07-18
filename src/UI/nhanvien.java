@@ -32,6 +32,7 @@ public class nhanvien extends javax.swing.JFrame {
      */
     public nhanvien() {
         initComponents();
+        setLocationRelativeTo(null);
         try {
             UIManager.setLookAndFeel(new FlatLightLaf()); // Giao diện sáng
             // UIManager.setLookAndFeel(new FlatDarkLaf()); // Giao diện tối
@@ -175,14 +176,11 @@ public class nhanvien extends javax.swing.JFrame {
             }
         });
 
-        btntheme.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\OneDrive\\Documents\\NetBeansProjects\\bida1\\quanlybida1\\src\\icon\\Contrast.png")); // NOI18N
         btntheme.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnthemeActionPerformed(evt);
             }
         });
-
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\OneDrive\\Documents\\NetBeansProjects\\bida1\\quanlybida1\\src\\icon\\đăng nhập.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -263,8 +261,7 @@ public class nhanvien extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(card, javax.swing.GroupLayout.DEFAULT_SIZE, 1307, Short.MAX_VALUE)
-                .addGap(18, 18, 18))
+                .addComponent(card, javax.swing.GroupLayout.DEFAULT_SIZE, 1325, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -312,7 +309,7 @@ public class nhanvien extends javax.swing.JFrame {
         card.revalidate();
         card.repaint();
         card.removeAll();
-        card.add(new SuaChuaPanel());
+        card.add(new QuanLyNhanVien());    
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

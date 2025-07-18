@@ -22,23 +22,41 @@ public class QuanLyNhanVien extends javax.swing.JPanel {
      */
     public QuanLyNhanVien() {
         initComponents();
+        String[] columnNames = {"Mã NV", "Tên", "Giới tính", "Ngày sinh", "SĐT", "Email", "Chức vụ", "Mật khẩu", "Trạng thái"};
+DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+tbl.setModel(model);
+
            phanQuyenNhanVienUI();
-           DefaultTableModel model = (DefaultTableModel) tbl.getModel();
+          
 
     }
-    private void setForm(Nhanvien nv) {
+private void setForm(Nhanvien nv) {
     txtMa.setText(nv.getMaNV());
     txtTen.setText(nv.getHoTen());
     sdt.setText(nv.getSdt());
+    date.setDate(nv.getNgaySinh());
+    txtemai.setText(nv.getEmail());
     cbb.setSelectedItem(nv.getChucVu());
-
+    txtpass.setText(nv.getMatKhau());
+    if ("Nam".equalsIgnoreCase(nv.getGioiTinh())) {
+        jRadioButton1.setSelected(true);
+    } else {
+        jRadioButton2.setSelected(true);
+    }
+    jCheckBox1.setSelected(nv.isTrangThai());
 }
-   private Nhanvien getForm() {
+
+ private Nhanvien getForm() {
     Nhanvien nv = new Nhanvien();
     nv.setMaNV(txtMa.getText());
     nv.setHoTen(txtTen.getText());
     nv.setSdt(sdt.getText());
+    nv.setNgaySinh(new java.sql.Date(date.getDate().getTime()));
+    nv.setEmail(txtemai.getText());
     nv.setChucVu(cbb.getSelectedItem().toString());
+    nv.setMatKhau(txtpass.getText());
+    nv.setGioiTinh(jRadioButton1.isSelected() ? "Nam" : "Nữ");
+    nv.setTrangThai(jCheckBox1.isSelected());
     return nv;
 }
 
@@ -76,7 +94,7 @@ private void loadThongTinCaNhan() {
 private void loadTatCaNhanVien() {
     DefaultTableModel model = (DefaultTableModel) tbl.getModel();
     model.setRowCount(0);
- NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+    NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
     List<Nhanvien> list = dao.getAll();
     for (Nhanvien nv : list) {
         model.addRow(new Object[]{
@@ -87,9 +105,21 @@ private void loadTatCaNhanVien() {
             nv.getSdt(),
             nv.getEmail(),
             nv.getChucVu(),
+          //  nv.getMatKhau(), 
             nv.isTrangThai() ? "Đang làm" : "Nghỉ"
         });
     }
+}
+private void clearForm() {
+    txtMa.setText("");
+    txtTen.setText("");
+    sdt.setText("");
+    txtemai.setText("");
+    txtpass.setText("");
+    cbb.setSelectedIndex(0);
+    date.setDate(null);
+    jRadioButton1.setSelected(true); 
+    jCheckBox1.setSelected(true); 
 }
 
 
@@ -125,6 +155,10 @@ private void loadTatCaNhanVien() {
         txtMa = new javax.swing.JTextField();
         txttenlog = new javax.swing.JTextField();
         txtTen = new javax.swing.JTextField();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        txtemai = new javax.swing.JTextField();
 
         setPreferredSize(new java.awt.Dimension(1620, 1080));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -245,11 +279,27 @@ private void loadTatCaNhanVien() {
             }
         });
         add(txtTen, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 120, 280, -1));
+
+        jRadioButton1.setText("Nam");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+        add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 320, -1, -1));
+
+        jRadioButton2.setText("Nữ");
+        add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 320, -1, -1));
+
+        jCheckBox1.setText("Làm/Nghĩ");
+        add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 320, -1, -1));
+        add(txtemai, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 240, 280, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
-Nhanvien nv = getForm();
-        NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+  Nhanvien nv = getForm();
+    NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+
     if (dao.findById(nv.getMaNV()) != null) {
         JOptionPane.showMessageDialog(this, "Mã nhân viên đã tồn tại!");
         return;
@@ -257,14 +307,15 @@ Nhanvien nv = getForm();
 
     if (dao.insert(nv)) {
         JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
-        loadTatCaNhanVien(); // load lại bảng
+        loadTatCaNhanVien();
+        clearForm();
     } else {
         JOptionPane.showMessageDialog(this, "Thêm thất bại!");
     }
     }//GEN-LAST:event_btnthemActionPerformed
 
     private void btnxoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaActionPerformed
- if (!phanquyen.check()) {
+  if (!phanquyen.check()) {
         JOptionPane.showMessageDialog(this, "Bạn không có quyền xóa nhân viên.");
         return;
     }
@@ -280,21 +331,33 @@ Nhanvien nv = getForm();
 
     if (confirm == JOptionPane.YES_OPTION) {
         NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
-        dao.delete(ma);
-        loadTatCaNhanVien();
+        if (dao.delete(ma)) {
+            JOptionPane.showMessageDialog(this, "Xoá thành công!");
+            loadTatCaNhanVien();
+            clearForm();
+        } else {
+            JOptionPane.showMessageDialog(this, "Xoá thất bại!");
+        }
     }
     }//GEN-LAST:event_btnxoaActionPerformed
 
     private void tblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMouseClicked
         // TODO add your handling code here:
-
-        
+  int row = tbl.getSelectedRow();
+    if (row >= 0) {
+        String ma = tbl.getValueAt(row, 0).toString();
+        NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+        Nhanvien nv = dao.findById(ma);
+        if (nv != null) {
+            setForm(nv);
+        }
+    }
 
     }//GEN-LAST:event_tblMouseClicked
 
     private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
         // TODO add your handling code here:
-   int row = tbl.getSelectedRow();
+      int row = tbl.getSelectedRow();
     if (row < 0) {
         JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng cần sửa.");
         return;
@@ -302,17 +365,21 @@ Nhanvien nv = getForm();
 
     String maNV = tbl.getValueAt(row, 0).toString();
 
-    // Nhân viên không được sửa thông tin người khác
     if (!phanquyen.check() && !maNV.equals(phanquyen.user.getMaNV())) {
         JOptionPane.showMessageDialog(this, "Bạn chỉ được sửa thông tin của chính mình.");
         return;
     }
- NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
-    Nhanvien nv = dao.findById(maNV);
-    if (nv != null) {
-        setForm(nv);
-    }
 
+    NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+    Nhanvien nv = getForm();
+
+    if (dao.update(nv)) {
+        JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+        loadTatCaNhanVien();
+        clearForm();
+    } else {
+        JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+    }
 
     }//GEN-LAST:event_btnsuaActionPerformed
 
@@ -324,6 +391,10 @@ Nhanvien nv = getForm();
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTenActionPerformed
 
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnsua;
@@ -332,6 +403,7 @@ Nhanvien nv = getForm();
     private javax.swing.JComboBox<String> cbb;
     private com.toedter.calendar.JDateChooser date;
     private javax.swing.JButton jButton5;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -340,11 +412,14 @@ Nhanvien nv = getForm();
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField sdt;
     private javax.swing.JTable tbl;
     private javax.swing.JTextField txtMa;
     private javax.swing.JTextField txtTen;
+    private javax.swing.JTextField txtemai;
     private javax.swing.JTextField txtpass;
     private javax.swing.JTextField txttenlog;
     // End of variables declaration//GEN-END:variables

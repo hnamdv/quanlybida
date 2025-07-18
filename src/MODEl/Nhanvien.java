@@ -83,7 +83,6 @@ public class Nhanvien {
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
-
     public Nhanvien(String maNV, String hoTen, String gioiTinh, Date ngaySinh, String sdt, String email, String chucVu, String matKhau, boolean trangThai) {
         this.maNV = maNV;
         this.hoTen = hoTen;
