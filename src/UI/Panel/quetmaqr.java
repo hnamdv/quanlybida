@@ -58,7 +58,16 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
 
                 Result result = new MultiFormatReader().decode(bitmap);
                 if (result != null) {
-                    String maNV = result.getText();
+                   String rawText = result.getText();
+                    String maNV = rawText;
+
+                    if (rawText.contains("=")) {
+                       String[] parts = rawText.split("=");
+                  if (parts.length == 2) {
+                    maNV = parts[1]; 
+                }
+                }
+
                     Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
                     if (daMoCa(maNV)) {
@@ -75,10 +84,10 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
                         }
                     }
 
-                    Thread.sleep(3000); // Chờ 3 giây tránh quét lặp
+                    Thread.sleep(3000); 
                 }
             } catch (NotFoundException e) {
-                // Không tìm thấy mã QR, bỏ qua
+               
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -86,7 +95,7 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
     }
 
     private boolean daMoCa(String maNV) {
-        // Kiểm tra trong DAO xem hôm nay đã có giờ vào chưa
+      
         return dao.daMoCa(maNV);
     }
 

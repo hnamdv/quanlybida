@@ -11,6 +11,12 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import img.anh;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,11 +25,17 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.util.Hashtable;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -38,14 +50,14 @@ public class maqr extends javax.swing.JPanel {
      */
     public maqr() {
         initComponents();
-        // Thiết lập layout chính xác
-    jPanelQR.setLayout(new GridBagLayout()); // dùng layout căn giữa
+  
+    jPanelQR.setLayout(new GridBagLayout()); 
     jPanelQR.setPreferredSize(new Dimension(300, 300));
     jPanelQR.setBorder(BorderFactory.createTitledBorder("Mã QR Chấm Công")); // viền có tiêu đề
 
     anh.startServer();
 
-    // Hiển thị QR
+    
     SwingUtilities.invokeLater(() -> {
         showQR();
     });
@@ -56,8 +68,8 @@ public class maqr extends javax.swing.JPanel {
         private void showQR() {
         try {
             String maNV = phanquyen.user.getMaNV();
-    String ip = InetAddress.getLocalHost().getHostAddress();    
-    String qrContent = "http://" + ip + ":8080/chamcong?maNV=" + maNV;
+            String qrContent = "maNV=" + maNV;
+
 
             BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
 
@@ -106,6 +118,44 @@ public class maqr extends javax.swing.JPanel {
 
             return MatrixToImageWriter.toBufferedImage(matrix);
         }
+        private void saveQRToPDF() {
+    try {
+        String maNV = phanquyen.user.getMaNV();
+        String qrContent = "maNV=" + maNV;
+        BufferedImage qrImage = generateQRImage(qrContent, 250, 250);
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu mã QR");
+        fileChooser.setSelectedFile(new File("QR_" + maNV + ".pdf"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(qrImage, "png", baos);
+            baos.flush();
+            Image qrItextImage = Image.getInstance(baos.toByteArray());
+            baos.close();
+
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(fileToSave));
+            document.open();
+
+            document.add(new Paragraph("Mã QR chấm công cho nhân viên: " + phanquyen.user.getHoTen()));
+            document.add(new Paragraph("Mã NV: " + maNV));
+            document.add(Chunk.NEWLINE);
+            qrItextImage.scaleToFit(200, 200);
+            qrItextImage.setAlignment(Element.ALIGN_CENTER);
+            document.add(qrItextImage);
+
+            document.close();
+            JOptionPane.showMessageDialog(this, "✅ Đã lưu QR vào: " + fileToSave.getAbsolutePath());
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "❌ Lỗi khi lưu mã QR");
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,6 +169,7 @@ public class maqr extends javax.swing.JPanel {
         jPanelQR = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        btnsave = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -153,6 +204,13 @@ public class maqr extends javax.swing.JPanel {
             }
         });
 
+        btnsave.setText("Save QR");
+        btnsave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnsaveActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -163,7 +221,9 @@ public class maqr extends javax.swing.JPanel {
                 .addComponent(jButton1)
                 .addGap(45, 45, 45)
                 .addComponent(jButton2)
-                .addContainerGap(990, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(btnsave)
+                .addContainerGap(877, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,7 +231,8 @@ public class maqr extends javax.swing.JPanel {
                 .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(btnsave))
                 .addGap(18, 18, 18)
                 .addComponent(jPanelQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
@@ -190,8 +251,15 @@ form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
                    // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void btnsaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsaveActionPerformed
+        // TODO add your handling code here:
+        saveQRToPDF();
+        
+    }//GEN-LAST:event_btnsaveActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnsave;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanelQR;
