@@ -39,60 +39,58 @@ public class BanbidaDAO {
     }
 
     public boolean capNhatTinhTrang(String maBan, String tinhTrang) {
-    String sql = "UPDATE Banbida SET TinhTrang = ? WHERE MaBan = ?";
-    try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, tinhTrang);
-        ps.setString(2, maBan);
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-
-public double getGiaTheoMaBan(String maBan) {
-    String sql = "SELECT GiaTheoGio FROM Banbida WHERE MaBan = ?";
-    try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, maBan);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getDouble("GiaTheoGio");
+        String sql = "UPDATE Banbida SET TinhTrang = ? WHERE MaBan = ?";
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tinhTrang);
+            ps.setString(2, maBan);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-    return 0.0;
-}
 
-public List<Banbida> getByTinhTrang(String tinhTrang) {
-    List<Banbida> list = new ArrayList<>();
-    String sql = "SELECT * FROM BANBIDA WHERE TinhTrang = ?";
+    public double getGiaTheoMaBan(String maBan) {
+        String sql = "SELECT GiaTheoGio FROM Banbida WHERE MaBan = ?";
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maBan);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("GiaTheoGio");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
 
-    try (Connection con = connect.openConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+    public List<Banbida> getByTinhTrang(String tinhTrang) {
+        List<Banbida> list = new ArrayList<>();
+        String sql = "SELECT * FROM BANBIDA WHERE TinhTrang = ?";
 
-        ps.setString(1, tinhTrang); // gán giá trị 'BaoTri' hoặc 'DangSua'
-        ResultSet rs = ps.executeQuery();
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-        while (rs.next()) {
-            Banbida b = new Banbida(
-                rs.getString("MaBan"),
-                rs.getString("TenBan"),
-                rs.getString("MaLoaiBan"),
-                rs.getString("TinhTrang"),
-                rs.getDouble("GiaTheoGio"),
-                rs.getInt("TuoiBan"),
-                rs.getString("GhiChu")
-            );
-            list.add(b);
+            ps.setString(1, tinhTrang); // gán giá trị 'BaoTri' hoặc 'DangSua'
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Banbida b = new Banbida(
+                        rs.getString("MaBan"),
+                        rs.getString("TenBan"),
+                        rs.getString("MaLoaiBan"),
+                        rs.getString("TinhTrang"),
+                        rs.getDouble("GiaTheoGio"),
+                        rs.getInt("TuoiBan"),
+                        rs.getString("GhiChu")
+                );
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-
-    return list;
-}
-
 
 }

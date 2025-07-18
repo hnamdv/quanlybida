@@ -12,35 +12,39 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Hoadon {
-public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBD, Timestamp thoiGianKT,
-              double tongTien, String trangThai, Date ngayTao,
-              double tienGio, double giamGia, double tienDV, String ghiChu) {
-    this.maHD = maHD;
-    this.maNV = maNV;
-    this.maBan = maBan;
-    this.thoiGianBD = thoiGianBD;
-    this.thoiGianKT = thoiGianKT;
-    this.tongTien = tongTien;
-    this.trangThai = trangThai;
-    this.ngayTao = ngayTao;
-    this.tienGio = tienGio;
-    this.giamGia = giamGia;
-    this.tienDV = tienDV;
-    this.ghiChu = ghiChu;
-}
-public Timestamp getThoiGianBD() {
-    return thoiGianBD;
-}
-public void setThoiGianBD(Timestamp thoiGianBD) {
-    this.thoiGianBD = thoiGianBD;
-}
 
-public Timestamp getThoiGianKT() {
-    return thoiGianKT;
-}
-public void setThoiGianKT(Timestamp thoiGianKT) {
-    this.thoiGianKT = thoiGianKT;
-}
+    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBD, Timestamp thoiGianKT,
+            double tongTien, String trangThai, Date ngayTao,
+            double tienGio, double giamGia, double tienDV, String ghiChu) {
+        this.maHD = maHD;
+        this.maNV = maNV;
+        this.maBan = maBan;
+        this.thoiGianBD = thoiGianBD;
+        this.thoiGianKT = thoiGianKT;
+        this.tongTien = tongTien;
+        this.trangThai = trangThai;
+        this.ngayTao = ngayTao;
+        this.tienGio = tienGio;
+        this.giamGia = giamGia;
+        this.tienDV = tienDV;
+        this.ghiChu = ghiChu;
+    }
+
+    public Timestamp getThoiGianBD() {
+        return thoiGianBD;
+    }
+
+    public void setThoiGianBD(Timestamp thoiGianBD) {
+        this.thoiGianBD = thoiGianBD;
+    }
+
+    public Timestamp getThoiGianKT() {
+        return thoiGianKT;
+    }
+
+    public void setThoiGianKT(Timestamp thoiGianKT) {
+        this.thoiGianKT = thoiGianKT;
+    }
 
     public Hoadon() {
     }
@@ -69,7 +73,6 @@ public void setThoiGianKT(Timestamp thoiGianKT) {
         this.maBan = maBan;
     }
 
-   
     public double getTongTien() {
         return tongTien;
     }
@@ -129,7 +132,7 @@ public void setThoiGianKT(Timestamp thoiGianKT) {
     private String maNV;
     private String maBan;
     private Timestamp thoiGianBD;
-private Timestamp thoiGianKT;
+    private Timestamp thoiGianKT;
 
     private double tongTien;
     private String trangThai;

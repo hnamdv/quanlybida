@@ -31,7 +31,9 @@ import java.sql.Timestamp;
  * @author HP
  */
 public class BanBidaPanel extends javax.swing.JPanel {
-private String currentMaBan = null;
+
+    private String currentMaBan = null;
+
     /**
      * Creates new form QLban
      */
@@ -155,163 +157,188 @@ private void loadDanhSachBan() {
         }
     }
 
-private void chonBan(String maBan, String tenBan, String maLoaiBan, String tinhTrang, double giaTheoGio, int tuoiBan, String ghiChu) {
-    this.currentMaBan = maBan;
-    jTabbedPane1.setSelectedIndex(1); // chuyển tab
+    private void chonBan(String maBan, String tenBan, String maLoaiBan, String tinhTrang, double giaTheoGio, int tuoiBan, String ghiChu) {
+        this.currentMaBan = maBan;
+        jTabbedPane1.setSelectedIndex(1); // chuyển tab
 
-    jLabel10.setText(tenBan);          // Tên bàn
-    jLabel30.setText(tinhTrang);       // Tình trạng
-    jTextField4.setText(ghiChu != null ? ghiChu : "");  // Ghi chú
+        jLabel10.setText(tenBan);          // Tên bàn
+        jLabel30.setText(tinhTrang);       // Tình trạng
+        jTextField4.setText(ghiChu != null ? ghiChu : "");  // Ghi chú
 
-    // Lấy tên loại bàn
-    LoaibanDAO loaibanDAO = new LoaibanDAO();
-    String tenLoai = loaibanDAO.getTenLoaiByMa(maLoaiBan);
-    jLabel28.setText(tenLoai != null ? tenLoai : "Không rõ");
+        // Lấy tên loại bàn
+        LoaibanDAO loaibanDAO = new LoaibanDAO();
+        String tenLoai = loaibanDAO.getTenLoaiByMa(maLoaiBan);
+        jLabel28.setText(tenLoai != null ? tenLoai : "Không rõ");
 
-    // Thông tin popup
-    JOptionPane.showMessageDialog(this,
-        "📌 Tên bàn: " + tenBan +
-        "\n🔸 Loại bàn: " + tenLoai +
-        "\n📍 Tình trạng: " + tinhTrang +
-        "\n📝 Ghi chú: " + (ghiChu == null ? "Không" : ghiChu),
-        "Thông tin bàn", JOptionPane.INFORMATION_MESSAGE
-    );
-
-    HoaDonDAO hdDAO = new HoaDonDAO();
-    Hoadon hd = hdDAO.getHoaDonDangMoByBan(maBan);
-
-    if (tinhTrang.equalsIgnoreCase("Trong") && hd == null) {
-        // 👉 Tự động tạo mã hóa đơn
-        String maHD = "HD" + System.currentTimeMillis();
-        jLabel7.setText(maHD);
-
-        // Khởi tạo thời gian bắt đầu
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        jTextField1.setText(now.format(formatter));
-
-        // Reset các ô nhập
-        jTextField2.setText("");      // Thời gian kết thúc
-        jLabel17.setText("0.0");      // Tiền giờ
-        jLabel21.setText("0.0");      // Tiền dịch vụ
-        jLabel19.setText("0.0");      // Tổng tiền
-        jTextField3.setText("0");     // Giảm giá
-
-        // 👉 Gọi bắt đầu chơi luôn (auto)
-        batDauChoi();
-
-    } else if (hd != null) {
-        // Bàn đang sử dụng
-        jLabel7.setText(hd.getMaHD());
-        jTextField1.setText(hd.getThoiGianBD() != null ? hd.getThoiGianBD().toString() : "");
-        jTextField2.setText(hd.getThoiGianKT() != null ? hd.getThoiGianKT().toString() : "");
-        jLabel17.setText(String.valueOf(hd.getTienGio()));
-        jLabel21.setText(String.valueOf(hd.getTienDV()));
-        jLabel19.setText(String.valueOf(hd.getTongTien()));
-        jTextField3.setText(String.valueOf((int) hd.getGiamGia()));
-        jTextField4.setText(hd.getGhiChu());
-
-        jButton1.setEnabled(false); // Không được bắt đầu lại
-
-        int result = JOptionPane.showConfirmDialog(
-                this,
-                "Bàn đang sử dụng.\nBạn có muốn kết thúc không?",
-                "Xác nhận kết thúc",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        jButton2.setEnabled(result == JOptionPane.YES_OPTION);
-    } else {
-        // Các trạng thái khác (Bảo trì, Hỏng,...)
+        // Thông tin popup
         JOptionPane.showMessageDialog(this,
-            "Không thao tác được với trạng thái bàn: " + tinhTrang,
-            "Lỗi", JOptionPane.WARNING_MESSAGE
+                "📌 Tên bàn: " + tenBan
+                + "\n🔸 Loại bàn: " + tenLoai
+                + "\n📍 Tình trạng: " + tinhTrang
+                + "\n📝 Ghi chú: " + (ghiChu == null ? "Không" : ghiChu),
+                "Thông tin bàn", JOptionPane.INFORMATION_MESSAGE
         );
+
+        HoaDonDAO hdDAO = new HoaDonDAO();
+        Hoadon hd = hdDAO.getHoaDonDangMoByBan(maBan);
+
+        if (tinhTrang.equalsIgnoreCase("Trong") && hd == null) {
+            // 👉 Tự động tạo mã hóa đơn
+            String maHD = "HD" + System.currentTimeMillis();
+            jLabel7.setText(maHD);
+
+            // Khởi tạo thời gian bắt đầu
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            jTextField1.setText(now.format(formatter));
+
+            // Reset các ô nhập
+            jTextField2.setText("");      // Thời gian kết thúc
+            jLabel17.setText("0.0");      // Tiền giờ
+            jLabel21.setText("0.0");      // Tiền dịch vụ
+            jLabel19.setText("0.0");      // Tổng tiền
+            jTextField3.setText("0");     // Giảm giá
+
+            // 👉 Gọi bắt đầu chơi luôn (auto)
+            batDauChoi();
+
+        } else if (hd != null) {
+            // Bàn đang sử dụng
+            jLabel7.setText(hd.getMaHD());
+            jTextField1.setText(hd.getThoiGianBD() != null ? hd.getThoiGianBD().toString() : "");
+            jTextField2.setText(hd.getThoiGianKT() != null ? hd.getThoiGianKT().toString() : "");
+            jLabel17.setText(String.valueOf(hd.getTienGio()));
+            jLabel21.setText(String.valueOf(hd.getTienDV()));
+            jLabel19.setText(String.valueOf(hd.getTongTien()));
+            jTextField3.setText(String.valueOf((int) hd.getGiamGia()));
+            jTextField4.setText(hd.getGhiChu());
+
+            jButton1.setEnabled(false); // Không được bắt đầu lại
+
+            int result = JOptionPane.showConfirmDialog(
+                    this,
+                    "Bàn đang sử dụng.\nBạn có muốn kết thúc không?",
+                    "Xác nhận kết thúc",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            jButton2.setEnabled(result == JOptionPane.YES_OPTION);
+        } else {
+            // Các trạng thái khác (Bảo trì, Hỏng,...)
+            JOptionPane.showMessageDialog(this,
+                    "Không thao tác được với trạng thái bàn: " + tinhTrang,
+                    "Lỗi", JOptionPane.WARNING_MESSAGE
+            );
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(false);
+        }
+    }
+
+    private void ketThucChoi() {
+        String maHD = jLabel7.getText();
+        HoaDonDAO hdDAO = new HoaDonDAO();
+        Hoadon hd = hdDAO.getHoaDonDangMoByBan(currentMaBan);
+
+        if (hd == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn để kết thúc!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Timestamp thoiGianKT = hd.getThoiGianKT();
+        Timestamp thoiGianBD = hd.getThoiGianBD();
+        long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
+        double gio = millis / (1000.0 * 60 * 60);
+        double tienGio = gio * new BanbidaDAO().getGiaTheoMaBan(currentMaBan); // cần viết hàm này
+
+        double tienDV = hd.getTienDV();
+        double giamGia = Double.parseDouble(jTextField3.getText());
+        double tongTien = tienGio + tienDV - giamGia;
+
+        hd.setThoiGianKT(thoiGianKT);
+        hd.setTienGio(tienGio);
+        hd.setTongTien(tongTien);
+        hd.setTrangThai("DaThanhToan");
+
+        hdDAO.update(hd); // viết hàm update hóa đơn
+        new BanbidaDAO().capNhatTinhTrang(currentMaBan, "Trong");
+
+        JOptionPane.showMessageDialog(this, "✅ Đã kết thúc và thanh toán bàn " + currentMaBan);
+
+        loadDanhSachBan();
         jButton1.setEnabled(false);
-        jButton2.setEnabled(false);
-    }
-}
-
-     private void ketThucChoi() {
-    String maHD = jLabel7.getText();
-    HoaDonDAO hdDAO = new HoaDonDAO();
-    Hoadon hd = hdDAO.getHoaDonDangMoByBan(currentMaBan);
-
-    if (hd == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn để kết thúc!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
+        jButton2.setEnabled(true);
     }
 
-    Timestamp thoiGianKT = new Timestamp(System.currentTimeMillis());
-    Timestamp thoiGianBD = hd.getThoiGianBD();
-    long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
-    double gio = millis / (1000.0 * 60 * 60);
-    double tienGio = gio * new BanbidaDAO().getGiaTheoMaBan(currentMaBan); // cần viết hàm này
+    private void batDauChoi() {
+        // 1. Kiểm tra điều kiện bắt buộc
+        if (currentMaBan == null || !jLabel7.getText().trim().startsWith("HD")) {
+            JOptionPane.showMessageDialog(this, "❌ Chưa chọn bàn hoặc mã hóa đơn sai!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    double tienDV = hd.getTienDV();
-    double giamGia = Double.parseDouble(jTextField3.getText());
-    double tongTien = tienGio + tienDV - giamGia;
+        // 2. Lấy mã hóa đơn và thời gian hiện tại
+        String maHD = jLabel7.getText().trim();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
 
-    hd.setThoiGianKT(thoiGianKT);
-    hd.setTienGio(tienGio);
-    hd.setTongTien(tongTien);
-    hd.setTrangThai("DaThanhToan");
+        // 3. Lấy giá trị từ giao diện, có xử lý sai định dạng
+        double tienGio = parseDoubleSafely(jLabel17.getText());
+        double giamGia = parseDoubleSafely(jTextField3.getText());
+        double tienDV = parseDoubleSafely(jLabel21.getText());
 
-    hdDAO.update(hd); // viết hàm update hóa đơn
-    new BanbidaDAO().capNhatTinhTrang(currentMaBan, "Trong");
+        // 4. Tính tổng tiền
+        double tongTien = tienGio + tienDV - giamGia;
 
-    JOptionPane.showMessageDialog(this, "✅ Đã kết thúc và thanh toán bàn " + currentMaBan);
+        // 5. Tạo đối tượng hóa đơn
+        Hoadon hd = new Hoadon(
+                maHD,
+                phanquyen.user.getMaNV(),
+                currentMaBan,
+                now,
+                null,
+                tongTien,
+                "DangMo",
+                new java.sql.Date(now.getTime()),
+                tienGio,
+                giamGia,
+                tienDV,
+                jTextField4.getText()
+        );
 
-    loadDanhSachBan();
-    jButton1.setEnabled(false);
-    jButton2.setEnabled(true);
-}
+        // 6. Lưu vào DB
+        new HoaDonDAO().insert(hd);
+        new BanbidaDAO().capNhatTinhTrang(currentMaBan, "DangSuDung");
 
-     private void batDauChoi() {
-  if (currentMaBan == null || !jLabel7.getText().trim().startsWith("HD")) {
-    JOptionPane.showMessageDialog(this, "Chưa chọn bàn hoặc mã hóa đơn sai!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-    return;
-}
-    String maHD = jLabel7.getText();
-    Timestamp now = new Timestamp(System.currentTimeMillis());
+        // 7. UI feedback và cập nhật trạng thái
+        JOptionPane.showMessageDialog(this, "✅ Bắt đầu chơi bàn " + currentMaBan);
+        loadDanhSachBan();
 
-    Hoadon hd = new Hoadon(
-        maHD,
-        phanquyen.user.getMaNV(),
-        currentMaBan,
-        now,
-        null,
-        0.0, // tổng tiền
-        "DangMo",
-        new java.sql.Date(now.getTime()),
-        0.0, // tiền giờ
-        0.0, // giảm giá
-        0.0, // tiền dịch vụ
-        jTextField4.getText()
-    );
-    new HoaDonDAO().insert(hd);
-    new BanbidaDAO().capNhatTinhTrang(currentMaBan, "DangSuDung");
+        jButton1.setEnabled(false);
+        jButton2.setEnabled(true);
+    }
 
-    JOptionPane.showMessageDialog(this, "✅ Bắt đầu chơi bàn " + currentMaBan);
-    loadDanhSachBan();
-   jButton1.setEnabled(false);
-    jButton2.setEnabled(true);
-}
+// Hàm phụ để parse Double an toàn
+    private double parseDoubleSafely(String input) {
+        try {
+            return Double.parseDouble(input.trim());
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
 
     ///
 private void loadDichVuVaoComboBox() {
-    cbb.removeAllItems();
-    DichVuDAO dao = new DichVuDAO();
-    try {
-        List<Dichvu> dsTenDV = dao.getAll();
-        for (Dichvu dv : dsTenDV) {
-            cbb.addItem(dv.getTenDV()); 
+        cbb.removeAllItems();
+        DichVuDAO dao = new DichVuDAO();
+        try {
+            List<Dichvu> dsTenDV = dao.getAll();
+            for (Dichvu dv : dsTenDV) {
+                cbb.addItem(dv.getTenDV());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        System.err.println("Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
     }
-}
 
     ///
     /**
@@ -373,6 +400,8 @@ private void loadDichVuVaoComboBox() {
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jButton16 = new javax.swing.JButton();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
@@ -653,6 +682,10 @@ private void loadDichVuVaoComboBox() {
         jButton16.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton16.setText("Tạm tính");
 
+        jLabel24.setText("Tiền bàn:");
+
+        jLabel31.setText("0.0");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -671,18 +704,26 @@ private void loadDichVuVaoComboBox() {
                                 .addComponent(jLabel18)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel20)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel21))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel17)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel17))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel20)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel21)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel16)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel24)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel31))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel16)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(38, 38, 38)))
                         .addGap(61, 61, 61)
                         .addComponent(jButton16)))
@@ -700,7 +741,9 @@ private void loadDichVuVaoComboBox() {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(jLabel21))
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel24)
+                    .addComponent(jLabel31))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -817,14 +860,13 @@ private void loadDichVuVaoComboBox() {
                         .addComponent(jLabel7)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Quản lý bàn", jPanel2);
@@ -856,11 +898,11 @@ private void loadDichVuVaoComboBox() {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        
+        batDauChoi();
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-ketThucChoi();        // TODO add your handling code here:
+        ketThucChoi();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
 
@@ -890,6 +932,7 @@ ketThucChoi();        // TODO add your handling code here:
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
@@ -897,6 +940,7 @@ ketThucChoi();        // TODO add your handling code here:
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

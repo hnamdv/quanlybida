@@ -34,10 +34,12 @@ public class Dichvu {
         this.donGia = donGia;
     }
 
-    public Dichvu(String maDV, String tenDV, double donGia) {
-        this.maDV = maDV;
-        this.tenDV = tenDV;
-        this.donGia = donGia;
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
     public Dichvu() {
@@ -45,5 +47,12 @@ public class Dichvu {
     private String maDV;
     private String tenDV;
     private double donGia;
-    
+    private int soLuong;
+
+    public Dichvu(String maDV, String tenDV, double donGia, int soLuong) {
+        this.maDV = maDV;
+        this.tenDV = tenDV;
+        this.donGia = donGia;
+        this.soLuong = soLuong;
+    }
 }
