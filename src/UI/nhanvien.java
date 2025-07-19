@@ -302,7 +302,7 @@ public class nhanvien extends javax.swing.JFrame {
         card.revalidate();
         card.repaint();
         card.removeAll();
-        card.add(new BanBidaPanel());
+        card.add(new quetmaqr());
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

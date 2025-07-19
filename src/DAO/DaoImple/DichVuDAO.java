@@ -82,8 +82,7 @@ public class DichVuDAO {
                     return new Dichvu(
                         rs.getString("MaDV"),
                         rs.getString("TenDV"),
-                        rs.getDouble("DonGia")
-                    );
+                        rs.getDouble("DonGia"), (int) rs.getDouble("soLuong"));
                 }
             }
         } catch (Exception e) {
