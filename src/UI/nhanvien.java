@@ -11,6 +11,7 @@ import UI.Panel.SuaChuaPanel;
 import UI.Panel.ThuCong;
 import UI.Panel.maqr;
 import UI.Panel.quetmaqr;
+import UI.Panel.thongke;
 import Xauth.phanquyen;
 import Xauth.phanquyen.SessionData;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -302,7 +303,7 @@ public class nhanvien extends javax.swing.JFrame {
         card.revalidate();
         card.repaint();
         card.removeAll();
-        card.add(new quetmaqr());
+        card.add(new thongke());
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

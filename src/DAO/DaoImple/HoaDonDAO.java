@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.sql.Date;
 import XJDBC.connect;
 import MODEl.Hoadon;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HoaDonDAO {
 
@@ -92,4 +94,26 @@ public void update(Hoadon hd) {
     }
 }
 
+    public Map<Integer, Double> getDoanhThuTheoThang(int nam) {
+        Map<Integer, Double> map = new HashMap<>();
+        String sql = "SELECT MONTH(NgayTao) AS Thang, SUM(TongTien) AS DoanhThu "
+                   + "FROM hoadon WHERE YEAR(NgayTao) = ? GROUP BY MONTH(NgayTao) ORDER BY Thang";
+
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql))  {
+
+            ps.setInt(1, nam);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int thang = rs.getInt("Thang");
+                double tien = rs.getDouble("DoanhThu");
+                map.put(thang, tien);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return map;
+    }
 }
+
