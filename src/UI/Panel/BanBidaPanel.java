@@ -31,7 +31,7 @@ import java.sql.Timestamp;
  * @author HP
  */
 public class BanBidaPanel extends javax.swing.JPanel {
-    
+
     private Hoadon hoaDonTamThoi = null;
     private String currentMaBan = null;
 
@@ -43,7 +43,7 @@ public class BanBidaPanel extends javax.swing.JPanel {
         loadDanhSachBan();
         loadDichVuVaoComboBox();
     }
-    
+
     ///
 private void loadDanhSachBan() {
         // Set layout chuẩn (GridLayout sẽ wrap tốt hơn trong ScrollPane so với FlowLayout)
@@ -57,7 +57,7 @@ private void loadDanhSachBan() {
         Pn3bangVIP.removeAll();
         Pnlo.removeAll();
         PnloVIP.removeAll();
-        
+
         try {
             BanbidaDAO banDAO = new BanbidaDAO();
             LoaibanDAO loaibanDAO = new LoaibanDAO();
@@ -65,7 +65,7 @@ private void loadDanhSachBan() {
 
             List<Banbida> danhSachBan = banDAO.getAll();
             Map<String, Loaiban> loaibanMap = loaibanDAO.getMapLoaiBan();
-            
+
             for (Banbida ban : danhSachBan) {
                 String maBan = ban.getMaBan();
                 String tenBan = ban.getTenBan();
@@ -87,7 +87,7 @@ private void loadDanhSachBan() {
 
                 // Kiểm tra nếu bàn đã được đặt trước (trạng thái vẫn là "Trong" nhưng đã có booking)
                 Booking thongTinBooking = bookingDAO.getBookingGanNhat(maBan);
-                
+
                 boolean daDatTruoc = false;
                 if (thongTinBooking != null && thongTinBooking.getTrangThai().equals("ChuaNhan")) {
                     daDatTruoc = true;
@@ -151,22 +151,31 @@ private void loadDanhSachBan() {
             PnloVIP.repaint();
             Pn3bangVIP.revalidate();
             Pn3bangVIP.repaint();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách bàn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+// Trong phương thức generateNewHoaDonId() của bạn:
+    private String generateNewHoaDonId() {
+        // Cách 1: Thêm một số ngẫu nhiên vào sau timestamp (ít khả năng trùng hơn)
+        // Cẩn thận với độ dài ID nếu cột MaHD có giới hạn chiều dài
+        // return "HD" + System.currentTimeMillis() + (new Random().nextInt(1000));
+
+        // Cách 2: Sử dụng UUID (Universally Unique Identifier) - đây là cách mạnh mẽ nhất để đảm bảo tính duy nhất
+        return "HD" + java.util.UUID.randomUUID().toString().replace("-", ""); // Bỏ dấu gạch ngang cho ngắn gọn hơn
+    }
+
     private void chonBan(String maBan, String tenBan, String maLoaiBan, String tinhTrang, double giaTheoGio, int tuoiBan, String ghiChu) {
         this.currentMaBan = maBan;
         jTabbedPane1.setSelectedIndex(1); // chuyển tab
 
-        jLabel10.setText(tenBan);          // Tên bàn
-        jLabel30.setText(tinhTrang);       // Tình trạng
-        jTextField4.setText(ghiChu != null ? ghiChu : "");  // Ghi chú
+        jLabel10.setText(tenBan);
+        jLabel30.setText(tinhTrang);
+        jTextField4.setText(ghiChu != null ? ghiChu : "");
 
-        // Lấy tên loại bàn
         LoaibanDAO loaibanDAO = new LoaibanDAO();
         String tenLoai = loaibanDAO.getTenLoaiByMa(maLoaiBan);
         jLabel28.setText(tenLoai != null ? tenLoai : "Không rõ");
@@ -179,28 +188,29 @@ private void loadDanhSachBan() {
                 + "\n📝 Ghi chú: " + (ghiChu == null ? "Không" : ghiChu),
                 "Thông tin bàn", JOptionPane.INFORMATION_MESSAGE
         );
-        
+
         HoaDonDAO hdDAO = new HoaDonDAO();
         Hoadon hd = hdDAO.getHoaDonDangMoByBan(maBan);
-        
+
         if (tinhTrang.equalsIgnoreCase("Trong") && hd == null) {
-            // 👉 KHÔNG tạo hóa đơn, KHÔNG gọi batDauChoi nữa
+            // Khi bàn trống, hãy tạo một mã hóa đơn mới và hiển thị nó
+            // Đây là điểm mấu chốt để fix lỗi "mã hóa đơn sai"
+            String newMaHD = generateNewHoaDonId();
+            jLabel7.setText(newMaHD); // Hiển thị mã hóa đơn mới
 
-            // Reset các ô nhập
-            jLabel7.setText("");            // Mã hóa đơn trống
-            jTextField1.setText("");        // Thời gian bắt đầu
-            jTextField2.setText("");        // Thời gian kết thúc
-            jLabel17.setText("0.0");        // Tiền giờ
-            jLabel21.setText("0.0");        // Tiền dịch vụ
-            jLabel19.setText("0.0");        // Tổng tiền
-            jTextField3.setText("0");       // Giảm giá
-            jLabel31.setText("0.0");  // Giá theo giờ
+            jTextField1.setText("");
+            jTextField2.setText("");
+            jLabel17.setText("0.0");
+            jLabel21.setText("0.0");
+            jLabel19.setText("0.0");
+            jTextField3.setText("0");
+            jLabel31.setText(String.valueOf(giaTheoGio)); // Hiển thị giá theo giờ của bàn trống
 
-            jButton1.setEnabled(true);      // Cho phép bắt đầu
-            jButton2.setEnabled(false);     // Không cho kết thúc khi chưa bắt đầu
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(false);
 
         } else if (hd != null) {
-            // Bàn đang sử dụng
+            // Bàn đang sử dụng hoặc có hóa đơn mở
             jLabel7.setText(hd.getMaHD());
             jTextField1.setText(hd.getThoiGianBD() != null ? hd.getThoiGianBD().toString() : "");
             jTextField2.setText(hd.getThoiGianKT() != null ? hd.getThoiGianKT().toString() : "");
@@ -208,9 +218,12 @@ private void loadDanhSachBan() {
             jLabel21.setText(String.valueOf(hd.getTienDV()));
             jLabel19.setText(String.valueOf(hd.getTongTien()));
             jTextField3.setText(String.valueOf((int) hd.getGiamGia()));
-            jLabel31.setText(String.valueOf(giaTheoGio));
+            jLabel31.setText(String.valueOf(giaTheoGio)); // Lấy giá theo giờ của bàn
             jTextField4.setText(hd.getGhiChu());
-            
+
+            // Gán hóa đơn đang mở vào hoaDonTamThoi để có thể kết thúc hoặc thêm dịch vụ
+            this.hoaDonTamThoi = hd;
+
             jButton1.setEnabled(false); // Không được bắt đầu lại
 
             int result = JOptionPane.showConfirmDialog(
@@ -219,8 +232,14 @@ private void loadDanhSachBan() {
                     "Xác nhận kết thúc",
                     JOptionPane.YES_NO_OPTION
             );
-            
+
+            // Nếu người dùng chọn CÓ, cho phép nút kết thúc
             jButton2.setEnabled(result == JOptionPane.YES_OPTION);
+            // Nếu người dùng chọn KHÔNG, tắt luôn nút kết thúc
+            if (result == JOptionPane.NO_OPTION) {
+                jButton2.setEnabled(false);
+            }
+
         } else {
             // Các trạng thái khác (Bảo trì, Hỏng,...)
             JOptionPane.showMessageDialog(this,
@@ -231,43 +250,60 @@ private void loadDanhSachBan() {
             jButton2.setEnabled(false);
         }
     }
-    
+
     private void ketThucChoi() {
         if (hoaDonTamThoi == null) {
-            JOptionPane.showMessageDialog(this, "❌ Chưa bắt đầu chơi!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "❌ Chưa có hóa đơn nào được bắt đầu cho bàn này!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         Timestamp thoiGianKT = new Timestamp(System.currentTimeMillis());
         Timestamp thoiGianBD = hoaDonTamThoi.getThoiGianBD();
-        
+
+        // Đảm bảo thoiGianBD không null
+        if (thoiGianBD == null) {
+            JOptionPane.showMessageDialog(this, "Thời gian bắt đầu không hợp lệ trong hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
-        double gio = millis / (1000.0 * 60 * 60); // đổi ra giờ
+        double gio = millis / (1000.0 * 60 * 60);
 
         double giaTheoGio = new BanbidaDAO().getGiaTheoMaBan(currentMaBan);
         double tienGio = gio * giaTheoGio;
-        
+
         double tienDV = parseDoubleSafely(jLabel21.getText());
         double giamGia = parseDoubleSafely(jTextField3.getText());
         double tongTien = tienGio + tienDV - giamGia;
-        
+
         hoaDonTamThoi.setThoiGianKT(thoiGianKT);
         hoaDonTamThoi.setTienGio(tienGio);
         hoaDonTamThoi.setTongTien(tongTien);
-        
-        JOptionPane.showMessageDialog(this, "⏹️ Đã kết thúc chơi bàn " + currentMaBan + ". Tổng tiền: " + tongTien);
+
+        // Cập nhật lại các trường hiển thị trên UI sau khi tính toán
+        jTextField1.setText(hoaDonTamThoi.getThoiGianBD().toString()); // Cập nhật lại thời gian bắt đầu
+        jTextField2.setText(hoaDonTamThoi.getThoiGianKT().toString()); // Hiển thị thời gian kết thúc
+        jLabel17.setText(String.format("%.2f", tienGio)); // Hiển thị tiền giờ
+        jLabel19.setText(String.format("%.2f", tongTien)); // Hiển thị tổng tiền
+
+        JOptionPane.showMessageDialog(this, "⏹️ Đã kết thúc chơi bàn " + currentMaBan + ". Tổng tiền tạm tính: " + String.format("%.2f", tongTien));
         jButton2.setEnabled(false); // tắt nút kết thúc
     }
-    
+
     private void batDauChoi() {
         if (currentMaBan == null || !jLabel7.getText().trim().startsWith("HD")) {
             JOptionPane.showMessageDialog(this, "❌ Chưa chọn bàn hoặc mã hóa đơn sai!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         String maHD = jLabel7.getText().trim();
+        if (!maHD.startsWith("HD")) { // Kiểm tra lại một lần nữa cho chắc
+            JOptionPane.showMessageDialog(this, "Mã hóa đơn không hợp lệ! Vui lòng chọn lại bàn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        
+
         double tienGio = 0;
         double giamGia = parseDoubleSafely(jTextField3.getText());
         double tienDV = parseDoubleSafely(jLabel21.getText());
@@ -280,51 +316,83 @@ private void loadDanhSachBan() {
                 now,
                 null,
                 tongTien,
-                "DangMo",
+                "DangMo", // Trạng thái "Đang mở"
                 new java.sql.Date(now.getTime()),
                 tienGio,
                 giamGia,
                 tienDV,
                 jTextField4.getText()
         );
-        
-        JOptionPane.showMessageDialog(this, "▶️ Đã bắt đầu tính giờ bàn " + currentMaBan);
-        jButton1.setEnabled(false); // tắt nút bắt đầu
-        jButton2.setEnabled(true);  // bật nút kết thúc
+        // Cần lưu hóa đơn này vào DB ngay khi bắt đầu
+        // để nếu ứng dụng bị đóng đột ngột, dữ liệu không bị mất
+        HoaDonDAO hdDAO = new HoaDonDAO();
+        try {
+            hdDAO.insert(hoaDonTamThoi);
+            // Cập nhật trạng thái bàn sang "Đang sử dụng"
+            new BanbidaDAO().capNhatTinhTrang(currentMaBan, "DangSuDung");
+            JOptionPane.showMessageDialog(this, "▶️ Đã bắt đầu tính giờ bàn " + currentMaBan);
+            jButton1.setEnabled(false);
+            jButton2.setEnabled(true);
+            loadDanhSachBan(); // Cập nhật lại trạng thái màu sắc của bàn trên giao diện
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi bắt đầu hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            hoaDonTamThoi = null; // Đặt lại để tránh lỗi tiếp theo
+        }
+
     }
-    
+
     private void thanhToan() {
         if (hoaDonTamThoi == null || hoaDonTamThoi.getThoiGianKT() == null) {
-            JOptionPane.showMessageDialog(this, "❌ Bạn chưa kết thúc chơi!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "❌ Bạn chưa kết thúc chơi để thanh toán!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        double tienDV = parseDoubleSafely(jLabel21.getText());
-        double giamGia = parseDoubleSafely(jTextField3.getText());
+
+        // Sử dụng giá trị đã tính từ hoaDonTamThoi
+        double tienDV = parseDoubleSafely(jLabel21.getText()); // Vẫn lấy từ UI nếu có thể chỉnh sửa DV
+        double giamGia = parseDoubleSafely(jTextField3.getText()); // Vẫn lấy từ UI nếu có thể chỉnh sửa giảm giá
         double tienGio = hoaDonTamThoi.getTienGio();
-        
-        double tongTien = tienGio + tienDV - giamGia;
-        
+
+        double tongTien = tienGio + tienDV - giamGia; // Tính toán lại tổng cuối cùng
+
         hoaDonTamThoi.setTienDV(tienDV);
         hoaDonTamThoi.setGiamGia(giamGia);
         hoaDonTamThoi.setTongTien(tongTien);
         hoaDonTamThoi.setGhiChu(jTextField4.getText());
-        hoaDonTamThoi.setTrangThai("DaThanhToan");
+        hoaDonTamThoi.setTrangThai("DaThanhToan"); // Đặt trạng thái đã thanh toán
 
         // Lưu DB
-        new HoaDonDAO().insert(hoaDonTamThoi);
-        new BanbidaDAO().capNhatTinhTrang(hoaDonTamThoi.getMaBan(), "Trong");
-        
-        JOptionPane.showMessageDialog(this, "💵 Thanh toán thành công!");
+        HoaDonDAO hdDAO = new HoaDonDAO();
+        BanbidaDAO banDAO = new BanbidaDAO();
+        try {
+            hdDAO.update(hoaDonTamThoi); // Cập nhật hóa đơn
+            banDAO.capNhatTinhTrang(hoaDonTamThoi.getMaBan(), "Trong"); // Cập nhật trạng thái bàn
 
-        // Reset lại trạng thái
-        hoaDonTamThoi = null;
-        jButton1.setEnabled(true);
-        jButton2.setEnabled(false);
-        loadDanhSachBan();
+            JOptionPane.showMessageDialog(this, "💵 Thanh toán thành công! Tổng tiền: " + String.format("%.2f", tongTien));
+
+            // Reset lại trạng thái UI
+            hoaDonTamThoi = null;
+            currentMaBan = null; // Đặt lại currentMaBan
+            jLabel7.setText(""); // Xóa mã hóa đơn
+            jTextField1.setText("");
+            jTextField2.setText("");
+            jLabel17.setText("0.0");
+            jLabel21.setText("0.0");
+            jLabel19.setText("0.0");
+            jTextField3.setText("0");
+            jLabel31.setText("0.0");
+            jTextField4.setText("");
+
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(false);
+            loadDanhSachBan(); // Tải lại danh sách bàn để cập nhật trạng thái
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi thanh toán: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
-
 // Hàm phụ để parse Double an toàn
+
     private double parseDoubleSafely(String input) {
         try {
             return Double.parseDouble(input.trim());
@@ -332,7 +400,7 @@ private void loadDanhSachBan() {
             return 0.0;
         }
     }
-    
+
     ///
 private void loadDichVuVaoComboBox() {
         cbb.removeAllItems();
@@ -347,7 +415,7 @@ private void loadDichVuVaoComboBox() {
             System.err.println("Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
         }
     }
-    
+
     ///
     /**
      * This method is called from within the constructor to initialize the form.
