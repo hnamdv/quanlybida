@@ -58,6 +58,7 @@ public class dangnhap extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         cbkluu = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(153, 153, 153));
@@ -123,6 +124,15 @@ public class dangnhap extends javax.swing.JFrame {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 500));
 
+        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 8)); // NOI18N
+        jButton2.setText("Quên Mật Khẩu?");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 350, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -174,7 +184,6 @@ if (nv != null) {
     } else {
         JOptionPane.showMessageDialog(this, "Xin chào nhân viên!");
     }
-
     this.dispose();
    new nhanvien().setVisible(true);
    if (cbkluu.isSelected()) {
@@ -200,6 +209,12 @@ if (nv != null) {
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+                quenmatkhau form = new quenmatkhau();
+        form.setVisible(true); 
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,6 +255,7 @@ if (nv != null) {
     private javax.swing.JCheckBox cbkluu;
     private javax.swing.JCheckBox cbmat;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

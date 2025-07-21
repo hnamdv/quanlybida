@@ -30,7 +30,7 @@ public class connect {
             if (!isReady()) {
                 Class.forName(driver);
                 connection = DriverManager.getConnection(dburl, username, password);
-                System.out.println("Kết nối thành công.");
+
             }
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println("Lỗi kết nối CSDL: " + e.getMessage());

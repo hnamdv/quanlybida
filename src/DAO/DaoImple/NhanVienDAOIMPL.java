@@ -195,20 +195,36 @@ public Nhanvien checkLogin(String maNV, String matKhau) {
 }
 
 
-public boolean doiMatKhau(String maNV, String matKhauMoi) {
-    String sql = "UPDATE NhanVien SET MatKhau = ? WHERE MaNV = ?";
+public boolean doiMatKhauTheoEmail(String email, String matKhauMoi) {
+    String sql = "UPDATE NhanVien SET MatKhau = ? WHERE Email = ?";
     try (
-        Connection conn = connect.openConnection();
+      Connection conn = connect.openConnection();
         PreparedStatement ps = conn.prepareStatement(sql)
     ) {
         ps.setString(1, matKhauMoi);
-        ps.setString(2, maNV);
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
+        ps.setString(2, email);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    } catch (SQLException e) {
         e.printStackTrace();
         return false;
     }
 }
+
+public boolean kiemTraEmailTonTai(String email) {
+    String sql = "SELECT * FROM NhanVien WHERE Email = ?";
+  try(  Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql) 
+    ) {
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        return rs.next(); 
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 
   
 
