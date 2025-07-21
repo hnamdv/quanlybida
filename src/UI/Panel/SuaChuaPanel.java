@@ -6,9 +6,15 @@ package UI.Panel;
 
 import DAO.DaoImple.SuachuaDAO;
 import MODEl.Suachua;
+import XJDBC.connect;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 
 /**
  *
@@ -62,6 +68,41 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         }
     }
 
+
+private void locTheoNgaySua() {
+    Date selectedDate = dateLoc.getDate();  // ngày sửa chọn từ JDateChooser
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    String sql = "SELECT * FROM SUALICH";
+
+    if (selectedDate != null) {
+        String dateString = sdf.format(selectedDate);
+        sql += " WHERE NgaySua = '" + dateString + "'";
+    }
+
+    try (
+        java.sql.Connection con = connect.openConnection();  // Giả sử bạn có class connect.java
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()
+    ) {
+        DefaultTableModel model = (DefaultTableModel) tblSuaChua.getModel(); // Đổi jTable1 thành bảng thật bạn dùng
+        model.setRowCount(0); // clear bảng trước
+
+        while (rs.next()) {
+            String maSC = rs.getString("MaSua");
+            String maBan = rs.getString("MaBan");
+            String moTa = rs.getString("MoTa");
+            double chiPhi = rs.getDouble("ChiPhi");
+            Date ngaySua = rs.getDate("NgaySua");
+
+            model.addRow(new Object[]{maSC, maBan, moTa, chiPhi, ngaySua});
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi lọc ngày: " + e.getMessage());
+    }
+}
     private void openThemSuaChuaDialog() {
         int result = JOptionPane.showConfirmDialog(
                 this, // hoặc null nếu bạn không trong JPanel
@@ -100,7 +141,7 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         tblSuaChua = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        dateLoc = new com.toedter.calendar.JDateChooser();
         btnLoc = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txtMaBan = new javax.swing.JTextField();
@@ -158,7 +199,7 @@ public class SuaChuaPanel extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(dateLoc, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -166,7 +207,7 @@ public class SuaChuaPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dateLoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnLoc)
@@ -288,8 +329,8 @@ public class SuaChuaPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoc;
     private javax.swing.JButton btnThemSuaChua;
+    private com.toedter.calendar.JDateChooser dateLoc;
     private com.toedter.calendar.JDateChooser dcNgaySua;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
