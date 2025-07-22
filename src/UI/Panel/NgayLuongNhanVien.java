@@ -114,23 +114,23 @@ for (int i = 1; i <= 12; i++) {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        cbbthang = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
-        txtmanv = new javax.swing.JTextField();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
-        btnluonh = new javax.swing.JButton();
-        txtluongdatinh = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
         rdngay = new javax.swing.JRadioButton();
         rdthang = new javax.swing.JRadioButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         cbbnam = new javax.swing.JComboBox<>();
+        cbbthang = new javax.swing.JComboBox<>();
+        btnluonh = new javax.swing.JButton();
+        txtluongdatinh = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        txtmanv = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        cbbthang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        getContentPane().add(cbbthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 200, -1, -1));
 
         tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -151,17 +151,9 @@ for (int i = 1; i <= 12; i++) {
         jScrollPane1.setViewportView(tbl);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 385, 1188, -1));
-        getContentPane().add(txtmanv, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 70, 147, -1));
-        getContentPane().add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 197, 235, -1));
 
-        btnluonh.setText("Tính Lương");
-        btnluonh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnluonhActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnluonh, new org.netbeans.lib.awtextra.AbsoluteConstraints(176, 315, -1, -1));
-        getContentPane().add(txtluongdatinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 320, 515, -1));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         rdngay.setText("Ngày");
         rdngay.addActionListener(new java.awt.event.ActionListener() {
@@ -169,7 +161,7 @@ for (int i = 1; i <= 12; i++) {
                 rdngayActionPerformed(evt);
             }
         });
-        getContentPane().add(rdngay, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 158, 98, -1));
+        jPanel1.add(rdngay, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 98, -1));
 
         rdthang.setText("Tháng");
         rdthang.addActionListener(new java.awt.event.ActionListener() {
@@ -177,18 +169,48 @@ for (int i = 1; i <= 12; i++) {
                 rdthangActionPerformed(evt);
             }
         });
-        getContentPane().add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(336, 158, 98, -1));
+        jPanel1.add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 120, 98, -1));
+        jPanel1.add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 170, 235, -1));
 
         cbbnam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        getContentPane().add(cbbnam, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
+        jPanel1.add(cbbnam, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 170, -1, -1));
 
+        cbbthang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel1.add(cbbthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 170, -1, -1));
+
+        btnluonh.setBackground(new java.awt.Color(0, 102, 102));
+        btnluonh.setForeground(new java.awt.Color(255, 255, 255));
+        btnluonh.setText("Tính Lương");
+        btnluonh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnluonhActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnluonh, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, -1, -1));
+        jPanel1.add(txtluongdatinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 280, 515, -1));
+
+        jButton1.setBackground(new java.awt.Color(0, 102, 102));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Lưu");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1080, 320, -1, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 280, -1, -1));
+        jPanel1.add(txtmanv, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 170, 150, -1));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel1.setText("Nhập Mã Nhân Viên ");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 130, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel2.setText("TÍNH LƯƠNG NHÂN VIÊN ");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 20, 470, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1190, 390));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -372,6 +394,9 @@ for (int i = 1; i <= 12; i++) {
     private javax.swing.JComboBox<String> cbbthang;
     private javax.swing.JButton jButton1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rdngay;
     private javax.swing.JRadioButton rdthang;

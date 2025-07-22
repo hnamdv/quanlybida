@@ -18,13 +18,11 @@ import java.util.List;
  */
 
 public class chamcongdao {
-    // Trả về tất cả
 public List<chamcong> findAll() {
     String sql = "SELECT * FROM ChamCong";
     return selectBySql(sql);
 }
 
-// Trả về theo mã nhân viên
 public List<chamcong> findByMaNV(String maNV) {
     String sql = "SELECT * FROM ChamCong WHERE MaNV = ?";
     return selectBySql(sql, maNV);
@@ -70,7 +68,6 @@ private List<chamcong> selectBySql(String sql, Object... args) {
         }
     }
 
-    // Kết ca (cập nhật giờ ra)
     public boolean updateGioRa(String maNV, Timestamp gioRa) {
         String sql = "UPDATE ChamCong SET GioRa = ? WHERE MaNV = ? AND Ngay = CURDATE() AND GioRa IS NULL";
         try (Connection conn = connect.openConnection();
@@ -191,12 +188,18 @@ public List<chamcong> findByThangNam(String maNV, int thang, int nam) {
 }
 public int demSoNgayCong(String maNV, int thang, int nam) {
     int soNgayCong = 0;
-    String sql = "SELECT COUNT(*) FROM ChamCong WHERE MaNV = ? AND MONTH(NgayLam) = ? AND YEAR(NgayLam) = ? AND TrangThai = 'Có mặt'";
-     try (
-        Connection conn = connect.openConnection();
-        PreparedStatement ps = conn.prepareStatement(sql))
-             {
+    String sql = """
+        SELECT COUNT(DISTINCT Ngay) FROM ChamCong 
+        WHERE MaNV = ? 
+        AND MONTH(Ngay) = ? 
+        AND YEAR(Ngay) = ? 
+        AND GioVao IS NOT NULL AND GioRa IS NOT NULL
+        """;
 
+    try (
+        Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
         ps.setString(1, maNV);
         ps.setInt(2, thang);
         ps.setInt(3, nam);

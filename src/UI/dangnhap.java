@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JOptionPane;
-
 /**
  *
  * @author Admin
@@ -107,7 +106,7 @@ public class dangnhap extends javax.swing.JFrame {
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 400, 100, -1));
 
         cbkluu.setText("Lưu Thông Tin?");
-        jPanel1.add(cbkluu, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 360, -1, -1));
+        jPanel1.add(cbkluu, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 350, -1, -1));
 
         jPanel2.setBackground(new java.awt.Color(0, 102, 102));
 
