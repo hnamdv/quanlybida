@@ -6,6 +6,7 @@ package DAO.DaoImple;
 import MODEl.PhanCong;
 import XJDBC.connect;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,5 +145,26 @@ public class PhanCongDAO {
     }
     return null;
 }
+     public PhanCong getCaLam(String maNV, LocalDate ngay) {
+        PhanCong pc = null;
+        String sql = "SELECT gioVao, gioRa FROM PhanCong WHERE maNV = ? AND ngay = ?";
+        try (
+            Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+            ps.setString(1, maNV);
+            ps.setDate(2, Date.valueOf(ngay));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                pc = new PhanCong();
+                pc.setMaNV(maNV);
+                pc.setGioBatDau(rs.getTime("gioVao").toLocalTime());
+                pc.setGioKetThuc(rs.getTime("gioRa").toLocalTime());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pc;
+    }
 
 }

@@ -4,18 +4,20 @@
  */
 package UI.Panel;
 
+import DAO.DaoImple.PhanCongDAO;
 import DAO.DaoImple.chamcongdao;
+import MODEl.PhanCong;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  *
@@ -44,55 +46,75 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
         thread.start();
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                BufferedImage image = webcam.getImage();
-                if (image == null) {
+@Override
+public void run() {
+    while (true) {
+        try {
+            BufferedImage image = webcam.getImage();
+            if (image == null) {
+                continue;
+            }
+            LuminanceSource source = new BufferedImageLuminanceSource(image);
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+            Result result = new MultiFormatReader().decode(bitmap);
+            if (result != null) {
+                String rawText = result.getText();
+                String maNV = rawText;
+
+                if (rawText.contains("=")) {
+                    String[] parts = rawText.split("=");
+                    if (parts.length == 2) {
+                        maNV = parts[1];
+                    }
+                }
+                LocalDateTime now = LocalDateTime.now();
+                Timestamp timestamp = Timestamp.valueOf(now);
+                boolean moCa = daMoCa(maNV);
+                   PhanCongDAO pcDAO = new PhanCongDAO();
+                PhanCong ca = pcDAO.getCaLam(maNV, now.toLocalDate());
+
+          if (!isTrongThoiGianChoPhep_DB(moCa, now, ca)) {
+                    JOptionPane.showMessageDialog(this, "⏱ Không trong thời gian chấm công hợp lệ!");
+                    Thread.sleep(3000); 
                     continue;
                 }
 
-                LuminanceSource source = new BufferedImageLuminanceSource(image);
-                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-                Result result = new MultiFormatReader().decode(bitmap);
-                if (result != null) {
-                   String rawText = result.getText();
-                    String maNV = rawText;
-
-                    if (rawText.contains("=")) {
-                       String[] parts = rawText.split("=");
-                  if (parts.length == 2) {
-                    maNV = parts[1]; 
-                }
-                }
-
-                    Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-
-                    if (daMoCa(maNV)) {
-                        if (dao.updateGioRa(maNV, now)) {
-                            JOptionPane.showMessageDialog(this, "✅ Kết ca: " + maNV);
-                        } else {
-                            JOptionPane.showMessageDialog(this, "❌ Không thể kết ca.");
-                        }
+                if (moCa) {
+                    if (dao.updateGioRa(maNV, timestamp)) {
+                        JOptionPane.showMessageDialog(this, "✅ Kết ca: " + maNV);
                     } else {
-                        if (dao.insertChamCong(maNV, now)) {
-                            JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
-                        } else {
-                            JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
-                        }
+                        JOptionPane.showMessageDialog(this, "❌ Không thể kết ca.");
                     }
-
-                    Thread.sleep(30000); 
+                } else {
+                    if (dao.insertChamCong(maNV, timestamp)) {
+                        JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
+                    }
                 }
-            } catch (NotFoundException e) {
-               
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                Thread.sleep(30000);
             }
+        } catch (NotFoundException e) {
+           
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+}
+ private boolean isTrongThoiGianChoPhep_DB(boolean daMoCa, LocalDateTime now, PhanCong ca) {
+    if (ca == null) return false;
+    LocalTime hienTai = now.toLocalTime();
+    LocalTime gioVao = ca.getGioBatDau();
+    LocalTime gioRa = ca.getGioKetThuc();
+
+    if (!daMoCa) {
+        return !hienTai.isBefore(gioVao.minusMinutes(15)) && !hienTai.isAfter(gioVao);
+    } else {
+        return !hienTai.isBefore(gioRa) && !hienTai.isAfter(gioRa.plusMinutes(15));
+    }
+}
 
     private boolean daMoCa(String maNV) {
       
