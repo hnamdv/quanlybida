@@ -4,6 +4,9 @@
  */
 package LuongService;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.UUID;
 /**
@@ -40,17 +43,21 @@ public class Xstr {
     }
 
     public static void main(String[] args) {
-        String encodedText = Xstr.encodeB64("Nguyễn Nghiệm");
-        System.out.println(encodedText); // => Tmd1eT9uIE5naGk/bQ==
-
-        String decodedText = Xstr.decodeB64("Tmd1eT9uIE5naGk/bQ==");
-        System.out.println(decodedText); // => Nguyễn Nghiệm
-
-        String key1 = Xstr.getKey();
-        System.out.println(key1); // => XXXXXXXX (8 random characters)
-
-        String key2 = Xstr.getKey("Nguyễn", "Nghiệm", "PolyHCM");
-        System.out.println(key2); // => 329FB580
+      
     }
+public static String hashSHA256(String text) {
+    try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b)); 
+        }
+        return sb.toString();
+    } catch (NoSuchAlgorithmException e) {
+        throw new RuntimeException(e);
+    }
+}
 
 }

@@ -170,6 +170,7 @@ public class maqr extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         btnsave = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -188,7 +189,7 @@ public class maqr extends javax.swing.JPanel {
 
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Thủ Công");
+        jButton1.setText("Tính Lương");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -204,10 +205,21 @@ public class maqr extends javax.swing.JPanel {
             }
         });
 
+        btnsave.setBackground(new java.awt.Color(0, 102, 102));
+        btnsave.setForeground(new java.awt.Color(255, 255, 255));
         btnsave.setText("Save QR");
         btnsave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnsaveActionPerformed(evt);
+            }
+        });
+
+        jButton3.setBackground(new java.awt.Color(0, 102, 102));
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setText("Thủ Công");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -221,9 +233,11 @@ public class maqr extends javax.swing.JPanel {
                 .addComponent(jButton1)
                 .addGap(45, 45, 45)
                 .addComponent(jButton2)
-                .addGap(40, 40, 40)
+                .addGap(52, 52, 52)
+                .addComponent(jButton3)
+                .addGap(43, 43, 43)
                 .addComponent(btnsave)
-                .addContainerGap(877, Short.MAX_VALUE))
+                .addContainerGap(731, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,7 +246,8 @@ public class maqr extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(btnsave))
+                    .addComponent(btnsave)
+                    .addComponent(jButton3))
                 .addGap(18, 18, 18)
                 .addComponent(jPanelQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
@@ -258,11 +273,19 @@ form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
         
     }//GEN-LAST:event_btnsaveActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+                                
+        ThuCong form = new ThuCong();
+form.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnsave;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanelQR;
     // End of variables declaration//GEN-END:variables
 }

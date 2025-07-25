@@ -5,6 +5,7 @@
 package UI;
 
 import DAO.DaoImple.NhanVienDAOIMPL;
+import LuongService.Xstr;
 import MODEl.Nhanvien;
 import Xauth.phanquyen;
 import java.io.BufferedReader;
@@ -166,43 +167,40 @@ public class dangnhap extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
      
-    String user = txttk.getText().trim();
+ String user = txttk.getText().trim();
     String pass = new String(txtmk.getPassword()).trim();
 
     if (user.isEmpty() || pass.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
         return;
     }
+    String hashedInput = Xstr.hashSHA256(pass); 
+    NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
+    Nhanvien nv = dao.findByUsername(user); 
+    if (nv != null && hashedInput.equals(nv.getMatKhau())) {
+        phanquyen.user = nv;
 
-   NhanVienDAOIMPL dao = new NhanVienDAOIMPL();
-    Nhanvien nv = dao.checkLogin(user, pass);
-if (nv != null) {
-    phanquyen.user = nv ; 
-    if (phanquyen.check()) {
-        JOptionPane.showMessageDialog(this, "Xin chào quản lý!");
+        if (phanquyen.check()) {
+            JOptionPane.showMessageDialog(this, "Xin chào quản lý!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Xin chào nhân viên!");
+        }
+
+        this.dispose();
+        new nhanvien().setVisible(true);
+
+        if (cbkluu.isSelected()) {
+            try (FileWriter fw = new FileWriter("remember.txt")) {
+                fw.write(user + "\n");
+                fw.write(pass); 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            File f = new File("remember.txt");
+            if (f.exists()) f.delete();
+        }
     } else {
-        JOptionPane.showMessageDialog(this, "Xin chào nhân viên!");
-    }
-    this.dispose();
-   new nhanvien().setVisible(true);
-   if (cbkluu.isSelected()) {
-    try (FileWriter fw = new FileWriter("remember.txt")) {
-        fw.write(txttk.getText().trim() + "\n");
-        fw.write(new String(txtmk.getPassword()).trim());
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-} else {
-
-    File f = new File("remember.txt");
-    if (f.exists()) {
-        f.delete();
-    }
-}
-
-   
-}
-     else {
         JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
 

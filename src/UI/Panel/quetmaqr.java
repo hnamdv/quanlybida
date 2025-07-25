@@ -84,7 +84,7 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
                         }
                     }
 
-                    Thread.sleep(3000); 
+                    Thread.sleep(30000); 
                 }
             } catch (NotFoundException e) {
                

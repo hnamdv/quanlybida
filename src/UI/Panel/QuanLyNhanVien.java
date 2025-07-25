@@ -5,9 +5,11 @@
 package UI.Panel;
 
 import DAO.DaoImple.NhanVienDAOIMPL;
+import LuongService.Xstr;
 import MODEl.Nhanvien;
 import Xauth.phanquyen;
 import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +24,9 @@ public class QuanLyNhanVien extends javax.swing.JPanel {
      */
     public QuanLyNhanVien() {
         initComponents();
+        ButtonGroup gioiTinhGroup = new ButtonGroup();
+        gioiTinhGroup.add(jRadioButton1);
+gioiTinhGroup.add(jRadioButton2);
         String[] columnNames = {"Mã NV", "Tên", "Giới tính", "Ngày sinh", "SĐT", "Email", "Chức vụ", "Mật khẩu", "Trạng thái"};
 DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 tbl.setModel(model);
@@ -54,7 +59,12 @@ private void setForm(Nhanvien nv) {
     nv.setNgaySinh(new java.sql.Date(date.getDate().getTime()));
     nv.setEmail(txtemai.getText());
     nv.setChucVu(cbb.getSelectedItem().toString());
-    nv.setMatKhau(txtpass.getText());
+
+    // Mã hóa mật khẩu trước khi gán
+    String rawPass = txtpass.getText();
+    String hashedPass = Xstr.hashSHA256(rawPass);
+    nv.setMatKhau(hashedPass);
+
     nv.setGioiTinh(jRadioButton1.isSelected() ? "Nam" : "Nữ");
     nv.setTrangThai(jCheckBox1.isSelected());
     return nv;
@@ -105,7 +115,7 @@ private void loadTatCaNhanVien() {
             nv.getSdt(),
             nv.getEmail(),
             nv.getChucVu(),
-          //  nv.getMatKhau(), 
+            nv.getMatKhau(), 
             nv.isTrangThai() ? "Đang làm" : "Nghỉ"
         });
     }
@@ -138,7 +148,6 @@ private void clearForm() {
         jLabel3 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         btnthem = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         btnxoa = new javax.swing.JButton();
@@ -147,18 +156,18 @@ private void clearForm() {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
         btnsua = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        load = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         sdt = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtMa = new javax.swing.JTextField();
-        txttenlog = new javax.swing.JTextField();
         txtTen = new javax.swing.JTextField();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jCheckBox1 = new javax.swing.JCheckBox();
         txtemai = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(1620, 1080));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -166,8 +175,8 @@ private void clearForm() {
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 102, 102));
-        jLabel3.setText("Tên nhân viên");
-        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 90, -1, -1));
+        jLabel3.setText("Email");
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 160, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 102, 102));
@@ -178,11 +187,6 @@ private void clearForm() {
         jLabel4.setForeground(new java.awt.Color(0, 102, 102));
         jLabel4.setText("Chức vụ");
         add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 250, -1, -1));
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 102, 102));
-        jLabel7.setText("Tên Đăng Nhập");
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 160, -1, -1));
 
         btnthem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnthem.setForeground(new java.awt.Color(0, 102, 102));
@@ -245,15 +249,15 @@ private void clearForm() {
         });
         add(btnsua, new org.netbeans.lib.awtextra.AbsoluteConstraints(1071, 383, -1, -1));
 
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(0, 102, 102));
-        jButton5.setText("Load");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        load.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        load.setForeground(new java.awt.Color(0, 102, 102));
+        load.setText("Load");
+        load.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                loadActionPerformed(evt);
             }
         });
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 380, -1, -1));
+        add(load, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 380, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 102, 102));
@@ -264,14 +268,13 @@ private void clearForm() {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 102, 102));
         jLabel2.setText("Mã nhân viên ");
-        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, -1, -1));
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 100, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 102, 102));
         jLabel5.setText("SĐT");
-        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 90, -1, -1));
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 100, -1, -1));
         add(txtMa, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 120, 280, -1));
-        add(txttenlog, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 180, 280, -1));
 
         txtTen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -292,8 +295,13 @@ private void clearForm() {
         add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 320, -1, -1));
 
         jCheckBox1.setText("Làm/Nghĩ");
-        add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 320, -1, -1));
-        add(txtemai, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 240, 280, -1));
+        add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 320, -1, -1));
+        add(txtemai, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 180, 280, -1));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel9.setText("Tên nhân viên");
+        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 100, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
@@ -383,9 +391,10 @@ private void clearForm() {
 
     }//GEN-LAST:event_btnsuaActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void loadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+           clearForm(); 
+    }//GEN-LAST:event_loadActionPerformed
 
     private void txtTenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenActionPerformed
         // TODO add your handling code here:
@@ -402,7 +411,6 @@ private void clearForm() {
     private javax.swing.JButton btnxoa;
     private javax.swing.JComboBox<String> cbb;
     private com.toedter.calendar.JDateChooser date;
-    private javax.swing.JButton jButton5;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -410,17 +418,17 @@ private void clearForm() {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton load;
     private javax.swing.JTextField sdt;
     private javax.swing.JTable tbl;
     private javax.swing.JTextField txtMa;
     private javax.swing.JTextField txtTen;
     private javax.swing.JTextField txtemai;
     private javax.swing.JTextField txtpass;
-    private javax.swing.JTextField txttenlog;
     // End of variables declaration//GEN-END:variables
 }

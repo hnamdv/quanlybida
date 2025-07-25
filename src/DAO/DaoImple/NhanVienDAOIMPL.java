@@ -224,6 +224,27 @@ public boolean kiemTraEmailTonTai(String email) {
         return false;
     }
 }
+public Nhanvien findByUsername(String username) {
+    // Tìm Nhanvien theo tài khoản (MãNV hoặc Username)
+    String sql = "SELECT * FROM NhanVien WHERE MaNV = ?";
+     try(  Connection conn = connect.openConnection();
+        PreparedStatement ps = conn.prepareStatement(sql) 
+    ) {
+        ps.setString(1, username);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Nhanvien nv = new Nhanvien();
+            nv.setMaNV(rs.getString("MaNV"));
+            nv.setMatKhau(rs.getString("MatKhau"));
+            nv.setHoTen(rs.getString("HoTen"));
+           nv.setChucVu(rs.getString("ChucVu"));
+            return nv;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
 
   
