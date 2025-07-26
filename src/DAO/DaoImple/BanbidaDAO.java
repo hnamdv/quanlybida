@@ -39,11 +39,14 @@ public class BanbidaDAO {
     }
 
     public boolean capNhatTinhTrang(String maBan, String tinhTrang) {
-        String sql = "UPDATE Banbida SET TinhTrang = ? WHERE MaBan = ?";
+        String sql = "UPDATE BANBIDA SET TinhTrang = ? WHERE MaBan = ?";
         try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tinhTrang);
             ps.setString(2, maBan);
-            return ps.executeUpdate() > 0;
+            System.out.println("SQL: " + ps.toString());
+            int rows = ps.executeUpdate();
+            System.out.println("Số dòng bị ảnh hưởng: " + rows);
+            return rows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

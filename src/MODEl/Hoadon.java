@@ -13,23 +13,6 @@ import java.sql.Timestamp;
 
 public class Hoadon {
 
-    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBD, Timestamp thoiGianKT,
-            double tongTien, String trangThai, Date ngayTao,
-            double tienGio, double giamGia, double tienDV, String ghiChu) {
-        this.maHD = maHD;
-        this.maNV = maNV;
-        this.maBan = maBan;
-        this.thoiGianBD = thoiGianBD;
-        this.thoiGianKT = thoiGianKT;
-        this.tongTien = tongTien;
-        this.trangThai = trangThai;
-        this.ngayTao = ngayTao;
-        this.tienGio = tienGio;
-        this.giamGia = giamGia;
-        this.tienDV = tienDV;
-        this.ghiChu = ghiChu;
-    }
-
     public Timestamp getThoiGianBD() {
         return thoiGianBD;
     }
@@ -141,5 +124,34 @@ public class Hoadon {
     private double giamGia;
     private double tienDV;
     private String ghiChu;
+
+    public String getMaDV() {
+        return MaDV;
+    }
+
+    public void setMaDV(String MaDV) {
+        this.MaDV = MaDV;
+    }
+
+    public Hoadon(String maHD, String maNV, String maBan, Timestamp thoiGianBD, Timestamp thoiGianKT,
+            double tongTien, String trangThai, Date ngayTao,
+            double tienGio, double giamGia, double tienDV,
+            String ghiChu, String MaDV) {
+        this.maHD = maHD;
+        this.maNV = maNV;
+        this.maBan = maBan;
+        this.thoiGianBD = thoiGianBD;
+        this.thoiGianKT = thoiGianKT;
+        this.tongTien = tongTien;
+        this.trangThai = trangThai;
+        this.ngayTao = ngayTao;
+        this.tienGio = tienGio;
+        this.giamGia = giamGia;
+        this.tienDV = tienDV;
+        this.ghiChu = ghiChu;
+        this.MaDV = MaDV;
+    }
+
+    private String MaDV;
 
 }
