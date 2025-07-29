@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TinhLuongService {
-    private final double HE_SO_TANG_CA = 1.5;
+   //  private final double HE_SO_TANG_CA = 1.5;
     private chamcongdao chamCongDAO = new chamcongdao();
     private PhanCongDAO phancongDAO = new PhanCongDAO();
     private static final int LUONG_MOT_GIO = 20000;

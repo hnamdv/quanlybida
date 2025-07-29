@@ -10,9 +10,12 @@ import Xauth.phanquyen;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
+import java.time.LocalDate;
+import java.time.Year;
+  
 /**
  *
  * @author Admin
@@ -27,48 +30,58 @@ DefaultTableModel model;
      */
     public lichsu() {
         initComponents();
+         initThangNam();
            phanQuyenTheoChucVu();
-           
     }
-  private void setFormFromTable(int row) {
-
-    String maNV = tbl.getValueAt(row, 0).toString();
-    String maLS = tbl.getValueAt(row, 1).toString();
-    String ngayBD = tbl.getValueAt(row, 2).toString();
-    String ngayKT = tbl.getValueAt(row, 3).toString();
-
-    txtmanv.setText(maNV);
-    txtmc.setText(maLS);
     
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
-        jDateChooser2.setDate(sdf.parse(ngayKT));
-    } catch (ParseException ex) {
-        ex.printStackTrace();
+private void initThangNam() {
+    cbothang.removeAllItems();
+    for (int i = 1; i <= 12; i++) {
+        cbothang.addItem(String.valueOf(i));
     }
+
+    cbonam.removeAllItems();
+    int currentYear = Year.now().getValue();
+    for (int i = currentYear - 5; i <= currentYear; i++) {
+        cbonam.addItem(String.valueOf(i));
+    }
+
+    cbothang.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
+    cbonam.setSelectedItem(String.valueOf(currentYear));
 }
 
 
-      private void phanQuyenTheoChucVu() {
+    private void phanQuyenTheoChucVu() {
         if (!phanquyen.check()) { 
             btnsua.setEnabled(false);
             btnxoa.setEnabled(false);
             txtmanv.setEditable(false);
             txtmc.setEditable(false);
             JOptionPane.showMessageDialog(this, "Bạn chỉ được xem chấm công của mình!");
-            loadLichSuNhanVien();
+        }
+        loadTheoPhanQuyen();
+    }
+
+    private void loadTheoPhanQuyen() {
+        if (phanquyen.check()) {
+            loadAllChamCongTheoThangNam();
         } else {
-            loadAllChamCong();
+            loadLichSuNhanVienTheoThangNam();
         }
     }
-      private void loadAllChamCong() {
-        List<chamcong> list = new chamcongdao().findAll();
+
+    private void loadAllChamCongTheoThangNam() {
+        int thang = (int) cbothang.getSelectedItem();
+        int nam = (int) cbonam.getSelectedItem();
+        List<chamcong> list = dao.findAllByThangNam(thang, nam);
         fillTable(list);
     }
 
-    private void loadLichSuNhanVien() {
+    private void loadLichSuNhanVienTheoThangNam() {
         String maNV = phanquyen.user.getMaNV();
-        List<chamcong> list = new chamcongdao().findByMaNV(maNV);
+        int thang = (int) cbothang.getSelectedItem();
+        int nam = (int) cbonam.getSelectedItem();
+        List<chamcong> list = dao.findByMaNV_ThangNam(maNV, thang, nam);
         fillTable(list);
     }
 
@@ -84,8 +97,16 @@ DefaultTableModel model;
             });
         }
     }
+       private void setFormFromTable(int row) {
+     String maCC = tbl.getValueAt(row, 0).toString();
+    String maNV = tbl.getValueAt(row, 1).toString();
+    String gioVao = tbl.getValueAt(row, 2).toString();
+    String gioRa = tbl.getValueAt(row, 3) == null ? "" : tbl.getValueAt(row, 3).toString();
 
-
+    txtmc.setText(maCC);
+    txtmanv.setText(maNV);
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -96,23 +117,22 @@ DefaultTableModel model;
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         btnsua = new javax.swing.JButton();
         btnxoa = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
         txtmanv = new javax.swing.JTextField();
         txtmc = new javax.swing.JTextField();
-        jDateChooser2 = new com.toedter.calendar.JDateChooser();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        cbothang = new javax.swing.JComboBox<>();
+        cbonam = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 500));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -174,6 +194,10 @@ DefaultTableModel model;
         jLabel5.setForeground(new java.awt.Color(0, 102, 102));
         jLabel5.setText("Giờ Ra");
 
+        cbothang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cbonam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -188,7 +212,7 @@ DefaultTableModel model;
                 .addGap(39, 39, 39))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -197,22 +221,19 @@ DefaultTableModel model;
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(47, 47, 47)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(txtmc, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(165, 165, 165)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jLabel3))))
-                .addContainerGap(240, Short.MAX_VALUE))
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtmc, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(165, 165, 165)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cbothang, 0, 132, Short.MAX_VALUE)
+                                    .addComponent(cbonam, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                .addContainerGap(395, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,16 +246,17 @@ DefaultTableModel model;
                             .addComponent(jLabel2)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3))
-                    .addComponent(jLabel5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cbothang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jDateChooser2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtmc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtmc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbonam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnxoa)
@@ -252,9 +274,10 @@ DefaultTableModel model;
 
     private void tblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMouseClicked
         // TODO add your handling code here:
-              int row = tbl.getSelectedRow();
-        if (row >= 0) {
-            setFormFromTable(row);
+           int row = tbl.getSelectedRow();
+    if (row >= 0) {
+        setFormFromTable(row);
+    
         }
     }//GEN-LAST:event_tblMouseClicked
 
@@ -273,8 +296,6 @@ phanQuyenTheoChucVu();
     ex.printStackTrace();
     JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
 }
-
-
     }//GEN-LAST:event_btnxoaActionPerformed
 
     private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
@@ -319,9 +340,9 @@ phanQuyenTheoChucVu();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnsua;
     private javax.swing.JButton btnxoa;
+    private javax.swing.JComboBox<String> cbonam;
+    private javax.swing.JComboBox<String> cbothang;
     private javax.swing.JButton jButton1;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
-    private com.toedter.calendar.JDateChooser jDateChooser2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

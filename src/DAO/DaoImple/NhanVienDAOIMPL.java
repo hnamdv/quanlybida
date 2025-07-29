@@ -224,6 +224,7 @@ public boolean kiemTraEmailTonTai(String email) {
         return false;
     }
 }
+
 public Nhanvien findByUsername(String username) {
     // Tìm Nhanvien theo tài khoản (MãNV hoặc Username)
     String sql = "SELECT * FROM NhanVien WHERE MaNV = ?";

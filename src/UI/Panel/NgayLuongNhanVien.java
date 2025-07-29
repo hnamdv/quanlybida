@@ -233,7 +233,7 @@ for (int i = 1; i <= 12; i++) {
 
     double luong = 0;
     String thoiGian = "";
-    int soNgayCong = 0; // tùy theo cách tính bạn lấy từ đâu
+    int soNgayCong = 0; 
     Date ngay = null;
     int thang = 0, nam = 0;
 

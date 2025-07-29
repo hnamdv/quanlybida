@@ -7,6 +7,7 @@ package UI;
 import DAO.DaoImple.NhanVienDAOIMPL;
 import LuongService.Mail;
 import LuongService.OTP;
+import LuongService.Xstr;
 import javax.swing.JOptionPane;
 
 /**
@@ -143,15 +144,15 @@ if (!maNhap.equals(maXacNhan)) {
     return;
 }
 
-boolean doiThanhCong = dao.doiMatKhauTheoEmail(email, matKhauMoi);
+String matKhauMoiHash = Xstr.hashSHA256(matKhauMoi); 
+boolean doiThanhCong = dao.doiMatKhauTheoEmail(email, matKhauMoiHash);
+
 if (doiThanhCong) {
     JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!");
 } else {
     JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại!");
 }
 
-
-     
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

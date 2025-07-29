@@ -53,7 +53,7 @@ public class maqr extends javax.swing.JPanel {
   
     jPanelQR.setLayout(new GridBagLayout()); 
     jPanelQR.setPreferredSize(new Dimension(300, 300));
-    jPanelQR.setBorder(BorderFactory.createTitledBorder("Mã QR Chấm Công")); // viền có tiêu đề
+    jPanelQR.setBorder(BorderFactory.createTitledBorder("Mã QR Chấm Công")); 
 
     anh.startServer();
 

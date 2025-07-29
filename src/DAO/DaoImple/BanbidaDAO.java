@@ -73,7 +73,7 @@ public class BanbidaDAO {
 
         try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, tinhTrang); // gán giá trị 'BaoTri' hoặc 'DangSua'
+            ps.setString(1, tinhTrang); 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {

@@ -17,10 +17,18 @@ import java.util.List;
  * @author Admin
  */
 
-public class chamcongdao {
+public class chamcongdao {  
 public List<chamcong> findAll() {
     String sql = "SELECT * FROM ChamCong";
     return selectBySql(sql);
+}
+public List<chamcong> findByMaNV_ThangNam(String maNV, int thang, int nam) {
+    String sql = "SELECT * FROM ChamCong WHERE MaNV = ? AND MONTH(Ngay) = ? AND YEAR(Ngay) = ?";
+    return selectBySql(sql, maNV, thang, nam);
+}
+public List<chamcong> findAllByThangNam(int thang, int nam) {
+    String sql = "SELECT * FROM ChamCong WHERE MONTH(Ngay) = ? AND YEAR(Ngay) = ?";
+    return selectBySql(sql, thang, nam);
 }
 
 public List<chamcong> findByMaNV(String maNV) {
@@ -131,7 +139,7 @@ public boolean daChamCongHomNay(String maNV) {
          PreparedStatement stmt = conn.prepareStatement(sql)) {
         stmt.setString(1, maNV);
         ResultSet rs = stmt.executeQuery();
-        return rs.next(); // nếu có bản ghi rồi => đã chấm công
+        return rs.next(); 
     } catch (Exception e) {
         e.printStackTrace();
         return false;
