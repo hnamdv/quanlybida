@@ -11,13 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChitiethoadonDao {
-public List<Chitiethoadon> getAll() {
+
+    public List<Chitiethoadon> getAll() {
         List<Chitiethoadon> list = new ArrayList<>();
         String sql = "SELECT MaCT, MaHD, MaDV, SoLuong, DonGia FROM CT_HOADON_DICHVU";
 
-        try (Connection con = connect.openConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Chitiethoadon ct = new Chitiethoadon();
@@ -35,11 +34,11 @@ public List<Chitiethoadon> getAll() {
 
         return list;
     }
-   public boolean insert(Chitiethoadon ct) {
+
+    public boolean insert(Chitiethoadon ct) {
         String sql = "INSERT INTO CT_HOADON_DICHVU (MaCT, MaHD, MaDV, SoLuong, DonGia) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection con = connect.openConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, ct.getMaCT());
             ps.setString(2, ct.getMaHD());
@@ -55,37 +54,47 @@ public List<Chitiethoadon> getAll() {
 
         return false;
     }
-   public boolean update(Chitiethoadon ct) {
-    String sql = "UPDATE CT_HOADON_DICHVU SET MaHD = ?, MaDV = ?, SoLuong = ?, DonGia = ? WHERE MaCT = ?";
-    try (Connection con = connect.openConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-         
-        ps.setString(1, ct.getMaHD());
-        ps.setString(2, ct.getMaDV());
-        ps.setInt(3, ct.getSoLuong());
-        ps.setDouble(4, ct.getDonGia());
-        ps.setString(5, ct.getMaCT());
 
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
+    public boolean update(Chitiethoadon ct) {
+        String sql = "UPDATE CT_HOADON_DICHVU SET MaHD = ?, MaDV = ?, SoLuong = ?, DonGia = ? WHERE MaCT = ?";
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, ct.getMaHD());
+            ps.setString(2, ct.getMaDV());
+            ps.setInt(3, ct.getSoLuong());
+            ps.setDouble(4, ct.getDonGia());
+            ps.setString(5, ct.getMaCT());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean delete(String maCT) {
+        String sql = "DELETE FROM CT_HOADON_DICHVU WHERE MaCT = ?";
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, maCT);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void themDichVuVaoHoaDon(String maHD, String maDV, int soLuong, double donGia) {
+        String sql = "INSERT INTO ct_hoadon_dichvu (MaHD, MaDV, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maHD);
+            ps.setString(2, maDV);
+            ps.setInt(3, soLuong);
+            ps.setDouble(4, donGia);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
-public boolean delete(String maCT) {
-    String sql = "DELETE FROM CT_HOADON_DICHVU WHERE MaCT = ?";
-    try (Connection con = connect.openConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-
-        ps.setString(1, maCT);
-        return ps.executeUpdate() > 0;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-
-}
-
-

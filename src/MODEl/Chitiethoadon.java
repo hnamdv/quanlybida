@@ -60,7 +60,7 @@ public class Chitiethoadon {
 
     public Chitiethoadon() {
     }
-        private String maCT;
+    private String maCT;
     private String maHD;
     private String maDV;
     private int soLuong;

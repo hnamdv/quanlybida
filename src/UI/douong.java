@@ -214,7 +214,7 @@ public void loadTable() {
 
         try {
             double gia = Double.parseDouble(giaStr);
-            Dichvu dv = new Dichvu(ma, ten, gia, SOMEBITS);
+            Dichvu dv = new Dichvu(ma, ten, gia);
             if (dao.insert(dv)) {
                 JOptionPane.showMessageDialog(null, "Thêm thành công!");
                 loadTable();
@@ -260,7 +260,7 @@ public void loadTable() {
 
         try {
             double gia = Double.parseDouble(giaStr);
-            Dichvu dv = new Dichvu(ma, ten, gia, SOMEBITS);
+            Dichvu dv = new Dichvu(ma, ten, gia);
             if (dao.update(dv)) {
                 JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
                 loadTable();

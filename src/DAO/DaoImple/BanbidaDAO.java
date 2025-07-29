@@ -73,7 +73,7 @@ public class BanbidaDAO {
 
         try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, tinhTrang); 
+            ps.setString(1, tinhTrang);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -94,6 +94,31 @@ public class BanbidaDAO {
         }
 
         return list;
+    }
+
+    public Banbida getByMaBan(String maBan) {
+        Banbida ban = null;
+        String sql = "SELECT * FROM banbida WHERE MaBan = ?";
+
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maBan);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ban = new Banbida();
+                    ban.setMaBan(rs.getString("MaBan"));
+                    ban.setTenBan(rs.getString("TenBan"));
+                    ban.setMaLoaiBan(rs.getString("MaLoaiBan"));
+                    ban.setTinhTrang(rs.getString("TinhTrang"));
+                    ban.setGiaTheoGio(rs.getDouble("GiaTheoGio"));
+                    ban.setTuoiBan(rs.getInt("TuoiBan"));
+                    ban.setGhiChu(rs.getString("GhiChu"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ban;
     }
 
 }

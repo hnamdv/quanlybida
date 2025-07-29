@@ -8,6 +8,29 @@ import java.util.List;
 
 public class DichVuDAO {
 
+    public List<Dichvu> getDichVuByHoaDon(String maHD) {
+        List<Dichvu> list = new ArrayList<>();
+        String sql = "SELECT dv.MaDV, dv.TenDV, ctdv.SoLuong, dv.DonGia "
+                + "FROM ct_hoadon_dichvu ctdv "
+                + "JOIN dichvu dv ON ctdv.MaDV = dv.MaDV "
+                + "WHERE ctdv.MaHD = ?";
+
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maHD);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Dichvu dv = new Dichvu();
+                dv.setMaDV(rs.getString("MaDV"));
+                dv.setTenDV(rs.getString("TenDV"));
+                dv.setDonGia(rs.getDouble("DonGia"));
+                list.add(dv);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // ✔ CREATE - Thêm dịch vụ
     public boolean insert(Dichvu dv) {
         String sql = "INSERT INTO DICHVU (MaDV, TenDV, DonGia) VALUES (?, ?, ?)";
@@ -76,7 +99,7 @@ public class DichVuDAO {
                     return new Dichvu(
                             rs.getString("MaDV"),
                             rs.getString("TenDV"),
-                            rs.getDouble("DonGia"), (int) rs.getDouble("soLuong"));
+                            rs.getDouble("DonGia"));
                 }
             }
         } catch (Exception e) {
@@ -95,7 +118,6 @@ public class DichVuDAO {
             while (rs.next()) {
                 Dichvu dv = new Dichvu();
                 dv.setTenDV(rs.getString("TenDV"));
-                dv.setSoLuong(rs.getInt("SoLuong"));
                 dv.setDonGia(rs.getDouble("DonGia"));
                 list.add(dv);
             }
@@ -103,6 +125,25 @@ public class DichVuDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public Dichvu getByTen(String tenDV) {
+        String sql = "SELECT * FROM dichvu WHERE TenDV = ?";
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tenDV);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Dichvu(
+                        rs.getString("MaDV"),
+                        rs.getString("TenDV"),
+                        rs.getDouble("DonGia")
+                );
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
