@@ -13,7 +13,7 @@ import javax.mail.internet.*;
 public class Mail {
      public static boolean sendOTP(String toEmail, String otp) {
         final String fromEmail = "namlnhtv00341@gmail.com"; 
-        final String password = "rhyl zxtm scqy jgqs";
+        final String password = "rhylzxtmscqyjgqs";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

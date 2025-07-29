@@ -145,26 +145,26 @@ public class PhanCongDAO {
     }
     return null;
 }
-     public PhanCong getCaLam(String maNV, LocalDate ngay) {
-        PhanCong pc = null;
-        String sql = "SELECT gioVao, gioRa FROM PhanCong WHERE maNV = ? AND ngay = ?";
-        try (
-            Connection conn = connect.openConnection();
+  public PhanCong getCaLam(String maNV, LocalDate ngay) {
+    PhanCong pc = null;
+    String sql = "SELECT GioBatDau, GioKetThuc FROM PhanCong WHERE MaNV = ? AND NgayLam = ?";
+    try (
+        Connection conn = connect.openConnection();
         PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-            ps.setString(1, maNV);
-            ps.setDate(2, Date.valueOf(ngay));
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                pc = new PhanCong();
-                pc.setMaNV(maNV);
-                pc.setGioBatDau(rs.getTime("gioVao").toLocalTime());
-                pc.setGioKetThuc(rs.getTime("gioRa").toLocalTime());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    ) {
+        ps.setString(1, maNV);
+        ps.setDate(2, Date.valueOf(ngay));
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            pc = new PhanCong();
+            pc.setMaNV(maNV);
+            pc.setGioBatDau(rs.getTime("GioBatDau").toLocalTime());
+            pc.setGioKetThuc(rs.getTime("GioKetThuc").toLocalTime());
         }
-        return pc;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return pc;
+}
 
 }

@@ -115,7 +115,6 @@ public void run() {
         return !hienTai.isBefore(gioRa) && !hienTai.isAfter(gioRa.plusMinutes(15));
     }
 }
-
     private boolean daMoCa(String maNV) {
       
         return dao.daMoCa(maNV);
