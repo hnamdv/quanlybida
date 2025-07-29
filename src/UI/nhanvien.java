@@ -51,6 +51,17 @@ public class nhanvien extends javax.swing.JFrame {
 
     }
     private boolean isDarkTheme = false;
+private void phanQuyenTheoChucVu() {
+    if (!phanquyen.check()) {
+      //  .setEnabled(false);
+     //  btnNhanVien.setEnabled(false);
+      //  btnChiTietHoaDon.setEnabled(false);
+      //  btnChiTietBooking.setEnabled(false);
+     //   btnSuaChua.setEnabled(false);
+      //  btnQR.setEnabled(false);
+       // các nút khác nếu cần
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -383,8 +394,6 @@ public class nhanvien extends javax.swing.JFrame {
                 UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
                 isDarkTheme = true;
             }
-
-            // Cập nhật toàn bộ giao diện
             SwingUtilities.updateComponentTreeUI(this);
 
         } catch (Exception ex) {

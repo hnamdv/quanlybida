@@ -6,6 +6,7 @@ package UI;
 
 import DAO.DaoImple.PhanCongDAO;
 import MODEl.PhanCong;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
  * @author ASUS
  */
 public class phanca extends javax.swing.JPanel {
-
+PhanCongDAO dao = new PhanCongDAO();
     /**
      * Creates new form phanca
      */
@@ -24,13 +25,10 @@ public class phanca extends javax.swing.JPanel {
         loadDataToTable();
         
     }
-    PhanCongDAO dao = new PhanCongDAO();
 
-// Tải dữ liệu lên bảng
 public void loadDataToTable() {
     DefaultTableModel model = (DefaultTableModel) tblphanca.getModel();
-    model.setRowCount(0); // clear table
-
+    model.setRowCount(0);
     for (PhanCong pc : dao.getAll()) {
         model.addRow(new Object[]{
             pc.getMaPC(),
@@ -43,7 +41,26 @@ public void loadDataToTable() {
         });
     }
 }
+public PhanCong getForm() {
+    String maPC = txtmaphancong.getText();
+    String maNV = txtmanhanvien.getText();
+    String tenCa = txttenca.getText();
+    LocalTime gioBD = LocalTime.parse(txtgiobatdau.getText());
+    LocalTime gioKT = LocalTime.parse(txtgioketthuc.getText());
+    LocalDate ngayLam = LocalDate.parse(txtngaylam.getText());
+    double heSoLuong = Double.parseDouble(txthesoluong.getText());
 
+    return new PhanCong(maPC, maNV, tenCa, gioBD, gioKT, ngayLam, heSoLuong);
+}
+public void setForm(PhanCong pc) {
+    txtmaphancong.setText(pc.getMaPC());
+    txtmanhanvien.setText(pc.getMaNV());
+    txttenca.setText(pc.getTenCa());
+    txtgiobatdau.setText(pc.getGioBatDau().toString());
+    txtgioketthuc.setText(pc.getGioKetThuc().toString());
+    txtngaylam.setText(pc.getNgayLam().toString());
+    txthesoluong.setText(String.valueOf(pc.getHeSoLuong()));
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -269,12 +286,11 @@ public void loadDataToTable() {
 
     private void btnxoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaActionPerformed
         // TODO add your handling code here:
-         String maPC = txtmanhanvien.getText();
+ String maPC = txtmaphancong.getText();
     if (!maPC.isEmpty()) {
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn muốn xoá?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            boolean success = dao.delete(maPC);
-            if (success) {
+            if (dao.delete(maPC)) {
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");
                 loadDataToTable();
             } else {
@@ -282,27 +298,24 @@ public void loadDataToTable() {
             }
         }
     } else {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn phân công cần xóa!");
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã phân công!");
     }
 
     }//GEN-LAST:event_btnxoaActionPerformed
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
         // TODO add your handling code here:
-           String maPC = txtmanhanvien.getText();
-    if (!maPC.isEmpty()) {
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn muốn thêm?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            boolean success = dao.delete(maPC);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "thêm thành công!");
-                loadDataToTable();
-            } else {
-                JOptionPane.showMessageDialog(this, "thêm thất bại!");
-            }
+try {
+        PhanCong pc = getForm();
+        if (dao.insert(pc)) {
+            JOptionPane.showMessageDialog(this, "Thêm thành công");
+            loadDataToTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm thất bại");
         }
-    } else {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn phân công cần xóa!");
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi dữ liệu!");
     }
     }//GEN-LAST:event_btnthemActionPerformed
 
@@ -320,19 +333,29 @@ public void loadDataToTable() {
 
     private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
          // TODO add your handling code here:
+           try {
+        PhanCong pc = getForm();
+        if (dao.update(pc)) {
+            JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+            loadDataToTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật!");
+    }
     }//GEN-LAST:event_btnsuaActionPerformed
 
     private void tblphancaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblphancaMouseClicked
-   int row = tblphanca.getSelectedRow();
-        if (row >= 0) {
-            txtmanhanvien.setText(tblphanca.getValueAt(row, 0).toString());
-            txtmaphancong.setText(tblphanca.getValueAt(row, 1).toString());
-            txtgiobatdau.setText(tblphanca.getValueAt(row, 2).toString());
-     //       txtgiobd.setText(tblphanca.getValueAt(row, 3).toString());
-      //      txtgiokt.setText(tblphanca.getValueAt(row, 4).toString());
-            txttenca.setText(tblphanca.getValueAt(row, 5).toString());
-   //         txtheso.setText(tblphanca.getValueAt(row, 6).toString());
+ int row = tblphanca.getSelectedRow();
+    if (row >= 0) {
+        String maPC = tblphanca.getValueAt(row, 0).toString();
+        PhanCong pc = dao.findById(maPC);
+        if (pc != null) {
+            setForm(pc);
         }
+    }
            // TODO add your handling code here:
     }//GEN-LAST:event_tblphancaMouseClicked
 

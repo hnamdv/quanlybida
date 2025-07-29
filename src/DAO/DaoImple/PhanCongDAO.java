@@ -17,7 +17,7 @@ import java.util.List;
 public class PhanCongDAO {
     
     public boolean insert(PhanCong pc) {
-        String sql = "INSERT INTO phancong (MaPC, MaNV, TenPC, GioBatDau, GioKetThuc, NgayLam, HeSoLuong) VALUES (?, ?, ?, ?, ?, ?, ?)";
+         String sql = "INSERT INTO phancong (MaPC, MaNV, TenCa, GioBatDau, GioKetThuc, NgayLam, HeSoLuong) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (
             Connection conn = connect.openConnection();
             PreparedStatement ps = conn.prepareStatement(sql)
@@ -37,7 +37,7 @@ public class PhanCongDAO {
     }
 
     public boolean update(PhanCong pc) {
-        String sql = "UPDATE phancong SET MaNV=?, TenPC=?, GioBatDau=?, GioKetThuc=?, NgayLam=?, HeSoLuong=? WHERE MaPC=?";
+    String sql = "UPDATE phancong SET MaNV=?, TenCa=?, GioBatDau=?, GioKetThuc=?, NgayLam=?, HeSoLuong=? WHERE MaPC=?";
         try (
             Connection conn = connect.openConnection();
             PreparedStatement ps = conn.prepareStatement(sql)
