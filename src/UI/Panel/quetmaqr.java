@@ -18,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  *
@@ -75,6 +77,7 @@ public void run() {
                 PhanCong ca = pcDAO.getCaLam(maNV, now.toLocalDate());
 
           if (!isTrongThoiGianChoPhep_DB(moCa, now, ca)) {
+              
                     JOptionPane.showMessageDialog(this, "⏱ Không trong thời gian chấm công hợp lệ!");
                     Thread.sleep(3000); 
                     continue;
@@ -108,15 +111,28 @@ public void run() {
     LocalTime hienTai = now.toLocalTime();
     LocalTime gioVao = ca.getGioBatDau();
     LocalTime gioRa = ca.getGioKetThuc();
+    
+    System.out.println("---- Kiểm tra thời gian hợp lệ ----");
+System.out.println("DaMoCa: " + daMoCa);
+System.out.println("Hiện tại: " + hienTai);
+System.out.println("Giờ vào: " + gioVao);
+System.out.println("Giờ ra: " + gioRa);
+System.out.println("----------------------------------");
 
     if (!daMoCa) {
-        return !hienTai.isBefore(gioVao.minusMinutes(15)) && !hienTai.isAfter(gioVao);
+       
+        LocalTime startWindow = gioVao.minusMinutes(15);
+        LocalTime endWindow = gioVao.plusMinutes(5); 
+        return !hienTai.isBefore(startWindow) && !hienTai.isAfter(endWindow);
     } else {
-        return !hienTai.isBefore(gioRa) && !hienTai.isAfter(gioRa.plusMinutes(15));
+        LocalTime endWindow = gioRa.plusMinutes(30);
+        return !hienTai.isBefore(gioRa) && !hienTai.isAfter(endWindow);
     }
 }
-    private boolean daMoCa(String maNV) {
-      
+
+ ZonedDateTime zonedNow = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+LocalDateTime now = zonedNow.toLocalDateTime();
+    private boolean daMoCa(String maNV) {     
         return dao.daMoCa(maNV);
     }
 
