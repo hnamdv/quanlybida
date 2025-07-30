@@ -97,4 +97,27 @@ public class ChitiethoadonDao {
             e.printStackTrace();
         }
     }
+    public List<Chitiethoadon> getChiTietByMaHD(String maHD) {
+    List<Chitiethoadon> list = new ArrayList<>();
+    String sql = "SELECT * FROM CT_HOADON_DICHVU WHERE MaHD = ?";
+
+    try (Connection conn = connect.openConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, maHD);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Chitiethoadon ct = new Chitiethoadon();
+            ct.setMaHD(rs.getString("MaHD"));
+            ct.setMaDV(rs.getString("MaDV"));
+            ct.setSoLuong(rs.getInt("SoLuong"));
+            ct.setDonGia(rs.getDouble("DonGia")); // nếu cần
+            list.add(ct);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
 }

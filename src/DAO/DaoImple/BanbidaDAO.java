@@ -29,7 +29,6 @@ public class BanbidaDAO {
                 ban.setGiaTheoGio(rs.getDouble("GiaTheoGio"));
                 ban.setTuoiBan(rs.getInt("TuoiBan"));
                 ban.setGhiChu(rs.getString("GhiChu"));
-                System.out.println("Đã load: " + ban.getTenBan()); // 🟢 THÊM DÒNG NÀY
                 list.add(ban);
             }
         } catch (SQLException e) {

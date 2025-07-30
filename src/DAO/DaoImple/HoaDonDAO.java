@@ -228,4 +228,32 @@ public class HoaDonDAO {
 
     }
 
+    public Hoadon getHoaDonGanNhatByMaBan(String maBan) {
+    String sql = "SELECT * FROM hoadon WHERE MaBan = ? ORDER BY NgayTao DESC LIMIT 1";
+    try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, maBan);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return new Hoadon(
+                    rs.getString("MaHD"),
+                    rs.getString("MaNV"),
+                    rs.getString("MaBan"),
+                    rs.getTimestamp("ThoiGianBD"),
+                    rs.getTimestamp("ThoiGianKT"),
+                    rs.getDouble("TongTien"),
+                    rs.getString("TrangThai"),
+                    rs.getDate("NgayTao"),
+                    rs.getDouble("TienGio"),
+                    rs.getDouble("GiamGia"),
+                    rs.getDouble("TienDV"),
+                    rs.getString("GhiChu"),
+                    rs.getString("MaDV")
+            );
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
 }
