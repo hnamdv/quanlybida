@@ -63,6 +63,84 @@ private void phanQuyenTheoChucVu() {
     }
 }
 
+private void btnChamCongMouseClicked(java.awt.event.MouseEvent evt) {
+    // TODO: xử lý khi click chuột vào nút Chấm Công
+    card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new quetmaqr());
+}
+private void btnChamCongActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Chấm Công
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new quetmaqr());
+}
+
+private void btnDichVUActionPerformed(java.awt.event.ActionEvent evt) {
+       card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new phanca());
+}
+
+private void btnMenuMouseClicked(java.awt.event.MouseEvent evt) {
+    // TODO: xử lý khi click chuột vào nút Menu
+           card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new BanBidaPanel());
+}
+
+private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Menu
+}
+
+private void btnNhanVienActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Nhân Viên
+}
+
+private void btnQuenActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Quên Mật Khẩu
+}
+
+private void btnDangXUatActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Đăng Xuất
+}
+
+private void btnBookingActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Booking
+}
+
+private void btnDoanhThuActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Doanh Thu
+}
+
+private void btnChiTietHoaDonActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Chi Tiết Hóa Đơn
+}
+
+private void btnChiTietBookingActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút Chi Tiết Booking
+}
+
+private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm jButton11
+            card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new maqr());
+}
+
+private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
+    // TODO: xử lý khi bấm nút QR
+        card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new maqr());
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -76,21 +154,26 @@ private void phanQuyenTheoChucVu() {
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnChamCong = new javax.swing.JButton();
+        btnDichVU = new javax.swing.JButton();
+        btnMenu = new javax.swing.JButton();
+        btnNhanVien = new javax.swing.JButton();
+        btnQuen = new javax.swing.JButton();
+        btnDangXUat = new javax.swing.JButton();
+        btnBooking = new javax.swing.JButton();
         lblchucvu = new javax.swing.JLabel();
         lblmnv = new javax.swing.JLabel();
-        jButton8 = new javax.swing.JButton();
+        btnDoanhThu = new javax.swing.JButton();
         btntheme = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         panelSubDichVu = new javax.swing.JPanel();
         btnThucUong = new javax.swing.JButton();
         btnSuaChua = new javax.swing.JButton();
+        btnChiTietHoaDon = new javax.swing.JButton();
+        btnChiTietBooking = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
+        btnQR = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -109,71 +192,71 @@ private void phanQuyenTheoChucVu() {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("MSNV:");
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(51, 51, 51));
-        jButton1.setText("Chấm Công");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnChamCong.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnChamCong.setForeground(new java.awt.Color(51, 51, 51));
+        btnChamCong.setText(" Chấm Công");
+        btnChamCong.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                btnChamCongMouseClicked(evt);
             }
         });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnChamCong.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnChamCongActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(51, 51, 51));
-        jButton3.setText("Dịch Vụ");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnDichVU.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDichVU.setForeground(new java.awt.Color(51, 51, 51));
+        btnDichVU.setText("Dịch Vụ");
+        btnDichVU.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnDichVUActionPerformed(evt);
             }
         });
 
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton4.setText("Menu");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnMenu.setText("Menu");
+        btnMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton4MouseClicked(evt);
+                btnMenuMouseClicked(evt);
             }
         });
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setText("Nhân Viên");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnMenuActionPerformed(evt);
             }
         });
 
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton5.setText("Đổi mật khẩu");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnNhanVien.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNhanVien.setText("Nhân Viên");
+        btnNhanVien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnNhanVienActionPerformed(evt);
             }
         });
 
-        jButton6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton6.setText("Đăng xuất ");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnQuen.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnQuen.setText("Đổi mật khẩu");
+        btnQuen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnQuenActionPerformed(evt);
             }
         });
 
-        jButton7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton7.setText("Booking");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnDangXUat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDangXUat.setText("Đăng xuất ");
+        btnDangXUat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnDangXUatActionPerformed(evt);
+            }
+        });
+
+        btnBooking.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnBooking.setText("Booking");
+        btnBooking.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBookingActionPerformed(evt);
             }
         });
 
@@ -185,11 +268,11 @@ private void phanQuyenTheoChucVu() {
         lblmnv.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblmnv.setText("jLabel5");
 
-        jButton8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton8.setText("Lịch Sử");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        btnDoanhThu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDoanhThu.setText("Doanh Thu");
+        btnDoanhThu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                btnDoanhThuActionPerformed(evt);
             }
         });
 
@@ -206,6 +289,40 @@ private void phanQuyenTheoChucVu() {
 
         btnSuaChua.setText("   - Sửa chữa");
         panelSubDichVu.add(btnSuaChua);
+
+        btnChiTietHoaDon.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnChiTietHoaDon.setText("Chi Tiết Hóa Đơn");
+        btnChiTietHoaDon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChiTietHoaDonActionPerformed(evt);
+            }
+        });
+
+        btnChiTietBooking.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnChiTietBooking.setText("Chi Tiết Booking");
+        btnChiTietBooking.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChiTietBookingActionPerformed(evt);
+            }
+        });
+
+        jButton11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton11.setText("Sửa Chữa");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        btnQR.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnQR.setText("Mã QR ");
+        btnQR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnQRActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/đăng nhập.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -224,15 +341,19 @@ private void phanQuyenTheoChucVu() {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 22, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
-                            .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(btntheme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnDangXUat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnNhanVien, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnBooking, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(btnDichVU, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnChamCong, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDoanhThu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnQuen, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(btntheme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnChiTietHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnChiTietBooking, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(30, 30, 30))))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,6 +367,10 @@ private void phanQuyenTheoChucVu() {
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel4)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -255,7 +380,9 @@ private void phanQuyenTheoChucVu() {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(74, 74, 74)
+                .addGap(46, 46, 46)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel2)
@@ -266,23 +393,31 @@ private void phanQuyenTheoChucVu() {
                 .addGap(18, 18, 18)
                 .addComponent(lblmnv)
                 .addGap(28, 28, 28)
-                .addComponent(jButton1)
+                .addComponent(btnChamCong)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton3)
+                .addComponent(btnDichVU)
                 .addGap(18, 18, 18)
-                .addComponent(jButton7)
+                .addComponent(btnBooking)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(btnNhanVien)
                 .addGap(18, 18, 18)
-                .addComponent(jButton8)
+                .addComponent(btnDoanhThu)
                 .addGap(18, 18, 18)
-                .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 285, Short.MAX_VALUE)
+                .addComponent(btnQuen)
+                .addGap(45, 45, 45)
+                .addComponent(btnChiTietHoaDon)
+                .addGap(18, 18, 18)
+                .addComponent(btnChiTietBooking)
+                .addGap(18, 18, 18)
+                .addComponent(jButton11)
+                .addGap(18, 18, 18)
+                .addComponent(btnQR)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btntheme, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6)
+                .addComponent(btnDangXUat)
                 .addGap(63, 63, 63))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
@@ -298,7 +433,7 @@ private void phanQuyenTheoChucVu() {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(card, javax.swing.GroupLayout.DEFAULT_SIZE, 1325, Short.MAX_VALUE))
+                .addComponent(card, javax.swing.GroupLayout.DEFAULT_SIZE, 1299, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,21 +572,26 @@ private void phanQuyenTheoChucVu() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBooking;
+    private javax.swing.JButton btnChamCong;
+    private javax.swing.JButton btnChiTietBooking;
+    private javax.swing.JButton btnChiTietHoaDon;
+    private javax.swing.JButton btnDangXUat;
+    private javax.swing.JButton btnDichVU;
+    private javax.swing.JButton btnDoanhThu;
+    private javax.swing.JButton btnMenu;
+    private javax.swing.JButton btnNhanVien;
+    private javax.swing.JButton btnQR;
+    private javax.swing.JButton btnQuen;
     private javax.swing.JButton btnSuaChua;
     private javax.swing.JButton btnThucUong;
     private javax.swing.JButton btntheme;
     private javax.swing.JPanel card;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton11;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblchucvu;
     private javax.swing.JLabel lblmnv;

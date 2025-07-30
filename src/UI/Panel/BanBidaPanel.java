@@ -266,60 +266,6 @@ public class BanBidaPanel extends javax.swing.JPanel {
         }
     }
 
-    private void ketThucChoi() {
-        String maBan = currentMaBan;
-
-        if (maBan == null || maBan.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "❌ Chưa chọn bàn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        HoaDonDAO dao = new HoaDonDAO();
-        Hoadon hoadon = dao.getHoaDonDangMoByBan(maBan);
-
-        if (hoadon == null) {
-            JOptionPane.showMessageDialog(this, "❌ Không tìm thấy hóa đơn đang sử dụng cho bàn này!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Timestamp thoiGianBD = hoadon.getThoiGianBD();
-        if (thoiGianBD == null) {
-            JOptionPane.showMessageDialog(this, "❌ Hóa đơn chưa có thời gian bắt đầu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Timestamp thoiGianKT = new Timestamp(System.currentTimeMillis());
-        long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
-        long soPhut = Math.max(1, millis / (60 * 1000));
-
-        double donGia = 1000;
-        double tongTien = soPhut * donGia;
-        jLabel17.setText(String.format("%.1f", tongTien));
-        hoadon.setThoiGianKT(thoiGianKT);
-        hoadon.setTienGio(tongTien); // hoặc tính kỹ lại
-        hoadon.setTrangThai("ChuaThanhToan"); // ✅ Không để "Đã thanh toán" tại đây
-        dao.capNhatHoaDon(hoadon); // ✅ Cập nhật DB
-
-        this.hd = hoadon;
-        this.hoaDonTamThoi = hoadon;
-
-        boolean thanhCong = dao.capNhatHoaDon(hoadon);
-
-        if (thanhCong) {
-            // Trả bàn về trạng thái "Trong"
-            BanbidaDAO banDao = new BanbidaDAO();
-            banDao.capNhatTinhTrang(maBan, "Trong");
-            loadDanhSachBan();
-            JOptionPane.showMessageDialog(this, "✅ Kết thúc phiên chơi.\nTổng thời gian: " + soPhut + " phút\nTổng tiền: " + tongTien + " VND", "Hoàn tất", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "❌ Lỗi khi cập nhật hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-        Hoadon hd = hoadon;
-        Banbida bd = new BanbidaDAO().getByMaBan(maBan);
-        List<Dichvu> dsDV = new DichVuDAO().getDichVuByHoaDon(hd.getMaHD());
-
-    }
-
     private void batDauChoi() {
         HoaDonDAO hds = new HoaDonDAO();
         String maBan = currentMaBan;
@@ -572,6 +518,61 @@ private void loadDichVuVaoComboBox() {
         hoaDonDAO.capNhatThongTinDichVu(maHD, dvChon.getMaDV(), tienDV);
         jLabel21.setText(String.format("%.1f", tienDV)); // ✅ Hiển thị Tiền DV ra label
         JOptionPane.showMessageDialog(this, "✅ Đã thêm dịch vụ vào hóa đơn!");
+    }
+
+    private void ketThucChoi() {
+        String maBan = currentMaBan;
+        if (maBan == null || maBan.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "❌ Chưa chọn bàn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        HoaDonDAO dao = new HoaDonDAO();
+        Hoadon hoadon = dao.getHoaDonDangMoByBan(maBan);
+
+        if (hoadon == null) {
+            JOptionPane.showMessageDialog(this, "❌ Không tìm thấy hóa đơn đang sử dụng cho bàn này!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Timestamp thoiGianBD = hoadon.getThoiGianBD();
+        if (thoiGianBD == null) {
+            JOptionPane.showMessageDialog(this, "❌ Hóa đơn chưa có thời gian bắt đầu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Timestamp thoiGianKT = new Timestamp(System.currentTimeMillis());
+        long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
+        long soPhut = Math.max(1, millis / (60 * 1000));
+        Hoadon hd1 = new Hoadon();
+        double donGia = 1000;
+        double tongTien = soPhut * donGia;
+        double fulltien = tongTien + hd1.getTienDV();
+        jLabel17.setText(String.format("%.1f", tongTien));
+        hoadon.setThoiGianKT(thoiGianKT);
+        hoadon.setTienGio(tongTien); // hoặc tính kỹ lại
+        jLabel19.setText(String.format("%.1f", fulltien));
+        hoadon.setTrangThai("ChuaThanhToan"); // ✅ Không để "Đã thanh toán" tại đây
+        dao.capNhatHoaDon(hoadon); // ✅ Cập nhật DB
+
+        this.hd = hoadon;
+        this.hoaDonTamThoi = hoadon;
+
+        boolean thanhCong = dao.capNhatHoaDon(hoadon);
+
+        if (thanhCong) {
+            // Trả bàn về trạng thái "Trong"
+            BanbidaDAO banDao = new BanbidaDAO();
+            banDao.capNhatTinhTrang(maBan, "Trong");
+            loadDanhSachBan();
+            JOptionPane.showMessageDialog(this, "✅ Kết thúc phiên chơi.\nTổng thời gian: " + soPhut + " phút\nTổng tiền: " + tongTien + " VND", "Hoàn tất", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "❌ Lỗi khi cập nhật hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        Hoadon hd = hoadon;
+        Banbida bd = new BanbidaDAO().getByMaBan(maBan);
+        List<Dichvu> dsDV = new DichVuDAO().getDichVuByHoaDon(hd.getMaHD());
+
     }
 
     ///
@@ -1133,7 +1134,7 @@ private void loadDichVuVaoComboBox() {
 
         String maBan = currentMaBan;
         HoaDonDAO dao = new HoaDonDAO();
-        Hoadon hoadon = dao.getHoaDonByMaHD(currentMaBan); // hoặc getHoaDonDangMoByBan(maBan)
+        Hoadon hoadon = dao.getHoaDonDangMoByBan(maBan);// hoặc getHoaDonDangMoByBan(maBan)
         if (hoadon == null) {
             JOptionPane.showMessageDialog(this, "❌ Không tìm thấy hóa đơn để in!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
