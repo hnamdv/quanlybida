@@ -103,7 +103,7 @@ public void run() {
     }
 } else {
     if (dao.insertChamCong(maNV, timestamp)) {
-        playSound("sounds/ChamCong.wav"); 
+        playSound("img/ChamCong.wav"); 
         JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
     } else {
         JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
