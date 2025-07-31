@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import javax.sound.sampled.*;
+import java.io.File;
 
 /**
  *
@@ -47,7 +49,16 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
         thread = new Thread(this);
         thread.start();
     }
-
+public void playSound(String filePath) {
+    try {
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
+        clip.start();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 @Override
 public void run() {
     while (true) {
@@ -83,19 +94,21 @@ public void run() {
                     continue;
                 }
 
-                if (moCa) {
-                    if (dao.updateGioRa(maNV, timestamp)) {
-                        JOptionPane.showMessageDialog(this, "✅ Kết ca: " + maNV);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "❌ Không thể kết ca.");
-                    }
-                } else {
-                    if (dao.insertChamCong(maNV, timestamp)) {
-                        JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
-                    }
-                }
+            if (moCa) {
+    if (dao.updateGioRa(maNV, timestamp)) {
+        playSound("img/ChamCongRa.wav");
+        JOptionPane.showMessageDialog(this, "✅ Kết ca: " + maNV);
+    } else {
+        JOptionPane.showMessageDialog(this, "❌ Không thể kết ca.");
+    }
+} else {
+    if (dao.insertChamCong(maNV, timestamp)) {
+        playSound("sounds/ChamCong.wav"); 
+        JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
+    } else {
+        JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
+    }
+}
 
                 Thread.sleep(30000);
             }
