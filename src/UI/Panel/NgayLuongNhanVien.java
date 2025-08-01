@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -46,6 +47,7 @@ public class NgayLuongNhanVien extends javax.swing.JFrame {
     String[] columnNames = {"Mã NV", "Họ tên", "Khoảng thời gian", "Số ngày công", "Lương"};
 DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 tbl.setModel(model);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     initComboBoxThangNam();
     loadDuLieuChamCong();
@@ -155,6 +157,8 @@ for (int i = 1; i <= 12; i++) {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        rdngay.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        rdngay.setForeground(new java.awt.Color(0, 102, 102));
         rdngay.setText("Ngày");
         rdngay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,13 +167,15 @@ for (int i = 1; i <= 12; i++) {
         });
         jPanel1.add(rdngay, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 98, -1));
 
+        rdthang.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        rdthang.setForeground(new java.awt.Color(0, 102, 102));
         rdthang.setText("Tháng");
         rdthang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rdthangActionPerformed(evt);
             }
         });
-        jPanel1.add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 120, 98, -1));
+        jPanel1.add(rdthang, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 130, 98, -1));
         jPanel1.add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 170, 235, -1));
 
         cbbnam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));

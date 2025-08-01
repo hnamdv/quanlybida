@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.time.Year;
+import javax.swing.JFrame;
   
 /**
  *
@@ -32,6 +33,14 @@ DefaultTableModel model;
         initComponents();
          initThangNam();
            phanQuyenTheoChucVu();
+               setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+               tbl.setModel(new javax.swing.table.DefaultTableModel(
+    new Object [][] {},
+    new String [] {
+        "Mã Chấm Công", "Mã NV", "Giờ Vào", "Giờ Ra"
+    }
+));
+
     }
     
 private void initThangNam() {
@@ -53,7 +62,6 @@ private void initThangNam() {
 
     private void phanQuyenTheoChucVu() {
         if (!phanquyen.check()) { 
-            btnsua.setEnabled(false);
             btnxoa.setEnabled(false);
             txtmanv.setEditable(false);
             txtmc.setEditable(false);
@@ -70,20 +78,20 @@ private void initThangNam() {
         }
     }
 
-    private void loadAllChamCongTheoThangNam() {
-        int thang = (int) cbothang.getSelectedItem();
-        int nam = (int) cbonam.getSelectedItem();
-        List<chamcong> list = dao.findAllByThangNam(thang, nam);
-        fillTable(list);
-    }
+   private void loadAllChamCongTheoThangNam() {
+    int thang = Integer.parseInt(cbothang.getSelectedItem().toString());
+    int nam = Integer.parseInt(cbonam.getSelectedItem().toString());
+    List<chamcong> list = dao.findAllByThangNam(thang, nam);
+    fillTable(list);
+}
+private void loadLichSuNhanVienTheoThangNam() {
+    String maNV = phanquyen.user.getMaNV();
+    int thang = Integer.parseInt(cbothang.getSelectedItem().toString());
+    int nam = Integer.parseInt(cbonam.getSelectedItem().toString());
+    List<chamcong> list = dao.findByMaNV_ThangNam(maNV, thang, nam);
+    fillTable(list);
+}
 
-    private void loadLichSuNhanVienTheoThangNam() {
-        String maNV = phanquyen.user.getMaNV();
-        int thang = (int) cbothang.getSelectedItem();
-        int nam = (int) cbonam.getSelectedItem();
-        List<chamcong> list = dao.findByMaNV_ThangNam(maNV, thang, nam);
-        fillTable(list);
-    }
 
     private void fillTable(List<chamcong> list) {
         DefaultTableModel model = (DefaultTableModel) tbl.getModel();
@@ -101,8 +109,7 @@ private void initThangNam() {
      String maCC = tbl.getValueAt(row, 0).toString();
     String maNV = tbl.getValueAt(row, 1).toString();
     String gioVao = tbl.getValueAt(row, 2).toString();
-    String gioRa = tbl.getValueAt(row, 3) == null ? "" : tbl.getValueAt(row, 3).toString();
-
+    String gioRa = tbl.getValueAt(row, 3).toString();
     txtmc.setText(maCC);
     txtmanv.setText(maNV);
         
@@ -117,7 +124,6 @@ private void initThangNam() {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        btnsua = new javax.swing.JButton();
         btnxoa = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
@@ -136,15 +142,6 @@ private void initThangNam() {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        btnsua.setBackground(new java.awt.Color(0, 102, 102));
-        btnsua.setForeground(new java.awt.Color(255, 255, 255));
-        btnsua.setText("Sửa");
-        btnsua.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnsuaActionPerformed(evt);
-            }
-        });
 
         btnxoa.setBackground(new java.awt.Color(0, 102, 102));
         btnxoa.setForeground(new java.awt.Color(255, 255, 255));
@@ -176,6 +173,11 @@ private void initThangNam() {
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Load");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(0, 153, 153));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -189,10 +191,10 @@ private void initThangNam() {
         jLabel3.setText("MaChamCong");
 
         jLabel4.setForeground(new java.awt.Color(0, 102, 102));
-        jLabel4.setText("GioVao");
+        jLabel4.setText("Tháng");
 
         jLabel5.setForeground(new java.awt.Color(0, 102, 102));
-        jLabel5.setText("Giờ Ra");
+        jLabel5.setText("Năm");
 
         cbothang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -207,9 +209,7 @@ private void initThangNam() {
                 .addComponent(btnxoa)
                 .addGap(27, 27, 27)
                 .addComponent(jButton1)
-                .addGap(20, 20, 20)
-                .addComponent(btnsua)
-                .addGap(39, 39, 39))
+                .addGap(131, 131, 131))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE))
@@ -260,7 +260,6 @@ private void initThangNam() {
                 .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnxoa)
-                    .addComponent(btnsua)
                     .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -298,9 +297,10 @@ phanQuyenTheoChucVu();
 }
     }//GEN-LAST:event_btnxoaActionPerformed
 
-    private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnsuaActionPerformed
+       loadTheoPhanQuyen();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -338,7 +338,6 @@ phanQuyenTheoChucVu();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnsua;
     private javax.swing.JButton btnxoa;
     private javax.swing.JComboBox<String> cbonam;
     private javax.swing.JComboBox<String> cbothang;

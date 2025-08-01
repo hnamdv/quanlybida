@@ -8,6 +8,7 @@ import DAO.DaoImple.NhanVienDAOIMPL;
 import LuongService.Mail;
 import LuongService.OTP;
 import LuongService.Xstr;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,6 +22,7 @@ public class quenmatkhau extends javax.swing.JFrame {
      */
     public quenmatkhau() {
         initComponents();
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 private String maXacNhan;
     /**
@@ -40,6 +42,7 @@ private String maXacNhan;
         txtmk = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
         btnGuiMa = new javax.swing.JButton();
         txtMaXacNhan = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -52,30 +55,30 @@ private String maXacNhan;
         jLabel1.setForeground(new java.awt.Color(0, 102, 102));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Quên Mật Khẩu");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 220, 40));
-        getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 190, 300, 40));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 60, 220, 40));
+        getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 190, 300, 40));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Email");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 160, 100, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 160, 100, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Mật Khẩu");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 340, 70, 20));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 340, 70, 20));
 
         cbmat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbmatActionPerformed(evt);
             }
         });
-        getContentPane().add(cbmat, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 380, -1, -1));
+        getContentPane().add(cbmat, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 380, -1, -1));
 
         txtmk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtmkActionPerformed(evt);
             }
         });
-        getContentPane().add(txtmk, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 370, 300, 40));
+        getContentPane().add(txtmk, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 370, 300, 40));
 
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
@@ -89,18 +92,26 @@ private String maXacNhan;
 
         jPanel2.setBackground(new java.awt.Color(0, 102, 102));
 
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/đăng nhập.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 460, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(144, 144, 144)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(133, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 500, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(178, 178, 178)
+                .addComponent(jLabel5)
+                .addContainerGap(189, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 500));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 500));
 
         btnGuiMa.setText("Gửi Mã");
         btnGuiMa.addActionListener(new java.awt.event.ActionListener() {
@@ -108,11 +119,11 @@ private String maXacNhan;
                 btnGuiMaActionPerformed(evt);
             }
         });
-        getContentPane().add(btnGuiMa, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 230, 90, 20));
-        getContentPane().add(txtMaXacNhan, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 280, 300, 40));
+        getContentPane().add(btnGuiMa, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 230, 90, 20));
+        getContentPane().add(txtMaXacNhan, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 280, 300, 40));
 
         jLabel4.setText("Nhập Mã");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 260, -1, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 260, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -220,6 +231,7 @@ if (guiThanhCong) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtMaXacNhan;

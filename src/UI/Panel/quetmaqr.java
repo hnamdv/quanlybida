@@ -22,6 +22,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import javax.sound.sampled.*;
 import java.io.File;
+import java.io.InputStream;
+import java.time.LocalDate;
 
 /**
  *
@@ -49,11 +51,17 @@ public class quetmaqr extends javax.swing.JPanel implements Runnable {
         thread = new Thread(this);
         thread.start();
     }
-public void playSound(String filePath) {
+
+public void playSound(String fileName) {
     try {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+        InputStream audioSrc = getClass().getResourceAsStream("/img/" + fileName);
+        if (audioSrc == null) {
+            System.out.println("❌ Không tìm thấy file: " + fileName);
+            return;
+        }
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioSrc);
         Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
+        clip.open(audioStream);
         clip.start();
     } catch (Exception e) {
         e.printStackTrace();
@@ -81,72 +89,85 @@ public void run() {
                         maNV = parts[1];
                     }
                 }
-                LocalDateTime now = LocalDateTime.now();
-                Timestamp timestamp = Timestamp.valueOf(now);
-                boolean moCa = daMoCa(maNV);
-                   PhanCongDAO pcDAO = new PhanCongDAO();
-                PhanCong ca = pcDAO.getCaLam(maNV, now.toLocalDate());
+LocalDateTime now = LocalDateTime.now();
+Timestamp timestamp = Timestamp.valueOf(now);
+PhanCongDAO pcDAO = new PhanCongDAO();
+PhanCong ca = pcDAO.getCaLam(maNV, now.toLocalDate(), now.toLocalTime());
+System.out.println("Đang kiểm tra ca làm của: " + maNV);
+System.out.println("Ngày: " + now.toLocalDate());
+System.out.println("Giờ hiện tại: " + now.toLocalTime());
 
-          if (!isTrongThoiGianChoPhep_DB(moCa, now, ca)) {
-              
-                    JOptionPane.showMessageDialog(this, "⏱ Không trong thời gian chấm công hợp lệ!");
-                    Thread.sleep(3000); 
+                if (ca == null) {
+                    JOptionPane.showMessageDialog(null, "❌ Không tìm thấy ca làm hôm nay.");
+                    Thread.sleep(3000);
                     continue;
                 }
 
-            if (moCa) {
-    if (dao.updateGioRa(maNV, timestamp)) {
-        playSound("img/ChamCongRa.wav");
-        JOptionPane.showMessageDialog(this, "✅ Kết ca: " + maNV);
-    } else {
-        JOptionPane.showMessageDialog(this, "❌ Không thể kết ca.");
-    }
-} else {
-    if (dao.insertChamCong(maNV, timestamp)) {
-        playSound("img/ChamCong.wav"); 
-        JOptionPane.showMessageDialog(this, "✅ Bắt đầu ca: " + maNV);
-    } else {
-        JOptionPane.showMessageDialog(this, "❌ Không thể chấm công.");
-    }
-}
+                String maPC = ca.getMaPC();
+                boolean moCa = dao.daMoCa(maNV, maPC);
+
+                if (!isTrongThoiGianChoPhep_DB(moCa, now, ca)) {
+                    JOptionPane.showMessageDialog(null, "⏱ Không trong thời gian chấm công hợp lệ!");
+                    Thread.sleep(3000);
+                    continue;
+                }
+
+                if (moCa) {
+                    if (dao.updateGioRa(maNV, timestamp)) {
+                        playSound("ChamCongRa.wav");
+                        JOptionPane.showMessageDialog(null, "✅ Kết ca: " + maNV);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Không thể kết ca.");
+                    }
+                } else {
+                    if (dao.insertChamCong(maNV, maPC, timestamp)) {
+                        playSound("ChamCong.wav");
+                        JOptionPane.showMessageDialog(null, "✅ Bắt đầu ca: " + maNV);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "❌ Không thể chấm công.");
+                    }
+                }
 
                 Thread.sleep(30000);
             }
         } catch (NotFoundException e) {
-           
+            // Không quét được QR, không làm gì
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
- private boolean isTrongThoiGianChoPhep_DB(boolean daMoCa, LocalDateTime now, PhanCong ca) {
+private boolean isTrongThoiGianChoPhep_DB(boolean daMoCa, LocalDateTime now, PhanCong ca) {
     if (ca == null) return false;
+
     LocalTime hienTai = now.toLocalTime();
     LocalTime gioVao = ca.getGioBatDau();
     LocalTime gioRa = ca.getGioKetThuc();
-    
+
     System.out.println("---- Kiểm tra thời gian hợp lệ ----");
-System.out.println("DaMoCa: " + daMoCa);
-System.out.println("Hiện tại: " + hienTai);
-System.out.println("Giờ vào: " + gioVao);
-System.out.println("Giờ ra: " + gioRa);
-System.out.println("----------------------------------");
+    System.out.println("DaMoCa: " + daMoCa);
+    System.out.println("Hiện tại: " + hienTai);
+    System.out.println("Giờ vào: " + gioVao);
+    System.out.println("Giờ ra: " + gioRa);
+    System.out.println("----------------------------------");
 
     if (!daMoCa) {
-       
-        LocalTime startWindow = gioVao.minusMinutes(15);
-        LocalTime endWindow = gioVao.plusMinutes(5); 
+        
+        LocalTime startWindow = gioVao.minusMinutes(30);
+        LocalTime endWindow = gioVao.plusMinutes(10);
         return !hienTai.isBefore(startWindow) && !hienTai.isAfter(endWindow);
     } else {
+        
         LocalTime endWindow = gioRa.plusMinutes(30);
         return !hienTai.isBefore(gioRa) && !hienTai.isAfter(endWindow);
     }
 }
 
+
  ZonedDateTime zonedNow = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
 LocalDateTime now = zonedNow.toLocalDateTime();
     private boolean daMoCa(String maNV) {     
-        return dao.daMoCa(maNV);
+        return dao.daMoCa(maNV, maNV);
     }
 
     /**

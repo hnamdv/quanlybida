@@ -1234,7 +1234,7 @@ private void loadDichVuVaoComboBox() {
         BanbidaDAO banDao = new BanbidaDAO();
         Banbida bd = banDao.getByMaBan(maBan);
 
-        String pdfPath = "C:\\Users\\HP\\OneDrive\\Documents\\hoadon" + hoadon + ".pdf";
+        String pdfPath = "C:\\Users\\ASUS\\OneDrive\\Documents\\NetBeansProjects" + hoadon + ".pdf";
         // Cân nhắc một đường dẫn mạnh mẽ hơn:
         // String userHome = System.getProperty("user.home");
         // String pdfPath = userHome + File.separator + "Documents" + File.separator + "hoadon_" + hoadon.getMaHD() + ".pdf";

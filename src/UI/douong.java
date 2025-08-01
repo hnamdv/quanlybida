@@ -7,6 +7,7 @@ package UI;
 import DAO.DaoImple.DichVuDAO;
 import MODEl.Dichvu;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,7 +22,7 @@ public class douong extends javax.swing.JFrame {
      */
     public douong() {
         initComponents();
-        
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         loadTable();
     }
     DichVuDAO dvDao = new DichVuDAO(); // Khởi tạo DAO

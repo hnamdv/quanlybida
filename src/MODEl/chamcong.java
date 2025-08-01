@@ -44,18 +44,28 @@ public class chamcong {
         this.gioRa = gioRa;
     }
 
-    public chamcong(int maCC, String maNV, Date gioVao, Date gioRa) {
+
+    public chamcong() {
+    }
+
+    public chamcong(int maCC, String maNV, Date gioVao, Date gioRa, String MaPC) {
         this.maCC = maCC;
         this.maNV = maNV;
         this.gioVao = gioVao;
         this.gioRa = gioRa;
+        this.MaPC = MaPC;
     }
 
-    public chamcong() {
+    public String getMaPC() {
+        return MaPC;
+    }
+
+    public void setMaPC(String MaPC) {
+        this.MaPC = MaPC;
     }
       private int maCC;
     private String maNV;
     private Date gioVao;
     private Date gioRa;
-
+    private String MaPC ;
 }

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import javax.swing.JFrame;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 /**
@@ -24,6 +25,7 @@ public class ThuCong extends javax.swing.JFrame {
      */
     public ThuCong() {
         initComponents();
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
    public Timestamp parseTimestampFromText(JTextField txtField) {
@@ -44,12 +46,12 @@ public void chamCongThuCong() {
     String maNV = phanquyen.user.getMaNV();
     chamcongdao dao = new chamcongdao();
 
-    if (dao.daChamCongHomNay(maNV)) {
-        JOptionPane.showMessageDialog(this, "Bạn đã chấm công hôm nay.");
-        return;
-    }
+  //  if (dao.daChamCongHomNay(maNV)) {
+    //    JOptionPane.showMessageDialog(this, "Bạn đã chấm công hôm nay.");
+    //    return;
+  //  }
 
-    boolean ok = dao.insertChamCong(maNV, gioVao);
+    boolean ok = dao.insertChamCongThuCong(maNV, gioVao, gioRa, maNV);
 
     if (ok) {
         JOptionPane.showMessageDialog(this, "Chấm công thành công.");
@@ -79,6 +81,7 @@ public void chamCongThuCong() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 153, 153));
+        setPreferredSize(new java.awt.Dimension(800, 500));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 102));
@@ -86,6 +89,11 @@ public void chamCongThuCong() {
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Chấm Công");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -125,7 +133,7 @@ public void chamCongThuCong() {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(114, 114, 114)
+                .addGap(156, 156, 156)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(txtgiovao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -135,13 +143,18 @@ public void chamCongThuCong() {
                 .addComponent(txtgiara, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(53, 53, 53)
                 .addComponent(jButton1)
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 890, 560));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        chamCongThuCong();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

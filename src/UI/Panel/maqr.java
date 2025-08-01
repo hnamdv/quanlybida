@@ -17,7 +17,6 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import img.anh;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -55,7 +54,6 @@ public class maqr extends javax.swing.JPanel {
     jPanelQR.setPreferredSize(new Dimension(300, 300));
     jPanelQR.setBorder(BorderFactory.createTitledBorder("Mã QR Chấm Công")); 
 
-    anh.startServer();
 
     
     SwingUtilities.invokeLater(() -> {
@@ -257,14 +255,16 @@ public class maqr extends javax.swing.JPanel {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
                            
         NgayLuongNhanVien form = new NgayLuongNhanVien();
+        form.setLocationRelativeTo(this);   
 form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
                                                                                                      // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-                           lichsu form = new lichsu();
-form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
-                   // TODO add your handling code here:
+     lichsu form = new lichsu();
+form.setLocationRelativeTo(this); // căn giữa nếu muốn
+form.setVisible(true); // ✅ Không ẩn hoặc đóng form chính
+      // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnsaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsaveActionPerformed
@@ -275,9 +275,10 @@ form.setVisible(true); // Lúc này cửa sổ form sẽ bật lên
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-                                
-        ThuCong form = new ThuCong();
-form.setVisible(true);
+     ThuCong form = new ThuCong();
+form.setLocationRelativeTo(this); // căn giữa nếu muốn
+form.setVisible(true); // ✅ Không ẩn hoặc đóng form chính
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
 

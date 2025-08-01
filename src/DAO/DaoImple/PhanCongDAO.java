@@ -7,6 +7,7 @@ import MODEl.PhanCong;
 import XJDBC.connect;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class PhanCongDAO {
                 return new PhanCong(
                     rs.getString("MaPC"),
                     rs.getString("MaNV"),
-                    rs.getString("TenPC"),
+                    rs.getString("TenCa"),
                     rs.getTime("GioBatDau").toLocalTime(),
                     rs.getTime("GioKetThuc").toLocalTime(),
                     rs.getDate("NgayLam").toLocalDate(),
@@ -107,7 +108,7 @@ public class PhanCongDAO {
                 PhanCong pc = new PhanCong(
                     rs.getString("MaPC"),
                     rs.getString("MaNV"),
-                    rs.getString("TenPC"),
+                    rs.getString("TenCa"),
                     rs.getTime("GioBatDau").toLocalTime(),
                     rs.getTime("GioKetThuc").toLocalTime(),
                     rs.getDate("NgayLam").toLocalDate(),
@@ -145,25 +146,52 @@ public class PhanCongDAO {
     }
     return null;
 }
-  public PhanCong getCaLam(String maNV, LocalDate ngay) {
+    public PhanCong getCaLam(String maNV, LocalDate ngay, LocalTime gioHienTai) {
     PhanCong pc = null;
-    String sql = "SELECT GioBatDau, GioKetThuc FROM PhanCong WHERE MaNV = ? AND NgayLam = ?";
+    String sql = """
+        SELECT * FROM PhanCong 
+        WHERE MaNV = ? 
+          AND NgayLam = ? 
+          AND (? BETWEEN DATE_SUB(GioBatDau, INTERVAL 30 MINUTE) 
+                    AND DATE_ADD(GioKetThuc, INTERVAL 30 MINUTE))
+    """;
+
     try (
         Connection conn = connect.openConnection();
         PreparedStatement ps = conn.prepareStatement(sql)
     ) {
         ps.setString(1, maNV);
         ps.setDate(2, Date.valueOf(ngay));
+        ps.setTime(3, Time.valueOf(gioHienTai));
+
         ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            pc = new PhanCong();
-            pc.setMaNV(maNV);
-            pc.setGioBatDau(rs.getTime("GioBatDau").toLocalTime());
-            pc.setGioKetThuc(rs.getTime("GioKetThuc").toLocalTime());
+        while (rs.next()) {
+       
+            LocalTime gioBD = rs.getTime("GioBatDau").toLocalTime();
+            LocalTime gioKT = rs.getTime("GioKetThuc").toLocalTime();
+
+            boolean trongThoiGianVao = !gioHienTai.isBefore(gioBD.minusMinutes(30)) &&
+                                       !gioHienTai.isAfter(gioBD.plusMinutes(10));
+
+            boolean trongThoiGianRa = !gioHienTai.isBefore(gioKT) &&
+                                      !gioHienTai.isAfter(gioKT.plusMinutes(30));
+
+            if (trongThoiGianVao || trongThoiGianRa) {
+                pc = new PhanCong();
+                pc.setMaPC(rs.getString("MaPC"));
+                pc.setMaNV(rs.getString("MaNV"));
+                pc.setTenCa(rs.getString("TenCa"));
+                pc.setGioBatDau(gioBD);
+                pc.setGioKetThuc(gioKT);
+                pc.setNgayLam(rs.getDate("NgayLam").toLocalDate());
+                pc.setHeSoLuong(rs.getDouble("HeSoLuong"));
+                break;
+            }
         }
     } catch (Exception e) {
         e.printStackTrace();
     }
+
     return pc;
 }
 
