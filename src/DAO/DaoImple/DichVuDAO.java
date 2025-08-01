@@ -145,5 +145,21 @@ public class DichVuDAO {
         }
         return null;
     }
+public List<Dichvu> selectAll() {
+    List<Dichvu> list = new ArrayList<>();
+    String sql = "SELECT * FROM DICHVU";
+    try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            Dichvu dv = new Dichvu();
+            dv.setMaDV(rs.getString("MaDV"));
+            dv.setTenDV(rs.getString("TenDV"));
+            dv.setDonGia(rs.getDouble("DonGia"));
+            list.add(dv);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
 }

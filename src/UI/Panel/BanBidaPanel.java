@@ -13,6 +13,11 @@ import MODEl.Dichvu;
 import MODEl.Hoadon;
 import MODEl.Loaiban;
 import Xauth.phanquyen;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.itextpdf.text.BaseColor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
@@ -23,12 +28,24 @@ import java.awt.GridLayout;
 import java.sql.Timestamp;
 import javax.swing.table.DefaultTableModel;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.sun.mail.imap.ACL;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.sql.Date;
 import java.io.FileOutputStream;
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
 import javax.swing.JTextArea;
 
 /**
@@ -205,7 +222,7 @@ private String layThoiGianHienTai() {
 
         // Kiểm tra hóa đơn đang mở
         HoaDonDAO hdDAO = new HoaDonDAO();
-        Hoadon hd = hdDAO.getHoaDonDangMoByBan(maBan);
+        Hoadon hd = hdDAO.getHoaDonDangMoByBan(currentMaBan);
 
         if (tinhTrang.equalsIgnoreCase("Trong") && hd == null) {
             // ✅ Bàn đang trống và chưa có hóa đơn → tạo mới
@@ -286,14 +303,16 @@ private String layThoiGianHienTai() {
         Timestamp gioBD = new Timestamp(System.currentTimeMillis());
         String maNV = phanquyen.user.getMaNV();
         String thoiGianBD = layThoiGianHienTai();
-        jTextField1.setText(new SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(thoiGianBD));
+        jTextField1.setText(thoiGianBD);  // Không cần format lại nữa
         Hoadon hoadonMoi = new Hoadon(
-                maHD, maNV, maBan, gioBD, null, 0.0, "Chưa thanh toán",
+                maHD, maNV, maBan, gioBD, null, 0.0, "ChuaThanhToan",
                 new Date(System.currentTimeMillis()), 0.0, 0.0, 0.0, "", null
         );
-
+        jButton1.setEnabled(false);
+        jButton2.setEnabled(true);
+        jButton16.setEnabled(false);
         // Lưu hóa đơn trước
-        if (hds.themHoaDon(hoadonMoi)) {
+        if (hds.insert(hoadonMoi)) {
             banDao.capNhatTinhTrang(maBan, "DangSuDung");
             hoaDonTamThoi = hoadonMoi; // ✅ Gán lại cho toàn cục
             JOptionPane.showMessageDialog(this, "✅ Bắt đầu tính giờ cho bàn " + maBan);
@@ -378,7 +397,9 @@ private String layThoiGianHienTai() {
             jTextField4.setText("");
 
             loadDanhSachBan();
-
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(false);
+            jButton16.setEnabled(true);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "❌ Lỗi khi thanh toán: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -409,79 +430,133 @@ private void loadDichVuVaoComboBox() {
         }
     }
 
-    public String taoBillBida(Hoadon hd, Banbida bd, List<Dichvu> danhSachDV, List<Chitiethoadon> chiTietList, JTextArea txtaBill, String pdfPath) {
-        if (hd == null || bd == null) {
-            return "❌ Không thể tạo bill, dữ liệu hóa đơn hoặc bàn bị null!";
+    public String taoBillBida(JTextArea txtaBill, String pdfPath) {
+        HoaDonDAO hoaDonDAO = new HoaDonDAO();
+        BanbidaDAO banBidaDAO = new BanbidaDAO();
+        ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
+        DichVuDAO dichVuDAO = new DichVuDAO();
+        hd = hoaDonTamThoi;
+
+        String maBan = currentMaBan;
+        Hoadon hd = hoaDonDAO.getHoaDonDangMoByBan(maBan);
+        if (hd == null) {
+            return "❌ Không tìm thấy hóa đơn đang mở cho bàn " + currentMaBan + "!";
         }
 
+        Banbida bd = banBidaDAO.getByMaBan(currentMaBan);
+        if (bd == null) {
+            return "❌ Không tìm thấy thông tin bàn!";
+        }
+
+        List<Chitiethoadon> chiTietList = chiTietDAO.getChiTietByMaHD(hd.getMaHD());
         if (hd.getThoiGianKT() == null || hd.getThoiGianBD() == null) {
-            return "❌ Không thể tạo bill, thời gian bắt đầu hoặc kết thúc bị thiếu!";
+            return "❌ Hóa đơn chưa kết thúc!";
         }
 
+        // === Tính tiền giờ ===
         long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
+        long soPhut = TimeUnit.MILLISECONDS.toMinutes(millis);
+        double tienGio = soPhut * (bd.getGiaTheoGio() / 60.0);
 
-        double gio = millis / (1000.0 * 60 * 60);
-        double tienGio = gio * bd.getGiaTheoGio();
+        // === Tính tiền dịch vụ ===
+        double tongDV = 0;
+        for (Chitiethoadon ct : chiTietList) {
+            Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
+            if (dv != null && ct.getSoLuong() > 0) {
+                tongDV += dv.getDonGia() * ct.getSoLuong();
+            }
+        }
 
+        // === Tổng cộng ===
+        double tongTien = tienGio + tongDV - hd.getGiamGia();
+        hd.setTienDV(tongDV);
+        hd.setTongTien(tongTien);
+
+        // === Định dạng tiền tệ ===
+        DecimalFormat df = new DecimalFormat("#,##0");
+
+        // === Chuỗi hóa đơn hiển thị ===
         StringBuilder sb = new StringBuilder();
         sb.append("======= HÓA ĐƠN BIDA =======\n");
         sb.append("Mã HĐ: ").append(hd.getMaHD()).append("\n");
         sb.append("Bàn: ").append(bd.getTenBan()).append(" (").append(bd.getMaLoaiBan()).append(")\n");
         sb.append("Thời gian: ").append(hd.getThoiGianBD()).append(" -> ").append(hd.getThoiGianKT()).append("\n");
-        sb.append(String.format("Tổng thời gian: %.2f giờ\n", gio));
-        sb.append(String.format("Đơn giá: %.0f VND/giờ\n", bd.getGiaTheoGio()));
-        sb.append(String.format("Tiền giờ: %.0f VND\n", tienGio));
+        sb.append(String.format("Tổng thời gian: %d phút\n", soPhut));
+        sb.append(String.format("Đơn giá: %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
+        sb.append(String.format("Tiền giờ: %s VND\n", df.format(tienGio)));
 
-        double tongDV = 0;
-        if (danhSachDV != null && chiTietList != null && !danhSachDV.isEmpty()) {
+        // === Dịch vụ ===
+        if (tongDV > 0) {
             sb.append("\n--- DỊCH VỤ ---\n");
-            for (Dichvu dv : danhSachDV) {
-                int soLuong = 0;
-
-                for (Chitiethoadon ct : chiTietList) {
-                    if (ct.getMaDV().equals(dv.getMaDV())) {
-                        soLuong = ct.getSoLuong();
-                        break;
-                    }
+            for (Chitiethoadon ct : chiTietList) {
+                Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
+                if (dv != null && ct.getSoLuong() > 0) {
+                    double thanhTien = dv.getDonGia() * ct.getSoLuong();
+                    sb.append(dv.getTenDV())
+                            .append(" x").append(ct.getSoLuong())
+                            .append(" = ").append(df.format(thanhTien)).append(" VND\n");
                 }
-
-                double thanhTien = dv.getDonGia() * soLuong;
-                tongDV += thanhTien;
-
-                sb.append(dv.getTenDV())
-                        .append(" x").append(soLuong)
-                        .append(" = ").append(String.format("%.0f VND\n", thanhTien));
             }
-            sb.append(String.format("Tổng dịch vụ: %.0f VND\n", tongDV));
+            sb.append(String.format("Tổng dịch vụ: %s VND\n", df.format(tongDV)));
         }
 
-        sb.append(String.format("Giảm giá: %.0f VND\n", hd.getGiamGia()));
+        sb.append(String.format("Giảm giá: %s VND\n", df.format(hd.getGiamGia())));
         sb.append("----------------------------\n");
-        sb.append(String.format("TỔNG CỘNG: %.0f VND\n", hd.getTongTien()));
+        sb.append(String.format("TỔNG CỘNG: %s VND\n", df.format(tongTien)));
         sb.append("============================\n");
         sb.append("Cảm ơn quý khách!\n");
 
+        // Gán vào textArea nếu có
         String billContent = sb.toString();
-
         if (txtaBill != null) {
             txtaBill.setText(billContent);
         }
 
-        // Xuất PDF
+        // === Xuất file PDF nếu được yêu cầu ===
         if (pdfPath != null && !pdfPath.trim().isEmpty()) {
             try {
+                File file = new File(pdfPath);
+                file.getParentFile().mkdirs();
+
                 Document document = new Document();
-                PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+                PdfWriter.getInstance(document, new FileOutputStream(file));
                 document.open();
-                document.add(new Paragraph(billContent));
+                Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
+                document.add(new Paragraph(billContent, font));
+
+                // QR code
+                String qrUrl = "https://img.vietqr.io/image/MB-0325734524-compact.png?amount=" + (int) tongTien;
+                try {
+                    Image qrImage = Image.getInstance(new URL(qrUrl));
+                    qrImage.scaleToFit(150, 150);
+                    qrImage.setAlignment(Element.ALIGN_CENTER);
+                    document.add(new Paragraph("\nQuét mã để thanh toán:",
+                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13)));
+                    document.add(qrImage);
+                } catch (Exception e) {
+                    document.add(new Paragraph("\n[QR lỗi - không thể tải mã QR thanh toán]",
+                            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10)));
+                }
+
                 document.close();
-                System.out.println("✅ PDF đã được tạo: " + pdfPath);
             } catch (Exception e) {
                 e.printStackTrace();
+                return "❌ Lỗi khi tạo PDF: " + e.getMessage();
             }
         }
 
         return billContent;
+    }
+
+    // ✅ Hàm tạo mã QR và chuyển thành Image để chèn vào PDF
+    public static Image generateQRCodeImage(String text, int width, int height) throws Exception {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", baos);
+        return Image.getInstance(baos.toByteArray());
     }
 
     private void xuLyThemDichVu() {
@@ -554,40 +629,49 @@ private void loadDichVuVaoComboBox() {
             return;
         }
 
-
         Timestamp thoiGianKT = new Timestamp(System.currentTimeMillis());
         jTextField2.setText(new SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(thoiGianKT));
+
         long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
-        long soPhut = Math.max(1, millis / (60 * 1000));
-        Hoadon hd1 = new Hoadon();
-        double donGia = 1000;
-        double tongTien = soPhut * donGia;
-        double fulltien = tongTien + hd1.getTienDV();
-        jLabel17.setText(String.format("%.1f", tongTien));
+        long soPhut = Math.max(1, millis / (60 * 1000)); // ✅ Bổ sung biến soPhut
+        double donGia = new BanbidaDAO().getGiaTheoMaBan(maBan) / 60.0; // Giá theo phút
+        double tienGio = soPhut * donGia;
+
+        double tienDV = new ChitiethoadonDao().tinhTongTienDV(hoadon.getMaHD());
+        double tongTien = tienGio + tienDV;
+
+        jLabel17.setText(String.format("%.1f", tienGio));
+        jLabel19.setText(String.format("%.1f", tongTien));
+
         hoadon.setThoiGianKT(thoiGianKT);
-        hoadon.setTienGio(tongTien); // hoặc tính kỹ lại
-        jLabel19.setText(String.format("%.1f", fulltien));
-        hoadon.setTrangThai("ChuaThanhToan"); // ✅ Không để "Đã thanh toán" tại đây
-        dao.capNhatHoaDon(hoadon); // ✅ Cập nhật DB
-        
+        hoadon.setTienGio(tienGio);
+        hoadon.setTienDV(tienDV);
+        hoadon.setTongTien(tongTien);
+        hoadon.setTrangThai("ChuaThanhToan");
+
         this.hd = hoadon;
         this.hoaDonTamThoi = hoadon;
 
         boolean thanhCong = dao.capNhatHoaDon(hoadon);
-
+        jButton1.setEnabled(true);
+        jButton2.setEnabled(false);
+        jButton16.setEnabled(true);
         if (thanhCong) {
             // Trả bàn về trạng thái "Trong"
             BanbidaDAO banDao = new BanbidaDAO();
             banDao.capNhatTinhTrang(maBan, "Trong");
             loadDanhSachBan();
-            JOptionPane.showMessageDialog(this, "✅ Kết thúc phiên chơi.\nTổng thời gian: " + soPhut + " phút\nTổng tiền: " + tongTien + " VND", "Hoàn tất", JOptionPane.INFORMATION_MESSAGE);
+
+            JOptionPane.showMessageDialog(this,
+                    "✅ Kết thúc phiên chơi.\nTổng thời gian: " + soPhut + " phút\nTổng tiền: " + String.format("%.0f VND", tongTien),
+                    "Hoàn tất", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "❌ Lỗi khi cập nhật hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-        Hoadon hd = hoadon;
-        Banbida bd = new BanbidaDAO().getByMaBan(maBan);
-        List<Dichvu> dsDV = new DichVuDAO().getDichVuByHoaDon(hd.getMaHD());
 
+        // Lưu thêm thông tin để in hóa đơn
+        Banbida bd = new BanbidaDAO().getByMaBan(maBan);
+        List<Dichvu> dsDV = new DichVuDAO().getDichVuByHoaDon(hoadon.getMaHD());
     }
 
     ///
@@ -1131,27 +1215,48 @@ private void loadDichVuVaoComboBox() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton16MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton16MouseClicked
-        // TODO add your handling code here:
-
         String maBan = currentMaBan;
         HoaDonDAO dao = new HoaDonDAO();
-        Hoadon hoadon = dao.getHoaDonGanNhatByMaBan(maBan);
+        Hoadon hoadon = dao.getHoaDonDangMoByBan(currentMaBan); // Hoặc getHoaDonDangMoByBan nếu hóa đơn chưa được thanh toán
+
         if (hoadon == null) {
             JOptionPane.showMessageDialog(this, "❌ Không tìm thấy hóa đơn để in!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-// Lấy chi tiết hóa đơn
+
         ChitiethoadonDao cthdDAO = new ChitiethoadonDao();
         List<Chitiethoadon> chiTietList = cthdDAO.getChiTietByMaHD(hoadon.getMaHD());
+
+        // Rất quan trọng: Lấy danh sách dịch vụ thực sự của hóa đơn này từ DAO
+        DichVuDAO dvDAO = new DichVuDAO();
+        List<Dichvu> danhSachDVInBill = dvDAO.getDichVuTheoHoaDon(hoadon.getMaHD()); // Giả sử phương thức này tồn tại và hoạt động
+
         BanbidaDAO banDao = new BanbidaDAO();
         Banbida bd = banDao.getByMaBan(maBan);
 
-// Lưu file PDF
-        String pdfPath = "D:/hoadon_" + hoadon.getMaHD() + ".pdf";
-        String bill = taoBillBida(hoadon, bd, danhSachDV, chiTietList, txtaBill, pdfPath);
+        String pdfPath = "C:\\Users\\HP\\OneDrive\\Documents\\hoadon" + hoadon + ".pdf";
+        // Cân nhắc một đường dẫn mạnh mẽ hơn:
+        // String userHome = System.getProperty("user.home");
+        // String pdfPath = userHome + File.separator + "Documents" + File.separator + "hoadon_" + hoadon.getMaHD() + ".pdf";
 
-        JOptionPane.showMessageDialog(this, "✅ Hóa đơn đã in và lưu: " + pdfPath);
+        String result = taoBillBida(txtaBill, pdfPath);
 
+        if (result.startsWith("❌")) { // Kiểm tra nếu chuỗi trả về chỉ ra lỗi
+            JOptionPane.showMessageDialog(this, result, "Lỗi In Hóa Đơn", JOptionPane.ERROR_MESSAGE);
+        } else {
+            System.out.println(pdfPath);
+            JOptionPane.showMessageDialog(this, "✅ Hóa đơn đã in và lưu: " + pdfPath);
+            // Tùy chọn: Mở PDF sau khi tạo thành công
+            try {
+                File pdfFile = new File(pdfPath);
+                if (pdfFile.exists()) {
+                    java.awt.Desktop.getDesktop().open(pdfFile);
+                }
+            } catch (java.io.IOException ex) {
+                System.err.println("Không thể mở PDF: " + ex.getMessage());
+            }
+        }
+        // Chỉ gọi thanhToan() sau khi hóa đơn được tạo/in thành công nếu đó là luồng mong muốn
         thanhToan();
     }//GEN-LAST:event_jButton16MouseClicked
 

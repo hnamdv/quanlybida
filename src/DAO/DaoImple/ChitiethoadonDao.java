@@ -120,4 +120,25 @@ public class ChitiethoadonDao {
     return list;
 }
 
+    public double tinhTongTienDV(String maHD) {
+    double tongTien = 0;
+    String sql = "SELECT SUM(SoLuong * DonGia) AS TongTien FROM CT_HOADON_DICHVU WHERE MaHD = ?";
+
+    try (Connection conn = connect.openConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, maHD);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            tongTien = rs.getDouble("TongTien");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return tongTien;
+}
+
 }
