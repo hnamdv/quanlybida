@@ -65,8 +65,8 @@ public class BanBidaPanel extends javax.swing.JPanel {
      */
     public BanBidaPanel() {
         initComponents();
-        loadDanhSachBan();
         loadDichVuVaoComboBox();
+        loadDanhSachBan();
     }
 
     ///
@@ -202,13 +202,13 @@ private String layThoiGianHienTai() {
         jTabbedPane1.setSelectedIndex(1); // Chuyển tab sang sử dụng
 
         lblmaban.setText(tenBan);
-        jLabel30.setText(tinhTrang);
+        lblKhuvuc.setText(tinhTrang);
         jTextField4.setText(ghiChu != null ? ghiChu : "");
 
         // Lấy tên loại bàn
         LoaibanDAO loaibanDAO = new LoaibanDAO();
         String tenLoai = loaibanDAO.getTenLoaiByMa(maLoaiBan);
-        jLabel28.setText(tenLoai != null ? tenLoai : "Không rõ");
+        lblLoaiban.setText(tenLoai != null ? tenLoai : "Không rõ");
 
         // Popup thông tin bàn
         JOptionPane.showMessageDialog(this,
@@ -238,7 +238,7 @@ private String layThoiGianHienTai() {
             if (insertResult) {
                 // ✅ Lưu vào biến tạm
                 this.hoaDonTamThoi = hoaDonMoi;
-                jLabel7.setText(maHDMoi);
+                lblmaHD.setText(maHDMoi);
             } else {
                 JOptionPane.showMessageDialog(this, "❌ Không thể tạo hóa đơn mới!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -247,23 +247,23 @@ private String layThoiGianHienTai() {
             // Reset giao diện
             jTextField1.setText("");
             jTextField2.setText("");
-            jLabel17.setText("0.0");
-            jLabel21.setText("0.0");
-            jLabel19.setText("0.0");
-            jLabel31.setText(String.valueOf(giaTheoGio));
+            lblTiengio.setText("0.0");
+            lblOrder.setText("0.0");
+            lblTongtien.setText("0.0");
+            lblTienban.setText(String.valueOf(giaTheoGio));
 
             jButton1.setEnabled(true);  // Bắt đầu
             jButton2.setEnabled(false); // Kết thúc
 
         } else if (hd != null) {
             // ✅ Bàn đang sử dụng hoặc có hóa đơn mở
-            jLabel7.setText(hd.getMaHD());
+            lblmaHD.setText(hd.getMaHD());
             jTextField1.setText(hd.getThoiGianBD() != null ? hd.getThoiGianBD().toString() : "");
             jTextField2.setText(hd.getThoiGianKT() != null ? hd.getThoiGianKT().toString() : "");
-            jLabel17.setText(String.valueOf(hd.getTienGio()));
-            jLabel21.setText(String.valueOf(hd.getTienDV()));
-            jLabel19.setText(String.valueOf(hd.getTongTien()));
-            jLabel31.setText(String.valueOf(giaTheoGio));
+            lblTienban.setText(String.valueOf(hd.getTienGio()));
+            lblOrder.setText(String.valueOf(hd.getTienDV()));
+            lblTongtien.setText(String.valueOf(hd.getTongTien()));
+            lblTiengio.setText(String.valueOf(giaTheoGio));
             jTextField4.setText(hd.getGhiChu());
 
             this.hoaDonTamThoi = hd; // ✅ Để ketThucChoi() dùng
@@ -356,7 +356,7 @@ private String layThoiGianHienTai() {
         double tienGio = gio * giaGio;
 
         // Lấy từ UI
-        double tienDV = parseDoubleSafely(jLabel21.getText());
+        double tienDV = parseDoubleSafely(lblOrder.getText());
         double tongTien = tienGio + tienDV;
 
         int xacNhan = JOptionPane.showConfirmDialog(this,
@@ -387,13 +387,13 @@ private String layThoiGianHienTai() {
             // Reset UI
             currentMaBan = null;
             hoaDonTamThoi = null;
-            jLabel7.setText("");
+            txtGiamgia.setText("");
             jTextField1.setText("");
             jTextField2.setText("");
-            jLabel17.setText("0.0");
-            jLabel21.setText("0.0");
-            jLabel19.setText("0.0");
-            jLabel31.setText("0.0");
+            lblTongtien.setText("0.0");
+            lblTienban.setText("0.0");
+            lblTiengio.setText("0.0");
+            lblOrder.setText("0.0");
             jTextField4.setText("");
 
             loadDanhSachBan();
@@ -417,18 +417,26 @@ private String layThoiGianHienTai() {
 
     ///
 private void loadDichVuVaoComboBox() {
-        cbb.removeAllItems();
-        DichVuDAO dao = new DichVuDAO();
-        try {
-            List<Dichvu> dsTenDV = dao.getAll();
+    cbb.removeAllItems();
+    cbb.addItem("Chọn dịch vụ...");
+
+    DichVuDAO dao = new DichVuDAO();
+    try {
+        List<Dichvu> dsTenDV = dao.getAll();
+        if (dsTenDV != null && !dsTenDV.isEmpty()) {
             for (Dichvu dv : dsTenDV) {
                 cbb.addItem(dv.getTenDV());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
+        } else {
+            System.err.println("Không có dịch vụ nào được tìm thấy!");
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null,
+            "❌ Lỗi khi tải danh sách dịch vụ:\n" + e.getMessage(),
+            "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         HoaDonDAO hoaDonDAO = new HoaDonDAO();
@@ -604,7 +612,7 @@ private void loadDichVuVaoComboBox() {
         // Cập nhật vào bảng hoadon
         double tienDV = dvChon.getDonGia() * soLuong;
         hoaDonDAO.capNhatThongTinDichVu(maHD, dvChon.getMaDV(), tienDV);
-        jLabel21.setText(String.format("%.1f", tienDV)); // ✅ Hiển thị Tiền DV ra label
+        lblOrder.setText(String.format("%.1f", tienDV)); // ✅ Hiển thị Tiền DV ra label
         JOptionPane.showMessageDialog(this, "✅ Đã thêm dịch vụ vào hóa đơn!");
     }
 
@@ -640,8 +648,8 @@ private void loadDichVuVaoComboBox() {
         double tienDV = new ChitiethoadonDao().tinhTongTienDV(hoadon.getMaHD());
         double tongTien = tienGio + tienDV;
 
-        jLabel17.setText(String.format("%.1f", tienGio));
-        jLabel19.setText(String.format("%.1f", tongTien));
+        lblTiengio.setText(String.format("%.1f", tienGio));
+        lblTongtien.setText(String.format("%.1f", tongTien));
 
         hoadon.setThoiGianKT(thoiGianKT);
         hoadon.setTienGio(tienGio);
@@ -711,7 +719,7 @@ private void loadDichVuVaoComboBox() {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        lblmaHD = new javax.swing.JLabel();
         lblTgain = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         lblmaban = new javax.swing.JLabel();
@@ -724,20 +732,22 @@ private void loadDichVuVaoComboBox() {
         jButton15 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        lblTiengio = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        lblTongtien = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
+        lblOrder = new javax.swing.JLabel();
         jButton16 = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
-        jLabel31 = new javax.swing.JLabel();
+        lblTienban = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtGiamgia = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
-        jLabel28 = new javax.swing.JLabel();
+        lblLoaiban = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
-        jLabel30 = new javax.swing.JLabel();
+        lblKhuvuc = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         txtaBill = new javax.swing.JTextArea();
 
@@ -849,7 +859,7 @@ private void loadDichVuVaoComboBox() {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(7, 7, 7)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 714, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addContainerGap(241, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -914,7 +924,7 @@ private void loadDichVuVaoComboBox() {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setText("Mã hóa đơn:");
 
-        jLabel7.setText("jLabel6");
+        lblmaHD.setText("jLabel6");
 
         lblTgain.setText("jLabel6");
 
@@ -938,7 +948,7 @@ private void loadDichVuVaoComboBox() {
         });
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel13.setText("...");
+        jLabel13.setText("Số lượng:");
 
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         jSpinner1.setRequestFocusEnabled(false);
@@ -994,20 +1004,20 @@ private void loadDichVuVaoComboBox() {
 
         jLabel14.setText("Tiền giờ:");
 
-        jLabel17.setText("0.0");
+        lblTiengio.setText("0.0");
 
         jLabel18.setText("Ghi chú:");
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel15.setText("Tổng tiền:");
 
-        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel19.setText("0.0");
+        lblTongtien.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblTongtien.setForeground(new java.awt.Color(255, 0, 0));
+        lblTongtien.setText("0.0");
 
         jLabel20.setText("Tổng tiền order:\n");
 
-        jLabel21.setText("0.0");
+        lblOrder.setText("0.0");
 
         jButton16.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton16.setText("Thanh toán");
@@ -1019,7 +1029,9 @@ private void loadDichVuVaoComboBox() {
 
         jLabel24.setText("Tiền bàn:");
 
-        jLabel31.setText("0.0");
+        lblTienban.setText("0.0");
+
+        jLabel8.setText("Giảm giá:");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -1031,7 +1043,7 @@ private void loadDichVuVaoComboBox() {
                         .addGap(166, 166, 166)
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19))
+                        .addComponent(lblTongtien))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1042,17 +1054,25 @@ private void loadDichVuVaoComboBox() {
                                 .addGap(66, 66, 66)
                                 .addComponent(jButton16))
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel20)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel21))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel17)
-                                .addGap(218, 218, 218)
-                                .addComponent(jLabel24)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel31)))))
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblTiengio))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel20)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(lblOrder)))
+                                .addGap(173, 173, 173)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtGiamgia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel24)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblTienban)))))))
                 .addContainerGap(496, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -1062,14 +1082,16 @@ private void loadDichVuVaoComboBox() {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel24)
-                        .addComponent(jLabel31))
+                        .addComponent(lblTienban))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel14)
-                        .addComponent(jLabel17)))
+                        .addComponent(lblTiengio)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(jLabel21))
+                    .addComponent(lblOrder)
+                    .addComponent(jLabel8)
+                    .addComponent(txtGiamgia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1078,19 +1100,19 @@ private void loadDichVuVaoComboBox() {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15)
-                    .addComponent(jLabel19))
+                    .addComponent(lblTongtien))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jLabel27.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel27.setText("Loại Bàn:");
 
-        jLabel28.setText("jLabel6");
+        lblLoaiban.setText("jLabel6");
 
         jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel29.setText("Khu vực:");
+        jLabel29.setText("Tình trạng:");
 
-        jLabel30.setText("jLabel6");
+        lblKhuvuc.setText("jLabel6");
 
         txtaBill.setColumns(20);
         txtaBill.setRows(5);
@@ -1121,7 +1143,7 @@ private void loadDichVuVaoComboBox() {
                                 .addComponent(jButton1)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton2)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 625, Short.MAX_VALUE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1135,14 +1157,14 @@ private void loadDichVuVaoComboBox() {
                             .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblKhuvuc, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblmaban, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblLoaiban, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(lblTgain, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lblmaHD, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jScrollPane6)
                         .addContainerGap())))
@@ -1170,7 +1192,7 @@ private void loadDichVuVaoComboBox() {
                             .addGap(22, 22, 22)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel6)
-                                .addComponent(jLabel7))
+                                .addComponent(lblmaHD))
                             .addGap(12, 12, 12)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel9)
@@ -1178,11 +1200,11 @@ private void loadDichVuVaoComboBox() {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel27)
-                                .addComponent(jLabel28))
+                                .addComponent(lblLoaiban))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel29)
-                                .addComponent(jLabel30))
+                                .addComponent(lblKhuvuc))
                             .addGap(11, 11, 11)))
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel4)
@@ -1197,7 +1219,7 @@ private void loadDichVuVaoComboBox() {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane6))
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addContainerGap(213, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Quản lý bàn", jPanel2);
@@ -1234,7 +1256,7 @@ private void loadDichVuVaoComboBox() {
         BanbidaDAO banDao = new BanbidaDAO();
         Banbida bd = banDao.getByMaBan(maBan);
 
-        String pdfPath = "C:\\Users\\ASUS\\OneDrive\\Documents\\NetBeansProjects" + hoadon + ".pdf";
+        String pdfPath =  hoadon + ".pdf";
         // Cân nhắc một đường dẫn mạnh mẽ hơn:
         // String userHome = System.getProperty("user.home");
         // String pdfPath = userHome + File.separator + "Documents" + File.separator + "hoadon_" + hoadon.getMaHD() + ".pdf";
@@ -1299,27 +1321,21 @@ private void loadDichVuVaoComboBox() {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1337,8 +1353,16 @@ private void loadDichVuVaoComboBox() {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JLabel lblKhuvuc;
+    private javax.swing.JLabel lblLoaiban;
+    private javax.swing.JLabel lblOrder;
     private javax.swing.JLabel lblTgain;
+    private javax.swing.JLabel lblTienban;
+    private javax.swing.JLabel lblTiengio;
+    private javax.swing.JLabel lblTongtien;
+    private javax.swing.JLabel lblmaHD;
     private javax.swing.JLabel lblmaban;
+    private javax.swing.JTextField txtGiamgia;
     private javax.swing.JTextArea txtaBill;
     // End of variables declaration//GEN-END:variables
 }
