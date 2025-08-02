@@ -119,5 +119,16 @@ public class BanbidaDAO {
 
         return ban;
     }
-
+    public List<String> getAllMaBanDangTrong() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT MaBan FROM BANBIDA WHERE TinhTrang = 'Trong' OR TinhTrang = 'DangSua' OR TinhTrang = 'BaoTri'";
+        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(rs.getString("MaBan"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

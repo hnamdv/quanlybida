@@ -4,23 +4,24 @@
  */
 package UI.Panel;
 
+import DAO.DaoImple.BanbidaDAO;
 import DAO.DaoImple.SuachuaDAO;
 import MODEl.Suachua;
-import XJDBC.connect;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 /**
  *
  * @author HP
  */
 public class SuaChuaPanel extends javax.swing.JPanel {
+
+    private JList<String> listBan;
 
     private DefaultTableModel model;
 
@@ -29,8 +30,16 @@ public class SuaChuaPanel extends javax.swing.JPanel {
      */
     public SuaChuaPanel() {
         initComponents();
-        model = (DefaultTableModel) tblSuaChua.getModel();
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (String maBan : new BanbidaDAO().getAllMaBanDangTrong()) {
+            model.addElement(maBan);
+        }
+        listBan = new JList<>(model);
+        listBan.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        jPanel2.add(new JScrollPane(listBan)); // thêm vào panel
+
         loadAll();
+        loadCbbBanDangSua();
     }
 
     private void loadAll() {
@@ -68,63 +77,51 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         }
     }
 
+ private void openThemSuaChuaDialog() {
+    int result = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc chắn muốn thêm sửa chữa?",
+            "Xác nhận",
+            JOptionPane.YES_NO_OPTION
+    );
+    if (result == JOptionPane.YES_OPTION) {
+        String maSC = "SC" + System.currentTimeMillis();
+        String moTa = txtMoTa.getText();
+        double chiPhi = Double.parseDouble(txtChiPhi.getText());
+        java.sql.Date ngaySua = new java.sql.Date(dcNgaySua.getDate().getTime());
 
-private void locTheoNgaySua() {
-    Date selectedDate = dateLoc.getDate();  // ngày sửa chọn từ JDateChooser
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    String sql = "SELECT * FROM SUALICH";
-
-    if (selectedDate != null) {
-        String dateString = sdf.format(selectedDate);
-        sql += " WHERE NgaySua = '" + dateString + "'";
-    }
-
-    try (
-        java.sql.Connection con = connect.openConnection();  // Giả sử bạn có class connect.java
-        PreparedStatement ps = con.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()
-    ) {
-        DefaultTableModel model = (DefaultTableModel) tblSuaChua.getModel(); // Đổi jTable1 thành bảng thật bạn dùng
-        model.setRowCount(0); // clear bảng trước
-
-        while (rs.next()) {
-            String maSC = rs.getString("MaSua");
-            String maBan = rs.getString("MaBan");
-            String moTa = rs.getString("MoTa");
-            double chiPhi = rs.getDouble("ChiPhi");
-            Date ngaySua = rs.getDate("NgaySua");
-
-            model.addRow(new Object[]{maSC, maBan, moTa, chiPhi, ngaySua});
+        // ✅ Lấy danh sách các bàn được chọn
+        List<String> maBanDaChon = listBan.getSelectedValuesList();
+        if (maBanDaChon.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một bàn để sửa!");
+            return;
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi lọc ngày: " + e.getMessage());
+        // ✅ Tạo sửa chữa chung
+        Suachua sc = new Suachua(maSC, "", moTa, chiPhi, ngaySua);
+
+        // ✅ Thêm vào DB
+        SuachuaDAO dao = new SuachuaDAO();
+        dao.insertSuaChuaNhieuBan(sc, maBanDaChon);
+
+        // ✅ Cập nhật tình trạng bàn
+        for (String maBan : maBanDaChon) {
+            dao.capNhatTinhTrang(maBan, "BaoTri");
+        }
+
+        // ✅ Làm mới giao diện
+        loadAll();
+        JOptionPane.showMessageDialog(this, "✅ Thêm sửa chữa cho nhiều bàn thành công!");
     }
 }
-    private void openThemSuaChuaDialog() {
-        int result = JOptionPane.showConfirmDialog(
-                this, // hoặc null nếu bạn không trong JPanel
-                "Bạn có chắc chắn muốn thêm sửa chữa?",
-                "Xác nhận",
-                JOptionPane.YES_NO_OPTION
-        );
-        if (result == JOptionPane.YES_OPTION) {
-            // Tạo object sửa chữa
-            Suachua sc = new Suachua(
-                    "SC" + System.currentTimeMillis(), // Tạo mã SC tự động
-                    txtMaBan.getText(), // Lấy mã bàn từ TextField
-                    txtMoTa.getText(), // Lấy mô tả
-                    Double.parseDouble(txtChiPhi.getText()), // Lấy chi phí
-                    new java.sql.Date(dcNgaySua.getDate().getTime()) // Lấy ngày sửa
-            );
 
-            // Thêm vào DB
-            new SuachuaDAO().insert(sc);
+    private void loadCbbBanDangSua() {
+        jComboBox1.removeAllItems(); // Xóa item cũ
+        SuachuaDAO dao = new SuachuaDAO();
+        List<String> danhSach = dao.getDanhSachMaBanDangSua();
 
-            // Refresh bảng
-            loadAll();
+        for (String maBan : danhSach) {
+            jComboBox1.addItem(maBan);
         }
     }
 
@@ -153,6 +150,9 @@ private void locTheoNgaySua() {
         txtMoTa = new javax.swing.JTextField();
         txtChiPhi = new javax.swing.JTextField();
         btnThemSuaChua = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(1620, 1080));
         setRequestFocusEnabled(false);
@@ -211,7 +211,7 @@ private void locTheoNgaySua() {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnLoc)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -288,6 +288,39 @@ private void locTheoNgaySua() {
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton1.setBackground(new java.awt.Color(0, 102, 102));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Sửa xong");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -298,17 +331,20 @@ private void locTheoNgaySua() {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(820, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(647, Short.MAX_VALUE))
@@ -325,12 +361,34 @@ private void locTheoNgaySua() {
         openThemSuaChuaDialog();
     }//GEN-LAST:event_btnThemSuaChuaMouseClicked
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        int row = tblSuaChua.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "❌ Vui lòng chọn dòng cần đánh dấu đã sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    String maBan = tblSuaChua.getValueAt(row, 1).toString();  // Cột mã bàn
+    int xacNhan = JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc chắn đã sửa xong bàn " + maBan + "?",
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+    if (xacNhan == JOptionPane.YES_OPTION) {
+        new SuachuaDAO().capNhatTinhTrang(maBan, "Trong");
+        JOptionPane.showMessageDialog(this, "✅ Đã cập nhật trạng thái bàn về 'Trong'!");
+        loadAll(); // Refresh bảng
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoc;
     private javax.swing.JButton btnThemSuaChua;
     private com.toedter.calendar.JDateChooser dateLoc;
     private com.toedter.calendar.JDateChooser dcNgaySua;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -338,6 +396,7 @@ private void locTheoNgaySua() {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblSuaChua;
     private javax.swing.JTextField txtChiPhi;
