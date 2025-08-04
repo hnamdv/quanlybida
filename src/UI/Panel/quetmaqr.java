@@ -102,7 +102,6 @@ System.out.println("Giờ hiện tại: " + now.toLocalTime());
                     Thread.sleep(3000);
                     continue;
                 }
-
                 String maPC = ca.getMaPC();
                 boolean moCa = dao.daMoCa(maNV, maPC);
 
@@ -143,7 +142,6 @@ private boolean isTrongThoiGianChoPhep_DB(boolean daMoCa, LocalDateTime now, Pha
     LocalTime hienTai = now.toLocalTime();
     LocalTime gioVao = ca.getGioBatDau();
     LocalTime gioRa = ca.getGioKetThuc();
-
     System.out.println("---- Kiểm tra thời gian hợp lệ ----");
     System.out.println("DaMoCa: " + daMoCa);
     System.out.println("Hiện tại: " + hienTai);
