@@ -65,8 +65,8 @@ public class BanBidaPanel extends javax.swing.JPanel {
      */
     public BanBidaPanel() {
         initComponents();
-        loadDichVuVaoComboBox();
         loadDanhSachBan();
+        loadDichVuVaoComboBox();
     }
 
     ///
@@ -416,29 +416,7 @@ private String layThoiGianHienTai() {
     }
 
     ///
-private void loadDichVuVaoComboBox() {
-    cbb.removeAllItems();
-    cbb.addItem("Chọn dịch vụ...");
-
-    DichVuDAO dao = new DichVuDAO();
-    try {
-        List<Dichvu> dsTenDV = dao.getAll();
-        if (dsTenDV != null && !dsTenDV.isEmpty()) {
-            for (Dichvu dv : dsTenDV) {
-                cbb.addItem(dv.getTenDV());
-            }
-        } else {
-            System.err.println("Không có dịch vụ nào được tìm thấy!");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null,
-            "❌ Lỗi khi tải danh sách dịch vụ:\n" + e.getMessage(),
-            "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-    public String taoBillBida(JTextArea txtaBill, String pdfPath) {
+ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         HoaDonDAO hoaDonDAO = new HoaDonDAO();
         BanbidaDAO banBidaDAO = new BanbidaDAO();
         ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
@@ -461,12 +439,10 @@ private void loadDichVuVaoComboBox() {
             return "❌ Hóa đơn chưa kết thúc!";
         }
 
-        // === Tính tiền giờ ===
         long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
-        long soPhut = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long soPhut = Math.max(1, TimeUnit.MILLISECONDS.toMinutes(millis)); // đảm bảo tối thiểu 1 phút
         double tienGio = soPhut * (bd.getGiaTheoGio() / 60.0);
 
-        // === Tính tiền dịch vụ ===
         double tongDV = 0;
         for (Chitiethoadon ct : chiTietList) {
             Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
@@ -475,15 +451,12 @@ private void loadDichVuVaoComboBox() {
             }
         }
 
-        // === Tổng cộng ===
         double tongTien = tienGio + tongDV - hd.getGiamGia();
         hd.setTienDV(tongDV);
         hd.setTongTien(tongTien);
 
-        // === Định dạng tiền tệ ===
         DecimalFormat df = new DecimalFormat("#,##0");
 
-        // === Chuỗi hóa đơn hiển thị ===
         StringBuilder sb = new StringBuilder();
         sb.append("======= HÓA ĐƠN BIDA =======\n");
         sb.append("Mã HĐ: ").append(hd.getMaHD()).append("\n");
@@ -493,7 +466,6 @@ private void loadDichVuVaoComboBox() {
         sb.append(String.format("Đơn giá: %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
         sb.append(String.format("Tiền giờ: %s VND\n", df.format(tienGio)));
 
-        // === Dịch vụ ===
         if (tongDV > 0) {
             sb.append("\n--- DỊCH VỤ ---\n");
             for (Chitiethoadon ct : chiTietList) {
@@ -514,22 +486,31 @@ private void loadDichVuVaoComboBox() {
         sb.append("============================\n");
         sb.append("Cảm ơn quý khách!\n");
 
-        // Gán vào textArea nếu có
         String billContent = sb.toString();
         if (txtaBill != null) {
             txtaBill.setText(billContent);
         }
 
-        // === Xuất file PDF nếu được yêu cầu ===
         if (pdfPath != null && !pdfPath.trim().isEmpty()) {
             try {
                 File file = new File(pdfPath);
-                file.getParentFile().mkdirs();
+                File parent = file.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
+                }
 
                 Document document = new Document();
                 PdfWriter.getInstance(document, new FileOutputStream(file));
                 document.open();
-                Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
+
+                // Font hỗ trợ Unicode tiếng Việt
+                BaseFont baseFont = BaseFont.createFont("src/static/NotoSans_Condensed-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font font = new Font(baseFont, 12);// Thêm đoạn text với font này
+                document.add(new Paragraph("Cảm ơn quý khách!", font));
+
+                Font fontBold = new Font(baseFont, 13, Font.BOLD);
+                Font fontItalic = new Font(baseFont, 10, Font.ITALIC);
+
                 document.add(new Paragraph(billContent, font));
 
                 // QR code
@@ -538,12 +519,10 @@ private void loadDichVuVaoComboBox() {
                     Image qrImage = Image.getInstance(new URL(qrUrl));
                     qrImage.scaleToFit(150, 150);
                     qrImage.setAlignment(Element.ALIGN_CENTER);
-                    document.add(new Paragraph("\nQuét mã để thanh toán:",
-                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13)));
+                    document.add(new Paragraph("\nQuét mã để thanh toán:", fontBold));
                     document.add(qrImage);
                 } catch (Exception e) {
-                    document.add(new Paragraph("\n[QR lỗi - không thể tải mã QR thanh toán]",
-                            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10)));
+                    document.add(new Paragraph("\n[QR lỗi - không thể tải mã QR thanh toán]", fontItalic));
                 }
 
                 document.close();
@@ -565,6 +544,27 @@ private void loadDichVuVaoComboBox() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", baos);
         return Image.getInstance(baos.toByteArray());
+    }
+
+    private void loadDichVuVaoComboBox() {
+        cbb.removeAllItems();
+        cbb.addItem("Chọn dịch vụ...");
+        DichVuDAO dao = new DichVuDAO();
+        try {
+            List<Dichvu> dsTenDV = dao.getAll();
+            if (dsTenDV != null && !dsTenDV.isEmpty()) {
+                for (Dichvu dv : dsTenDV) {
+                    cbb.addItem(dv.getTenDV());
+                }
+            } else {
+                System.err.println("Không có dịch vụ nào được tìm thấy!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "❌ Lỗi khi tải danh sách dịch vụ:\n" + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void xuLyThemDichVu() {
@@ -1256,7 +1256,7 @@ private void loadDichVuVaoComboBox() {
         BanbidaDAO banDao = new BanbidaDAO();
         Banbida bd = banDao.getByMaBan(maBan);
 
-        String pdfPath =  hoadon + ".pdf";
+        String pdfPath = hoadon + ".pdf";
         // Cân nhắc một đường dẫn mạnh mẽ hơn:
         // String userHome = System.getProperty("user.home");
         // String pdfPath = userHome + File.separator + "Documents" + File.separator + "hoadon_" + hoadon.getMaHD() + ".pdf";
@@ -1288,7 +1288,6 @@ private void loadDichVuVaoComboBox() {
     }//GEN-LAST:event_jButton15ActionPerformed
     private void cbbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbActionPerformed
         // TODO add your handling code here:
-        loadDichVuVaoComboBox();
     }//GEN-LAST:event_cbbActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
