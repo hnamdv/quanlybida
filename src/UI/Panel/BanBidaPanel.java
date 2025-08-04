@@ -416,7 +416,7 @@ private String layThoiGianHienTai() {
     }
 
     ///
- public String taoBillBida(JTextArea txtaBill, String pdfPath) {
+public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         HoaDonDAO hoaDonDAO = new HoaDonDAO();
         BanbidaDAO banBidaDAO = new BanbidaDAO();
         ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
@@ -440,7 +440,7 @@ private String layThoiGianHienTai() {
         }
 
         long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
-        long soPhut = Math.max(1, TimeUnit.MILLISECONDS.toMinutes(millis)); // đảm bảo tối thiểu 1 phút
+        long soPhut = Math.max(1, TimeUnit.MILLISECONDS.toMinutes(millis));
         double tienGio = soPhut * (bd.getGiaTheoGio() / 60.0);
 
         double tongDV = 0;
@@ -459,12 +459,12 @@ private String layThoiGianHienTai() {
 
         StringBuilder sb = new StringBuilder();
         sb.append("======= HÓA ĐƠN BIDA =======\n");
-        sb.append("Mã HĐ: ").append(hd.getMaHD()).append("\n");
-        sb.append("Bàn: ").append(bd.getTenBan()).append(" (").append(bd.getMaLoaiBan()).append(")\n");
-        sb.append("Thời gian: ").append(hd.getThoiGianBD()).append(" -> ").append(hd.getThoiGianKT()).append("\n");
-        sb.append(String.format("Tổng thời gian: %d phút\n", soPhut));
-        sb.append(String.format("Đơn giá: %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
-        sb.append(String.format("Tiền giờ: %s VND\n", df.format(tienGio)));
+        sb.append("Mã HĐ      : ").append(hd.getMaHD()).append("\n");
+        sb.append("Bàn        : ").append(bd.getTenBan()).append(" (").append(bd.getMaLoaiBan()).append(")\n");
+        sb.append("Thời gian  : ").append(hd.getThoiGianBD()).append(" -> ").append(hd.getThoiGianKT()).append("\n");
+        sb.append(String.format("T.giờ chơi: %d phút\n", soPhut));
+        sb.append(String.format("Đơn giá    : %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
+        sb.append(String.format("Tiền giờ   : %s VND\n", df.format(tienGio)));
 
         if (tongDV > 0) {
             sb.append("\n--- DỊCH VỤ ---\n");
@@ -472,17 +472,16 @@ private String layThoiGianHienTai() {
                 Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
                 if (dv != null && ct.getSoLuong() > 0) {
                     double thanhTien = dv.getDonGia() * ct.getSoLuong();
-                    sb.append(dv.getTenDV())
-                            .append(" x").append(ct.getSoLuong())
-                            .append(" = ").append(df.format(thanhTien)).append(" VND\n");
+                    sb.append(String.format("%-20s x%d = %s VND\n",
+                            dv.getTenDV(), ct.getSoLuong(), df.format(thanhTien)));
                 }
             }
             sb.append(String.format("Tổng dịch vụ: %s VND\n", df.format(tongDV)));
         }
 
-        sb.append(String.format("Giảm giá: %s VND\n", df.format(hd.getGiamGia())));
+        sb.append(String.format("Giảm giá    : %s VND\n", df.format(hd.getGiamGia())));
         sb.append("----------------------------\n");
-        sb.append(String.format("TỔNG CỘNG: %s VND\n", df.format(tongTien)));
+        sb.append(String.format("TỔNG CỘNG   : %s VND\n", df.format(tongTien)));
         sb.append("============================\n");
         sb.append("Cảm ơn quý khách!\n");
 
@@ -494,26 +493,22 @@ private String layThoiGianHienTai() {
         if (pdfPath != null && !pdfPath.trim().isEmpty()) {
             try {
                 File file = new File(pdfPath);
-                File parent = file.getParentFile();
-                if (parent != null && !parent.exists()) {
-                    parent.mkdirs();
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
                 }
 
                 Document document = new Document();
                 PdfWriter.getInstance(document, new FileOutputStream(file));
                 document.open();
 
-                // Font hỗ trợ Unicode tiếng Việt
                 BaseFont baseFont = BaseFont.createFont("src/static/NotoSans_Condensed-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                Font font = new Font(baseFont, 12);// Thêm đoạn text với font này
-                document.add(new Paragraph("Cảm ơn quý khách!", font));
-
+                Font font = new Font(baseFont, 12);
                 Font fontBold = new Font(baseFont, 13, Font.BOLD);
                 Font fontItalic = new Font(baseFont, 10, Font.ITALIC);
 
+                document.add(new Paragraph("======= HÓA ĐƠN BIDA =======", fontBold));
                 document.add(new Paragraph(billContent, font));
 
-                // QR code
                 String qrUrl = "https://img.vietqr.io/image/MB-0325734524-compact.png?amount=" + (int) tongTien;
                 try {
                     Image qrImage = Image.getInstance(new URL(qrUrl));
