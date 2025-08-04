@@ -28,19 +28,24 @@ public class SuaChuaPanel extends javax.swing.JPanel {
     /**
      * Creates new form SuaChuaPanel
      */
-    public SuaChuaPanel() {
-        initComponents();
-        DefaultListModel<String> model = new DefaultListModel<>();
-        for (String maBan : new BanbidaDAO().getAllMaBanDangTrong()) {
-            model.addElement(maBan);
-        }
-        listBan = new JList<>(model);
-        listBan.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        jPanel2.add(new JScrollPane(listBan)); // thêm vào panel
-
-        loadAll();
-        loadCbbBanDangSua();
+public SuaChuaPanel() {
+    initComponents();
+    
+    // Khởi tạo danh sách bàn trống
+    DefaultListModel<String> modelList = new DefaultListModel<>();
+    for (String maBan : new BanbidaDAO().getAllMaBanDangTrong()) {
+        modelList.addElement(maBan);
     }
+    listBan = new JList<>(modelList);
+    listBan.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    jPanel2.add(new JScrollPane(listBan));
+
+    // Quan trọng ❗❗ Gán model cho bảng
+    model = (DefaultTableModel) tblSuaChua.getModel();
+
+    loadAll();
+    loadCbbBanDangSua();
+}
 
     private void loadAll() {
         SuachuaDAO dao = new SuachuaDAO();
@@ -58,12 +63,12 @@ public class SuaChuaPanel extends javax.swing.JPanel {
     }
 
     private void filterByDate() {
-        if (dcNgaySua.getDate() == null) {
+        if (dateLoc.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        java.sql.Date ngay = new java.sql.Date(dcNgaySua.getDate().getTime());
+        java.sql.Date ngay = new java.sql.Date(dateLoc.getDate().getTime());
         SuachuaDAO dao = new SuachuaDAO();
         List<Suachua> list = dao.getByNgaySua(ngay);
 
@@ -76,42 +81,43 @@ public class SuaChuaPanel extends javax.swing.JPanel {
             });
         }
     }
-
- private void openThemSuaChuaDialog() {
+private void openThemSuaChuaDialog() {
     int result = JOptionPane.showConfirmDialog(
-            this,
-            "Bạn có chắc chắn muốn thêm sửa chữa?",
-            "Xác nhận",
-            JOptionPane.YES_NO_OPTION
+        this,
+        "Bạn có chắc chắn muốn thêm sửa chữa?",
+        "Xác nhận",
+        JOptionPane.YES_NO_OPTION
     );
+
     if (result == JOptionPane.YES_OPTION) {
-        String maSC = "SC" + System.currentTimeMillis();
-        String moTa = txtMoTa.getText();
-        double chiPhi = Double.parseDouble(txtChiPhi.getText());
-        java.sql.Date ngaySua = new java.sql.Date(dcNgaySua.getDate().getTime());
+        try {
+            String maSC = "SC" + System.currentTimeMillis();
+            String maBan = txtMaBan.getText().trim(); // ✅ Lấy từ textfield
+            String moTa = txtMoTa.getText();
+            double chiPhi = Double.parseDouble(txtChiPhi.getText());
+            java.sql.Date ngaySua = new java.sql.Date(dcNgaySua.getDate().getTime());
 
-        // ✅ Lấy danh sách các bàn được chọn
-        List<String> maBanDaChon = listBan.getSelectedValuesList();
-        if (maBanDaChon.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một bàn để sửa!");
-            return;
+            if (maBan.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập mã bàn!");
+                return;
+            }
+
+            // ✅ Tạo sửa chữa cho 1 bàn
+            Suachua sc = new Suachua(maSC, maBan, moTa, chiPhi, ngaySua);
+            System.out.println("Insert sửa chữa: " + sc.getMaSC() + " - " + maBan + " - " + sc.getMoTaLoi());
+
+            // ✅ Thêm vào DB
+            SuachuaDAO dao = new SuachuaDAO();
+            dao.insert(sc);  // ✅ Chỉ insert 1 dòng
+
+            dao.capNhatTinhTrang(maBan, "BaoTri");  // ✅ Cập nhật tình trạng
+
+            loadAll();
+            JOptionPane.showMessageDialog(this, "✅ Thêm sửa chữa thành công!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+            ex.printStackTrace();
         }
-
-        // ✅ Tạo sửa chữa chung
-        Suachua sc = new Suachua(maSC, "", moTa, chiPhi, ngaySua);
-
-        // ✅ Thêm vào DB
-        SuachuaDAO dao = new SuachuaDAO();
-        dao.insertSuaChuaNhieuBan(sc, maBanDaChon);
-
-        // ✅ Cập nhật tình trạng bàn
-        for (String maBan : maBanDaChon) {
-            dao.capNhatTinhTrang(maBan, "BaoTri");
-        }
-
-        // ✅ Làm mới giao diện
-        loadAll();
-        JOptionPane.showMessageDialog(this, "✅ Thêm sửa chữa cho nhiều bàn thành công!");
     }
 }
 
@@ -124,12 +130,38 @@ public class SuaChuaPanel extends javax.swing.JPanel {
             jComboBox1.addItem(maBan);
         }
     }
+public Suachua getForm() {
+   Suachua sc = new Suachua();
+sc.setMaBan(txtMaBan.getText().trim());
+sc.setMoTaLoi(txtMoTa.getText().trim());
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+// Chi phí: ép kiểu từ String sang double
+try {
+    sc.setChiPhi(Double.parseDouble(txtChiPhi.getText().trim()));
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "❌ Chi phí phải là số!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    return null;
+}
+
+// Ngày sửa: từ util.Date -> sql.Date
+java.util.Date utilDate = dcNgaySua.getDate();
+if (utilDate == null) {
+    JOptionPane.showMessageDialog(this, "❌ Vui lòng chọn ngày sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    return null;
+}
+sc.setNgaySua(new java.sql.Date(utilDate.getTime()));
+
+    return sc;
+}
+
+   
+public void setForm(Suachua sc) {
+    txtMaBan.setText(sc.getMaBan());
+    txtMoTa.setText(sc.getMoTaLoi());
+    txtChiPhi.setText(String.valueOf(sc.getChiPhi()));
+    dcNgaySua.setDate(sc.getNgaySua());
+}
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -170,6 +202,11 @@ public class SuaChuaPanel extends javax.swing.JPanel {
                 "Mã SC", "Mã Bàn", "Mô Tả Lỗi", "Chi Phí", "Ngày Sửa"
             }
         ));
+        tblSuaChua.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSuaChuaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblSuaChua);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -185,6 +222,11 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         btnLoc.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnLocMouseClicked(evt);
+            }
+        });
+        btnLoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLocActionPerformed(evt);
             }
         });
 
@@ -216,6 +258,12 @@ public class SuaChuaPanel extends javax.swing.JPanel {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        txtMaBan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaBanActionPerformed(evt);
+            }
+        });
+
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 102, 102));
         jLabel2.setText("Mã bàn:");
@@ -239,6 +287,11 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         btnThemSuaChua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnThemSuaChuaMouseClicked(evt);
+            }
+        });
+        btnThemSuaChua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemSuaChuaActionPerformed(evt);
             }
         });
 
@@ -378,6 +431,34 @@ public class SuaChuaPanel extends javax.swing.JPanel {
         loadAll(); // Refresh bảng
     }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tblSuaChuaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSuaChuaMouseClicked
+        // TODO add your handling code here:
+        SuachuaDAO dao = new SuachuaDAO();
+            int row = tblSuaChua.getSelectedRow();
+        if (row >= 0) {
+            String maBan = tblSuaChua.getValueAt(row, 0).toString(); // cột mã bàn
+            Suachua sc = dao.findById(maBan);
+            if (sc != null) {
+                setForm(sc);
+            }
+        }
+    
+    }//GEN-LAST:event_tblSuaChuaMouseClicked
+
+    private void btnThemSuaChuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSuaChuaActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnThemSuaChuaActionPerformed
+
+    private void txtMaBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaBanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaBanActionPerformed
+
+    private void btnLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnLocActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -11,6 +11,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -124,22 +125,46 @@ public class SuachuaDAO {
             e.printStackTrace();
         }
     }
+public List<String> getDanhSachMaBanDangSua() {
+    List<String> list = new ArrayList<>();
+    String sql = "SELECT MaBan FROM BANBIDA WHERE TinhTrang IN ('DangSua', 'BaoTri')";
 
-    public List<String> getDanhSachMaBanDangSua() {
-        List<String> list = new ArrayList<>();
-        String sql = "SELECT MaBan FROM BANBIDA WHERE TinhTrang = ('DangSua', 'BaoTri')";
+    try (Connection con = connect.openConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
 
-        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                list.add(rs.getString("MaBan"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        while (rs.next()) {
+            list.add(rs.getString("MaBan"));
         }
-
-        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+public Suachua findById(String maBan) {
+    String sql = "SELECT * FROM suachua WHERE MaBan = ?";
+    try (
+        Connection con = connect.openConnection();
+        PreparedStatement ps = con.prepareStatement(sql)
+    ) {
+        ps.setString(1, maBan);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Suachua sc = new Suachua();
+            sc.setMaBan(rs.getString("MaBan"));
+            sc.setMoTaLoi(rs.getString("MoTaLoi"));
+            sc.setChiPhi(rs.getDouble("ChiPhi"));
+            sc.setNgaySua(rs.getDate("NgaySua"));
+            return sc;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+
 
     public void insertSuachuaVaBan(Suachua sc, List<String> danhSachMaBan) {
         String sqlSuachua = "INSERT INTO SUACHUA (MaSC, MoTaLoi, ChiPhi, NgaySua) VALUES (?, ?, ?, ?)";
@@ -170,26 +195,29 @@ public class SuachuaDAO {
             e.printStackTrace();
         }
     }
+public void insertSuaChuaNhieuBan(Suachua sc, List<String> dsMaBan) {
+    String sqlInsertSC = "INSERT INTO suachua (MaSC, MaBan, MoTaLoi, ChiPhi, NgaySua) VALUES (?, ?, ?, ?, ?)";
 
-    public void insertSuaChuaNhieuBan(Suachua sc, List<String> maBanList) {
-        String sql = "INSERT INTO SUACHUA (MaSC, MaBan, MoTaLoi, ChiPhi, NgaySua) VALUES (?, ?, ?, ?, ?)";
-        try (Connection con = connect.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            for (String maBan : maBanList) {
-                ps.setString(1, sc.getMaSC());
-                ps.setString(2, maBan);
-                ps.setString(3, sc.getMoTaLoi());
-                ps.setDouble(4, sc.getChiPhi());
-                ps.setDate(5, sc.getNgaySua());
-                ps.addBatch();
+    try (Connection con = connect.openConnection();
+         PreparedStatement psSC = con.prepareStatement(sqlInsertSC)) {
 
-                // ✅ Cập nhật tình trạng bàn về "DangSua" hoặc "BaoTri"
-                capNhatTinhTrang(maBan, "BaoTri");
-
-            }
-            ps.executeBatch();
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (String maBan : dsMaBan) {
+            psSC.setString(1, sc.getMaSC());
+            psSC.setString(2, maBan); // 💡 MaBan lấy từ danh sách
+            psSC.setString(3, sc.getMoTaLoi());
+            psSC.setDouble(4, sc.getChiPhi());
+            psSC.setDate(5, sc.getNgaySua());
+            psSC.addBatch(); // dùng batch để insert nhiều dòng
         }
+
+        psSC.executeBatch();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "❌ Lỗi khi thêm sửa chữa: " + e.getMessage());
     }
+}
+
+
 
 }

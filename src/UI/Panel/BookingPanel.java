@@ -162,7 +162,7 @@ public class BookingPanel extends javax.swing.JPanel {
 
         cbbtrangthai.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cbbtrangthai.setForeground(new java.awt.Color(0, 102, 102));
-        cbbtrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Namdz", "Namcutre", " " }));
+        cbbtrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đã Xác Minh", "Chờ Xác Minh", " " }));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 102, 102));
@@ -184,13 +184,13 @@ public class BookingPanel extends javax.swing.JPanel {
                             .addComponent(dcGioDat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
-                                    .addComponent(jLabel1))
-                                .addGap(16, 16, 16))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7))
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel7))
+                                .addGap(16, 16, 16)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(0, 383, Short.MAX_VALUE)

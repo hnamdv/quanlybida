@@ -116,4 +116,38 @@ public class ChiTietBookingDAO {
         }
         return list;
     }
+    public boolean updateChiTietBooking(ChiTietBooking ct) {
+    Connection conn = connect.openConnection();
+    String sql = "UPDATE CT_BOOKING SET MaBooking = ?, MaBan = ?, GioBatDau = ?, GioKetThuc = ?, GhiChu = ? WHERE MaCTBooking = ?";
+
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, ct.getMaBooking());
+        ps.setString(2, ct.getMaBan());
+        ps.setString(3, ct.getGioBatDau());
+        ps.setString(4, ct.getGioKetThuc());
+        ps.setString(5, ct.getGhiChu());
+        ps.setString(6, ct.getMaCTBooking());
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        System.err.println("Lỗi update ChiTietBooking: " + e.getMessage());
+        return false;
+    }
+}
+public boolean deleteChiTietBooking(String maCTBooking) {
+    Connection conn = connect.openConnection();
+    String sql = "DELETE FROM CT_BOOKING WHERE MaCTBooking = ?";
+
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, maCTBooking);
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        System.err.println("Lỗi delete ChiTietBooking: " + e.getMessage());
+        return false;
+    }
+}
+
 }

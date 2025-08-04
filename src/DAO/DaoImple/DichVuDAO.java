@@ -161,5 +161,24 @@ public List<Dichvu> selectAll() {
     }
     return list;
 }
+public Dichvu findByTen(String ten) {
+    Connection conn = connect.openConnection();
+    String sql = "SELECT * FROM DICHVU WHERE TenDV = ?";
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, ten);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Dichvu dv = new Dichvu();
+            dv.setMaDV(rs.getString("MaDV"));
+            dv.setTenDV(rs.getString("TenDV"));
+            dv.setDonGia(rs.getDouble("GiaDV"));
+            return dv;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
 }

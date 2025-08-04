@@ -155,7 +155,7 @@ private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {
             card.revalidate();
         card.repaint();
         card.removeAll();
-        card.add(new maqr());
+        card.add(new SuaChuaPanel());
 }
 
 private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
