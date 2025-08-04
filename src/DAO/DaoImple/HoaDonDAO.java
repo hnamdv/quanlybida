@@ -5,10 +5,77 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import XJDBC.connect;
 import MODEl.Hoadon;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HoaDonDAO {
+public double getDoanhThuNhanVien(String maNV, int nam, int thang) {
+    double tong = 0;
+    String sql = "SELECT SUM(IFNULL(TongTien, 0)) FROM HoaDon " +
+                 "WHERE MaNV = ? AND YEAR(NgayTao) = ? AND MONTH(NgayTao) = ?"; // ❌ KHÔNG còn lọc trạng thái
+
+    try (Connection conn = connect.openConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, maNV);
+        ps.setInt(2, nam);
+        ps.setInt(3, thang);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            tong = rs.getDouble(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return tong;
+}
+
+    public List<Object[]> getDoanhThuTheoThang(int nam) {
+    List<Object[]> list = new ArrayList<>();
+String sql = "SELECT MONTH(ThoiGianBD) AS thang, " +
+             "SUM(IFNULL(CT_HOADON_DICHVU.SoLuong, 0) * IFNULL(CT_HOADON_DICHVU.DonGia, 0)) AS tongTien " +
+             "FROM HoaDon " +
+             "JOIN CT_HOADON_DICHVU ON HoaDon.MaHD = CT_HOADON_DICHVU.MaHD " +
+             "WHERE YEAR(ThoiGianBD) = ? " +
+             "GROUP BY MONTH(ThoiGianBD)";
+
+    try (Connection conn = connect.openConnection(); 
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, nam);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            int thang = rs.getInt("thang");
+            double tongTien = rs.getDouble("tongTien");
+            list.add(new Object[]{thang, tongTien});
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
+public double getDoanhThuBan(String maBan, int nam, int thang) {
+    String sql = "SELECT SUM(IFNULL(TongTien, 0)) FROM HoaDon " +
+                 "WHERE MaBan = ? AND YEAR(NgayTao) = ? AND MONTH(NgayTao) = ?";
+
+    try (Connection conn = connect.openConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, maBan);
+        ps.setInt(2, nam);
+        ps.setInt(3, thang);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getDouble(1);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
 
     public Hoadon getHoaDonDangMoByBan(String maBan) {
         String sql = "SELECT * FROM hoadon WHERE MaBan = ? AND TrangThai = 'ChuaThanhToan'";
@@ -107,28 +174,6 @@ public class HoaDonDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public Map<Integer, Double> getDoanhThuTheoThang(int nam) {
-        Map<Integer, Double> map = new HashMap<>();
-        String sql = "SELECT MONTH(NgayTao) AS Thang, SUM(TongTien) AS DoanhThu "
-                + "FROM hoadon WHERE YEAR(NgayTao) = ? GROUP BY MONTH(NgayTao) ORDER BY Thang";
-
-        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, nam);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                int thang = rs.getInt("Thang");
-                double tien = rs.getDouble("DoanhThu");
-                map.put(thang, tien);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return map;
     }
 
     public boolean capNhatHoaDon(Hoadon hd) {

@@ -4,13 +4,19 @@
  */
 package UI.Panel;
 import DAO.DaoImple.HoaDonDAO;
+import MODEl.Hoadon;
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Map;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.PlotOrientation;
 import java.util.Calendar;
+import java.util.TreeMap;
 import org.jfree.data.category.DefaultCategoryDataset;
+import java.util.List;
+
 /**
  *
  * @author Admin
@@ -23,42 +29,70 @@ public class thongke extends javax.swing.JPanel {
     HoaDonDAO dao= new HoaDonDAO();
     public thongke() {
         initComponents();
-            initNam();
+    initThangNam();
+    
     }
-   private void initNam() {
+private void initThangNam() {
+    for (int i = 1; i <= 12; i++) {
+        cbbThang.addItem(String.valueOf(i)); 
+    }
+
     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
     for (int i = 2020; i <= currentYear; i++) {
-        cbbNam.addItem(String.valueOf(i)); 
+        cbbNam.addItem(String.valueOf(i));  
     }
 }
 
 
 
-    private void hienThiBieuDo(int nam) {
-        Map<Integer, Double> map = dao.getDoanhThuTheoThang(nam);
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (int thang = 1; thang <= 12; thang++) {
-            double tien = map.getOrDefault(thang, 0.0);
-            dataset.addValue(tien, "Doanh Thu", "Tháng " + thang);
-        }
+private void veBieuDo(String title, DefaultCategoryDataset dataset) {
+    JFreeChart chart = ChartFactory.createBarChart(
+        title, "Danh mục", "Doanh thu (VNĐ)", dataset,
+        PlotOrientation.VERTICAL, true, true, false);
 
-        JFreeChart chart = ChartFactory.createBarChart(
-                "Thống kê doanh thu theo tháng - Năm " + nam,
-                "Tháng", "Doanh thu (VNĐ)",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
+    ChartPanel chartPanel = new ChartPanel(chart);
+    chartPanel.setPreferredSize(new Dimension(780, 500));
 
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(780, 500));
+    pnlBieuDo.removeAll();
+    pnlBieuDo.setLayout(new BorderLayout());
+    pnlBieuDo.add(chartPanel, BorderLayout.CENTER);
+    pnlBieuDo.validate();
+}
 
-        pnlBieuDo.removeAll();
-        pnlBieuDo.setLayout(new BorderLayout());
-        pnlBieuDo.add(chartPanel, BorderLayout.CENTER);
-        pnlBieuDo.validate();
+    
+    
+    private void hienThiTheoBan(String maBan, int nam, int thang) {
+    double tongTien = dao.getDoanhThuBan(maBan, nam, thang);
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    dataset.addValue(tongTien, "Doanh Thu", "Bàn " + maBan);
+    veBieuDo("Doanh thu bàn " + maBan, dataset);
+}
+private void hienThiTheoNhanVien(String maNV, int nam, int thang) {
+    double tongTien = dao.getDoanhThuNhanVien(maNV, nam, thang);
+    System.out.println("Doanh thu của " + maNV + ": " + tongTien); 
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    dataset.addValue(tongTien, "Doanh Thu", "NV " + maNV);
+    veBieuDo("Doanh thu NV " + maNV, dataset);
+}
+private void hienThiTheoThangNam(int nam) {
+    HoaDonDAO dao = new HoaDonDAO();
+    List<Object[]> ds = dao.getDoanhThuTheoThang(nam); 
+    Map<Integer, Double> map = new TreeMap<>();
+
+    for (Object[] row : ds) {
+        int thang = (int) row[0];
+        double tongTien = (double) row[1];
+        map.put(thang, tongTien);
     }
+
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    for (int i = 1; i <= 12; i++) {
+        dataset.addValue(map.getOrDefault(i, 0.0), "Doanh Thu", "Tháng " + i);
+    }
+
+    veBieuDo("Doanh thu năm " + nam, dataset);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,16 +103,31 @@ public class thongke extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         cbbNam = new javax.swing.JComboBox<>();
         btnthongke = new javax.swing.JButton();
         pnlBieuDo = new javax.swing.JPanel();
+        cbbThang = new javax.swing.JComboBox<>();
+        txtma = new javax.swing.JTextField();
 
         setPreferredSize(new java.awt.Dimension(1620, 1080));
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton1.setText("Thống Kê");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 160, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 102, 102));
         jLabel2.setText("Thống Kê Doanh Thu ");
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(651, 18, 434, 94));
+
+        add(cbbNam, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 156, 230, -1));
 
         btnthongke.setBackground(new java.awt.Color(0, 102, 102));
         btnthongke.setForeground(new java.awt.Color(255, 255, 255));
@@ -88,6 +137,7 @@ public class thongke extends javax.swing.JPanel {
                 btnthongkeActionPerformed(evt);
             }
         });
+        add(btnthongke, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 170, -1, -1));
 
         javax.swing.GroupLayout pnlBieuDoLayout = new javax.swing.GroupLayout(pnlBieuDo);
         pnlBieuDo.setLayout(pnlBieuDoLayout);
@@ -97,55 +147,61 @@ public class thongke extends javax.swing.JPanel {
         );
         pnlBieuDoLayout.setVerticalGroup(
             pnlBieuDoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 871, Short.MAX_VALUE)
+            .addGap(0, 870, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(pnlBieuDo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(cbbNam, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(100, 100, 100)
-                        .addComponent(btnthongke)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 651, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(535, 535, 535))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnthongke)
-                    .addComponent(cbbNam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
-                .addComponent(pnlBieuDo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        add(pnlBieuDo, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 210, 1600, -1));
+
+        cbbThang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        add(cbbThang, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 181, 230, -1));
+        add(txtma, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 160, 392, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnthongkeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthongkeActionPerformed
         // TODO add your handling code here:
-         int nam = Integer.parseInt(cbbNam.getSelectedItem().toString());
-        hienThiBieuDo(nam);
+   try {
+        int nam = Integer.parseInt((String) cbbNam.getSelectedItem());
+        hienThiTheoThangNam(nam);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Lỗi: " + e.getMessage());
+        e.printStackTrace();
+    }    
     }//GEN-LAST:event_btnthongkeActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+         try {
+            int thang = Integer.parseInt((String) cbbThang.getSelectedItem());
+            int nam = Integer.parseInt((String) cbbNam.getSelectedItem());
+            String ma = txtma.getText().trim();
+
+            if (!ma.isEmpty()) {
+                if (ma.startsWith("B")) {
+                    hienThiTheoBan(ma, nam, thang); // gọi hàm thống kê theo mã bàn
+                } else if (ma.startsWith("NV")) {
+                    hienThiTheoNhanVien(ma, nam, thang); // gọi hàm thống kê theo mã NV
+                } else {
+                    JOptionPane.showMessageDialog(null, "Mã không hợp lệ. Nhập B... hoặc NV...");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập mã bàn hoặc mã nhân viên.");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Lỗi: " + e.getMessage());
+            e.printStackTrace();
+        }
+    
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnthongke;
     private javax.swing.JComboBox<String> cbbNam;
+    private javax.swing.JComboBox<String> cbbThang;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel pnlBieuDo;
+    private javax.swing.JTextField txtma;
     // End of variables declaration//GEN-END:variables
 }
