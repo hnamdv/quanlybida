@@ -203,7 +203,7 @@ private String layThoiGianHienTai() {
 
         lblmaban.setText(tenBan);
         lblKhuvuc.setText(tinhTrang);
-        jTextField4.setText(ghiChu != null ? ghiChu : "");
+        txtGhichu.setText(ghiChu != null ? ghiChu : "");
 
         // Lấy tên loại bàn
         LoaibanDAO loaibanDAO = new LoaibanDAO();
@@ -264,7 +264,7 @@ private String layThoiGianHienTai() {
             lblOrder.setText(String.valueOf(hd.getTienDV()));
             lblTongtien.setText(String.valueOf(hd.getTongTien()));
             lblTiengio.setText(String.valueOf(giaTheoGio));
-            jTextField4.setText(hd.getGhiChu());
+            txtGhichu.setText(hd.getGhiChu());
 
             this.hoaDonTamThoi = hd; // ✅ Để ketThucChoi() dùng
 
@@ -372,7 +372,7 @@ private String layThoiGianHienTai() {
         hd.setTienDV(tienDV);
         hd.setTongTien(tongTien);
         hd.setTrangThai("DaThanhToan");
-        hd.setGhiChu(jTextField4.getText());
+        hd.setGhiChu(txtGhichu.getText());
 
         try {
             hdDAO.capNhatHoaDon(hd); // cập nhật DB
@@ -394,7 +394,7 @@ private String layThoiGianHienTai() {
             lblTienban.setText("0.0");
             lblTiengio.setText("0.0");
             lblOrder.setText("0.0");
-            jTextField4.setText("");
+            txtGhichu.setText("");
 
             loadDanhSachBan();
             jButton1.setEnabled(true);
@@ -417,110 +417,122 @@ private String layThoiGianHienTai() {
 
     ///
 public String taoBillBida(JTextArea txtaBill, String pdfPath) {
-    HoaDonDAO hoaDonDAO = new HoaDonDAO();
-    BanbidaDAO banBidaDAO = new BanbidaDAO();
-    ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
-    DichVuDAO dichVuDAO = new DichVuDAO();
+        HoaDonDAO hoaDonDAO = new HoaDonDAO();
+        BanbidaDAO banBidaDAO = new BanbidaDAO();
+        ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
+        DichVuDAO dichVuDAO = new DichVuDAO();
 
-    String maBan = currentMaBan;
-    Hoadon hd = hoaDonDAO.getHoaDonDangMoByBan(maBan);
-    if (hd == null) return "❌ Không tìm thấy hóa đơn đang mở cho bàn " + currentMaBan + "!";
-
-    Banbida bd = banBidaDAO.getByMaBan(currentMaBan);
-    if (bd == null) return "❌ Không tìm thấy thông tin bàn!";
-
-    List<Chitiethoadon> chiTietList = chiTietDAO.getChiTietByMaHD(hd.getMaHD());
-    if (hd.getThoiGianKT() == null || hd.getThoiGianBD() == null) return "❌ Hóa đơn chưa kết thúc!";
-
-    long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
-    long soPhut = Math.max(1, TimeUnit.MILLISECONDS.toMinutes(millis));
-    double tienGio = soPhut * (bd.getGiaTheoGio() / 60.0);
-
-    double tongDV = 0;
-    for (Chitiethoadon ct : chiTietList) {
-        Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
-        if (dv != null && ct.getSoLuong() > 0) {
-            tongDV += dv.getDonGia() * ct.getSoLuong();
+        String maBan = currentMaBan;
+        Hoadon hd = hoaDonDAO.getHoaDonDangMoByBan(maBan);
+        if (hd == null) {
+            return "❌ Không tìm thấy hóa đơn đang mở cho bàn " + currentMaBan + "!";
         }
-    }
 
-    double tongTien = tienGio + tongDV - hd.getGiamGia();
-    hd.setTienDV(tongDV);
-    hd.setTongTien(tongTien);
+        Banbida bd = banBidaDAO.getByMaBan(currentMaBan);
+        if (bd == null) {
+            return "❌ Không tìm thấy thông tin bàn!";
+        }
 
-    DecimalFormat df = new DecimalFormat("#,##0");
-    StringBuilder sb = new StringBuilder();
-    sb.append(String.format("Mã HĐ       : %s\n", hd.getMaHD()));
-    sb.append(String.format("Bàn         : %s (%s)\n", bd.getTenBan(), bd.getMaLoaiBan()));
-    sb.append(String.format("Thời gian   : %s -> %s\n", hd.getThoiGianBD(), hd.getThoiGianKT()));
-    sb.append(String.format("T.giờ chơi  : %d phút\n", soPhut));
-    sb.append(String.format("Đơn giá     : %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
-    sb.append(String.format("Tiền giờ    : %s VND\n", df.format(tienGio)));
+        List<Chitiethoadon> chiTietList = chiTietDAO.getChiTietByMaHD(hd.getMaHD());
+        if (hd.getThoiGianKT() == null || hd.getThoiGianBD() == null) {
+            return "❌ Hóa đơn chưa kết thúc!";
+        }
 
-    if (tongDV > 0) {
-        sb.append("\n----------- DỊCH VỤ -----------\n");
+        long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
+        long soPhut = Math.max(1, TimeUnit.MILLISECONDS.toMinutes(millis));
+        double tienGio = soPhut * (bd.getGiaTheoGio() / 60.0);
+
+        double tongDV = 0;
         for (Chitiethoadon ct : chiTietList) {
             Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
             if (dv != null && ct.getSoLuong() > 0) {
-                double thanhTien = dv.getDonGia() * ct.getSoLuong();
-                sb.append(String.format("%-20s x%-2d = %s VND\n",
-                        dv.getTenDV(), ct.getSoLuong(), df.format(thanhTien)));
+                tongDV += dv.getDonGia() * ct.getSoLuong();
             }
         }
-        sb.append(String.format("Tổng dịch vụ : %s VND\n", df.format(tongDV)));
-    }
 
-    sb.append(String.format("Giảm giá      : %s VND\n", df.format(hd.getGiamGia())));
-    sb.append("------------------------------------\n");
-    sb.append(String.format("TỔNG CỘNG     : %s VND\n", df.format(tongTien)));
-    sb.append("====================================\n");
-    sb.append("     CẢM ƠN QUÝ KHÁCH, HẸN GẶP LẠI!\n");
+        double tongTien = tienGio + tongDV - hd.getGiamGia();
+        hd.setTienDV(tongDV);
+        hd.setTongTien(tongTien);
 
-    String billContent = sb.toString();
-    if (txtaBill != null) txtaBill.setText("=========== HÓA ĐƠN BIDA ===========\n" + billContent);
+        DecimalFormat df = new DecimalFormat("#,##0");
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Mã HĐ       : %s\n", hd.getMaHD()));
+        sb.append(String.format("Bàn         : %s (%s)\n", bd.getTenBan(), bd.getMaLoaiBan()));
+        sb.append(String.format("Thời gian   : %s -> %s\n", hd.getThoiGianBD(), hd.getThoiGianKT()));
+        sb.append(String.format("T.giờ chơi  : %d phút\n", soPhut));
+        sb.append(String.format("Đơn giá     : %s VND/giờ\n", df.format(bd.getGiaTheoGio())));
+        sb.append(String.format("Tiền giờ    : %s VND\n", df.format(tienGio)));
 
-    // Tạo PDF nếu có đường dẫn
-    if (pdfPath != null && !pdfPath.trim().isEmpty()) {
-        try {
-            File file = new File(pdfPath);
-            File parent = file.getParentFile();
-            if (parent != null && !parent.exists()) parent.mkdirs();
-
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(file));
-            document.open();
-
-            BaseFont baseFont = BaseFont.createFont("src/static/NotoSans_Condensed-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-            Font font = new Font(baseFont, 11);
-            Font fontBold = new Font(baseFont, 13, Font.BOLD);
-            Font fontItalic = new Font(baseFont, 10, Font.ITALIC);
-
-            document.add(new Paragraph("=========== HÓA ĐƠN BIDA ===========", fontBold));
-            for (String line : billContent.split("\n")) {
-                document.add(new Paragraph(line, font));
+        if (tongDV > 0) {
+            sb.append("\n----------- DỊCH VỤ -----------\n");
+            for (Chitiethoadon ct : chiTietList) {
+                Dichvu dv = dichVuDAO.findByMaDV(ct.getMaDV());
+                if (dv != null && ct.getSoLuong() > 0) {
+                    double thanhTien = dv.getDonGia() * ct.getSoLuong();
+                    sb.append(String.format("%-20s x%-2d = %s VND\n",
+                            dv.getTenDV(), ct.getSoLuong(), df.format(thanhTien)));
+                }
             }
+            sb.append(String.format("Tổng dịch vụ : %s VND\n", df.format(tongDV)));
+        }
+        if (hd.getGhiChu() != null && !hd.getGhiChu().trim().isEmpty()) {
+            sb.append(String.format("Ghi chú      : %s\n", hd.getGhiChu().trim()));
+        }
+        sb.append(String.format("Giảm giá      : %s VND\n", df.format(hd.getGiamGia())));
+        sb.append("------------------------------------\n");
+        sb.append(String.format("TỔNG CỘNG     : %s VND\n", df.format(tongTien)));
+        sb.append("====================================\n");
+        sb.append("     CẢM ƠN QUÝ KHÁCH, HẸN GẶP LẠI!\n");
 
-            // QR thanh toán
-            String qrUrl = "https://img.vietqr.io/image/MB-0325734524-compact.png?amount=" + (int) tongTien;
+        String billContent = sb.toString();
+        if (txtaBill != null) {
+            txtaBill.setText("=========== HÓA ĐƠN BIDA ===========\n" + billContent);
+        }
+
+        // Tạo PDF nếu có đường dẫn
+        if (pdfPath != null && !pdfPath.trim().isEmpty()) {
             try {
-                Image qrImage = Image.getInstance(new URL(qrUrl));
-                qrImage.scaleToFit(150, 150);
-                qrImage.setAlignment(Element.ALIGN_CENTER);
-                document.add(new Paragraph("\nQuét mã để thanh toán:", fontBold));
-                document.add(qrImage);
+                File file = new File(pdfPath);
+                File parent = file.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
+                }
+
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+
+                BaseFont baseFont = BaseFont.createFont("src/static/NotoSans_Condensed-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font font = new Font(baseFont, 11);
+                Font fontBold = new Font(baseFont, 13, Font.BOLD);
+                Font fontItalic = new Font(baseFont, 10, Font.ITALIC);
+
+                document.add(new Paragraph("=========== HÓA ĐƠN BIDA ===========", fontBold));
+                for (String line : billContent.split("\n")) {
+                    document.add(new Paragraph(line, font));
+                }
+
+                // QR thanh toán
+                String qrUrl = "https://img.vietqr.io/image/MB-0325734524-compact.png?amount=" + (int) tongTien;
+                try {
+                    Image qrImage = Image.getInstance(new URL(qrUrl));
+                    qrImage.scaleToFit(150, 150);
+                    qrImage.setAlignment(Element.ALIGN_CENTER);
+                    document.add(new Paragraph("\nQuét mã để thanh toán:", fontBold));
+                    document.add(qrImage);
+                } catch (Exception e) {
+                    document.add(new Paragraph("\n[QR lỗi - không thể tải mã QR thanh toán]", fontItalic));
+                }
+
+                document.close();
             } catch (Exception e) {
-                document.add(new Paragraph("\n[QR lỗi - không thể tải mã QR thanh toán]", fontItalic));
+                e.printStackTrace();
+                return "❌ Lỗi khi tạo PDF: " + e.getMessage();
             }
-
-            document.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "❌ Lỗi khi tạo PDF: " + e.getMessage();
         }
-    }
 
-    return billContent;
-}
+        return billContent;
+    }
 
     // ✅ Hàm tạo mã QR và chuyển thành Image để chèn vào PDF
     public static Image generateQRCodeImage(String text, int width, int height) throws Exception {
@@ -595,7 +607,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         }
 
         // Thêm vào chi tiết hóa đơn
-//        new ChitiethoadonDao().themDichVuVaoHoaDon(maHD, dvChon.getMaDV(), soLuong, dvChon.getDonGia());
+        new ChitiethoadonDao().themDichVuVaoHoaDon(maHD, dvChon.getMaDV(), soLuong, dvChon.getDonGia());
         // Cập nhật vào bảng hoadon
         double tienDV = dvChon.getDonGia() * soLuong;
         hoaDonDAO.capNhatThongTinDichVu(maHD, dvChon.getMaDV(), tienDV);
@@ -628,21 +640,40 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         jTextField2.setText(new SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(thoiGianKT));
 
         long millis = thoiGianKT.getTime() - thoiGianBD.getTime();
-        long soPhut = Math.max(1, millis / (60 * 1000)); // ✅ Bổ sung biến soPhut
-        double donGia = new BanbidaDAO().getGiaTheoMaBan(maBan) / 60.0; // Giá theo phút
+        long soPhut = Math.max(1, millis / (60 * 1000)); // ✅ Tính phút
+        double donGia = new BanbidaDAO().getGiaTheoMaBan(maBan) / 60.0;
         double tienGio = soPhut * donGia;
-
         double tienDV = new ChitiethoadonDao().tinhTongTienDV(hoadon.getMaHD());
-        double tongTien = tienGio + tienDV;
+        double tongTienTruocGiam = tienGio + tienDV;
+
+        // ✅ Lấy giảm giá từ txtGiamgia
+        String giamGiaStr = txtGiamgia.getText().trim();
+        double giamGia = 0;
+        if (!giamGiaStr.isEmpty()) {
+            try {
+                giamGia = Double.parseDouble(giamGiaStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "❌ Giảm giá không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // ✅ Tính giảm
+        double soTienGiam = tongTienTruocGiam * (giamGia / 100.0);
+        double tongTien = tongTienTruocGiam - soTienGiam;
+
+        String ghiChu = txtGhichu.getText().trim(); // ✅ Nếu bạn muốn dùng ghi chú
 
         lblTiengio.setText(String.format("%.1f", tienGio));
         lblTongtien.setText(String.format("%.1f", tongTien));
 
+        // ✅ Cập nhật vào hóa đơn
         hoadon.setThoiGianKT(thoiGianKT);
         hoadon.setTienGio(tienGio);
         hoadon.setTienDV(tienDV);
         hoadon.setTongTien(tongTien);
         hoadon.setTrangThai("ChuaThanhToan");
+        hoadon.setGiamGia(giamGia); // ✅ Cập nhật giảm giá
 
         this.hd = hoadon;
         this.hoaDonTamThoi = hoadon;
@@ -651,8 +682,9 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         jButton1.setEnabled(true);
         jButton2.setEnabled(false);
         jButton16.setEnabled(true);
+
         if (thanhCong) {
-            // Trả bàn về trạng thái "Trong"
+            // ✅ Trả bàn về trạng thái "Trong"
             BanbidaDAO banDao = new BanbidaDAO();
             banDao.capNhatTinhTrang(maBan, "Trong");
             loadDanhSachBan();
@@ -664,7 +696,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             JOptionPane.showMessageDialog(this, "❌ Lỗi khi cập nhật hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
 
-        // Lưu thêm thông tin để in hóa đơn
+        // ✅ Thông tin để in hóa đơn
         Banbida bd = new BanbidaDAO().getByMaBan(maBan);
         List<Dichvu> dsDV = new DichVuDAO().getDichVuByHoaDon(hoadon.getMaHD());
     }
@@ -721,7 +753,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         jLabel14 = new javax.swing.JLabel();
         lblTiengio = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtGhichu = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         lblTongtien = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
@@ -753,7 +785,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             Pn3bangVIPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Pn3bangVIPLayout.createSequentialGroup()
                 .addComponent(jLabel26)
-                .addGap(0, 573, Short.MAX_VALUE))
+                .addGap(0, 660, Short.MAX_VALUE))
         );
         Pn3bangVIPLayout.setVerticalGroup(
             Pn3bangVIPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -775,13 +807,13 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             PnloVIPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnloVIPLayout.createSequentialGroup()
                 .addComponent(jLabel23)
-                .addGap(0, 554, Short.MAX_VALUE))
+                .addGap(0, 713, Short.MAX_VALUE))
         );
         PnloVIPLayout.setVerticalGroup(
             PnloVIPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnloVIPLayout.createSequentialGroup()
                 .addComponent(jLabel23)
-                .addGap(0, 260, Short.MAX_VALUE))
+                .addGap(0, 503, Short.MAX_VALUE))
         );
 
         jScrollPane3.setViewportView(PnloVIP);
@@ -803,7 +835,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             Pn3bangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Pn3bangLayout.createSequentialGroup()
                 .addComponent(jLabel25)
-                .addGap(0, 301, Short.MAX_VALUE))
+                .addGap(0, 474, Short.MAX_VALUE))
         );
 
         jScrollPane4.setViewportView(Pn3bang);
@@ -819,13 +851,13 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             PnloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnloLayout.createSequentialGroup()
                 .addComponent(jLabel22)
-                .addGap(0, 534, Short.MAX_VALUE))
+                .addGap(0, 693, Short.MAX_VALUE))
         );
         PnloLayout.setVerticalGroup(
             PnloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PnloLayout.createSequentialGroup()
                 .addComponent(jLabel22)
-                .addGap(0, 301, Short.MAX_VALUE))
+                .addGap(0, 484, Short.MAX_VALUE))
         );
 
         jScrollPane5.setViewportView(Pnlo);
@@ -837,29 +869,26 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 715, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(7, 7, 7)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 714, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(241, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(488, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(246, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Phòng Bàn ", jPanel1);
@@ -1037,7 +1066,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel18)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtGhichu, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(66, 66, 66)
                                 .addComponent(jButton16))
                             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -1081,7 +1110,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
                     .addComponent(txtGiamgia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtGhichu, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel18)
                     .addComponent(jButton16, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
@@ -1130,7 +1159,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
                                 .addComponent(jButton1)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton2)))
-                        .addGap(0, 625, Short.MAX_VALUE))
+                        .addGap(0, 628, Short.MAX_VALUE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1206,7 +1235,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane6))
-                .addContainerGap(213, Short.MAX_VALUE))
+                .addContainerGap(200, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Quản lý bàn", jPanel2);
@@ -1215,11 +1244,11 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 647, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1067, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1338,7 +1367,6 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblKhuvuc;
     private javax.swing.JLabel lblLoaiban;
     private javax.swing.JLabel lblOrder;
@@ -1348,6 +1376,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
     private javax.swing.JLabel lblTongtien;
     private javax.swing.JLabel lblmaHD;
     private javax.swing.JLabel lblmaban;
+    private javax.swing.JTextField txtGhichu;
     private javax.swing.JTextField txtGiamgia;
     private javax.swing.JTextArea txtaBill;
     // End of variables declaration//GEN-END:variables

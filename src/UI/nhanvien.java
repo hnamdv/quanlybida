@@ -208,6 +208,8 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
         card.setPreferredSize(new java.awt.Dimension(1620, 1080));
         card.setLayout(new java.awt.CardLayout());
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         jPanel2.setBackground(new java.awt.Color(0, 102, 102));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
