@@ -18,8 +18,7 @@ public class BanbidaDAO {
     public List<Banbida> getAll() {
         List<Banbida> list = new ArrayList<>();
         String sql = "SELECT * FROM BANBIDA";
-        try (
-                Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Banbida ban = new Banbida();
                 ban.setMaBan(rs.getString("MaBan"));
@@ -119,6 +118,7 @@ public class BanbidaDAO {
 
         return ban;
     }
+
     public List<String> getAllMaBanDangTrong() {
         List<String> list = new ArrayList<>();
         String sql = "SELECT MaBan FROM BANBIDA WHERE TinhTrang = 'Trong' OR TinhTrang = 'DangSua' OR TinhTrang = 'BaoTri'";
@@ -131,4 +131,74 @@ public class BanbidaDAO {
         }
         return list;
     }
+
+    public boolean insert(Banbida ban) {
+        String sql = "INSERT INTO BANBIDA (MaBan, TenBan, MaLoaiBan, TinhTrang, GiaTheoGio, TuoiBan, GhiChu) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, ban.getMaBan());
+            ps.setString(2, ban.getTenBan());
+            ps.setString(3, ban.getMaLoaiBan());
+            ps.setString(4, ban.getTinhTrang());
+            ps.setDouble(5, ban.getGiaTheoGio());
+            ps.setInt(6, ban.getTuoiBan());
+            ps.setString(7, ban.getGhiChu());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean update(Banbida ban) {
+        String sql = "UPDATE BANBIDA SET TenBan = ?, MaLoaiBan = ?, TinhTrang = ?, GiaTheoGio = ?, TuoiBan = ?, GhiChu = ? WHERE MaBan = ?";
+        try (Connection conn = connect.openConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, ban.getTenBan());
+            ps.setString(2, ban.getMaLoaiBan());
+            ps.setString(3, ban.getTinhTrang());
+            ps.setDouble(4, ban.getGiaTheoGio());
+            ps.setInt(5, ban.getTuoiBan());
+            ps.setString(6, ban.getGhiChu());
+            ps.setString(7, ban.getMaBan());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean delete(String maBan) {
+        String updateHoaDonSQL = "UPDATE HOADON SET MaBan = 'B000' WHERE MaBan = ?";
+        String insertBanAoSQL = "INSERT IGNORE INTO BANBIDA (MaBan, TenBan, TinhTrang) VALUES ('B000', 'Bàn đã xóa', 'Ngưng hoạt động')";
+        String deleteBanSQL = "DELETE FROM BANBIDA WHERE MaBan = ?";
+
+        try (Connection conn = connect.openConnection()) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            // 1. Tạo bàn ảo nếu chưa có
+            try (PreparedStatement ps = conn.prepareStatement(insertBanAoSQL)) {
+                ps.executeUpdate();
+            }
+
+            // 2. Chuyển hóa đơn của bàn cần xóa sang bàn ảo
+            try (PreparedStatement ps = conn.prepareStatement(updateHoaDonSQL)) {
+                ps.setString(1, maBan);
+                ps.executeUpdate();
+            }
+
+            // 3. Xóa bàn
+            try (PreparedStatement ps = conn.prepareStatement(deleteBanSQL)) {
+                ps.setString(1, maBan);
+                int rows = ps.executeUpdate();
+                conn.commit();
+                return rows > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

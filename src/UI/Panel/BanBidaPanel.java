@@ -584,7 +584,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         String maHD = hoaDon.getMaHD();
 
         // Lấy thông tin từ combobox và spinner
-        String tenDVChon = cbb.getSelectedItem().toString();
+        String tenDVChon = (String) cbb.getSelectedItem();
         int soLuong = (int) jSpinner1.getValue();
 
         if (tenDVChon == null || tenDVChon.isEmpty()) {
@@ -599,7 +599,7 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
 
         // Tìm dịch vụ theo tên
         DichVuDAO dvDAO = new DichVuDAO();
-        Dichvu dvChon = dvDAO.getByTen(tenDVChon); // Bạn cần có hàm này trong DAO
+        Dichvu dvChon = dvDAO.getByTen(tenDVChon);
 
         if (dvChon == null) {
             JOptionPane.showMessageDialog(this, "❌ Không tìm thấy dịch vụ đã chọn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -608,11 +608,40 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
 
         // Thêm vào chi tiết hóa đơn
         new ChitiethoadonDao().themDichVuVaoHoaDon(maHD, dvChon.getMaDV(), soLuong, dvChon.getDonGia());
-        // Cập nhật vào bảng hoadon
+
+        // Cập nhật tổng tiền dịch vụ trong hóa đơn
         double tienDV = dvChon.getDonGia() * soLuong;
         hoaDonDAO.capNhatThongTinDichVu(maHD, dvChon.getMaDV(), tienDV);
-        lblOrder.setText(String.format("%.1f", tienDV)); // ✅ Hiển thị Tiền DV ra label
+
+        // ✅ Cập nhật bảng dịch vụ
+        hienThiDichVuTrongBang(maHD);  // ⬅️ gọi hàm cập nhật jTable1 (viết bên dưới nếu chưa có)
+
+        // ✅ Hiển thị tổng tiền dịch vụ lên label
+        lblOrder.setText(String.format("%.1f", tienDV));
+
         JOptionPane.showMessageDialog(this, "✅ Đã thêm dịch vụ vào hóa đơn!");
+    }
+
+    private void hienThiDichVuTrongBang(String maHD) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+
+        ChitiethoadonDao chiTietDAO = new ChitiethoadonDao();
+        DichVuDAO dvDAO = new DichVuDAO();
+        List<Chitiethoadon> list = chiTietDAO.getChiTietByMaHD(maHD);
+
+        for (Chitiethoadon ct : list) {
+            Dichvu dv = dvDAO.findByMaDV(ct.getMaDV());
+            if (dv != null) {
+                double thanhTien = ct.getSoLuong() * dv.getDonGia();
+                model.addRow(new Object[]{
+                    dv.getTenDV(),
+                    ct.getSoLuong(),
+                    dv.getDonGia(),
+                    thanhTien
+                });
+            }
+        }
     }
 
     private void ketThucChoi() {

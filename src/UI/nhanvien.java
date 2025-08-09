@@ -9,6 +9,7 @@ import UI.Panel.BanBidaPanel;
 import UI.Panel.BookingPanel;
 import UI.Panel.ChiTietBookingPanel;
 import UI.Panel.ChitiethoadonPanel;
+import UI.Panel.QuanLyBanPanel;
 import UI.Panel.QuanLyNhanVien;
 import UI.Panel.SuaChuaPanel;
 import UI.Panel.ThuCong;
@@ -200,6 +201,7 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
         jButton11 = new javax.swing.JButton();
         btnQR = new javax.swing.JButton();
         btnphanca = new javax.swing.JButton();
+        btnQLBan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -358,6 +360,14 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
             }
         });
 
+        btnQLBan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnQLBan.setText("Quản lý bàn bida");
+        btnQLBan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnQLBanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -380,7 +390,10 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
                             .addComponent(btnBooking, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(btnDichVU, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnChamCong, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(panelSubDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(btnDoanhThu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnQuen, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(btntheme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -388,7 +401,8 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
                             .addComponent(btnChiTietBooking, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnphanca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnphanca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnQLBan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(30, 30, 30))))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -402,16 +416,11 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(panelSubDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(191, 191, 191)
+                .addGap(149, 149, 149)
                 .addComponent(jLabel1)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel2)
@@ -424,37 +433,39 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
                 .addGap(28, 28, 28)
                 .addComponent(btnChamCong)
                 .addGap(18, 18, 18)
-                .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnDichVU)
-                .addGap(18, 18, 18)
-                .addComponent(btnBooking)
-                .addGap(18, 18, 18)
-                .addComponent(btnNhanVien)
-                .addGap(18, 18, 18)
-                .addComponent(btnDoanhThu)
-                .addGap(18, 18, 18)
-                .addComponent(btnQuen)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnphanca)
-                .addGap(18, 18, 18)
-                .addComponent(btnChiTietHoaDon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnChiTietBooking)
-                .addGap(18, 18, 18)
-                .addComponent(jButton11)
-                .addGap(18, 18, 18)
-                .addComponent(btnQR)
-                .addGap(18, 18, 18)
-                .addComponent(btntheme, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnDangXUat)
-                .addGap(39, 39, 39))
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 469, Short.MAX_VALUE)
-                    .addComponent(panelSubDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 470, Short.MAX_VALUE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDichVU)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnBooking)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnNhanVien)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDoanhThu)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnQuen)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnphanca)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnChiTietHoaDon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnChiTietBooking)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton11)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnQR)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnQLBan)
+                        .addGap(64, 64, 64)
+                        .addComponent(btntheme, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDangXUat)
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(panelSubDichVu, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(571, 571, 571))))
         );
 
         jScrollPane1.setViewportView(jPanel2);
@@ -578,6 +589,14 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
         card.add(new phanca());
     }//GEN-LAST:event_btnphancaActionPerformed
 
+    private void btnQLBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQLBanActionPerformed
+        // TODO add your handling code here:
+                  card.revalidate();
+        card.repaint();
+        card.removeAll();
+        card.add(new QuanLyBanPanel());
+    }//GEN-LAST:event_btnQLBanActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -623,6 +642,7 @@ private void btnQRActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JButton btnDoanhThu;
     private javax.swing.JButton btnMenu;
     private javax.swing.JButton btnNhanVien;
+    private javax.swing.JButton btnQLBan;
     private javax.swing.JButton btnQR;
     private javax.swing.JButton btnQuen;
     private javax.swing.JButton btnSuaChua;
