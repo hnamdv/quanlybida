@@ -183,8 +183,12 @@ public class QuanLyBanPanel extends javax.swing.JPanel {
 
         List<Banbida> filteredList = new ArrayList<>();
         for (Banbida b : allBan) {
-            boolean matchMa = keyword.isEmpty() || b.getMaBan().toLowerCase().contains(keyword);
-            boolean matchLoai = "Tất cả".equals(selectedTenLoai) || b.getMaLoaiBan().equalsIgnoreCase(maLoai);
+            boolean matchMa = keyword.isEmpty()
+                    || (b.getMaBan() != null && b.getMaBan().toLowerCase().contains(keyword));
+
+            boolean matchLoai = "Tất cả".equals(selectedTenLoai)
+                    || (b.getMaLoaiBan() != null && b.getMaLoaiBan().equalsIgnoreCase(maLoai));
+
             if (matchMa && matchLoai) {
                 filteredList.add(b);
             }
