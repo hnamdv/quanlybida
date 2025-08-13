@@ -17,7 +17,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.itextpdf.text.BaseColor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
@@ -30,12 +29,10 @@ import javax.swing.table.DefaultTableModel;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.sun.mail.imap.ACL;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -212,10 +209,10 @@ private String layThoiGianHienTai() {
 
         // Popup thông tin bàn
         JOptionPane.showMessageDialog(this,
-                "📌 Tên bàn: " + tenBan
-                + "\n🔸 Loại bàn: " + (tenLoai != null ? tenLoai : "Không rõ")
-                + "\n📍 Tình trạng: " + tinhTrang
-                + "\n📝 Ghi chú: " + (ghiChu != null ? ghiChu : "Không"),
+                " Tên bàn: " + tenBan
+                + "\n Loại bàn: " + (tenLoai != null ? tenLoai : "Không rõ")
+                + "\n Tình trạng: " + tinhTrang
+                + "\n Ghi chú: " + (ghiChu != null ? ghiChu : "Không"),
                 "Thông tin bàn",
                 JOptionPane.INFORMATION_MESSAGE
         );
@@ -315,16 +312,16 @@ private String layThoiGianHienTai() {
         if (hds.insert(hoadonMoi)) {
             banDao.capNhatTinhTrang(maBan, "DangSuDung");
             hoaDonTamThoi = hoadonMoi; // ✅ Gán lại cho toàn cục
-            JOptionPane.showMessageDialog(this, "✅ Bắt đầu tính giờ cho bàn " + maBan);
+            JOptionPane.showMessageDialog(this, " Bắt đầu tính giờ cho bàn " + maBan);
             loadDanhSachBan();
         } else {
-            JOptionPane.showMessageDialog(this, "❌ Lỗi khi tạo hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, " Lỗi khi tạo hóa đơn!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void thanhToan() {
         if (currentMaBan == null || currentMaBan.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "❌ Chưa chọn bàn để thanh toán!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, " Chưa chọn bàn để thanh toán!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -337,7 +334,7 @@ private String layThoiGianHienTai() {
             hd = hoaDonTamThoi;
         }
         if (hd == null) {
-            JOptionPane.showMessageDialog(this, "❌ Không có hóa đơn cần thanh toán!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, " Không có hóa đơn cần thanh toán!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -382,7 +379,7 @@ private String layThoiGianHienTai() {
             Banbida ban = banDAO.getByMaBan(currentMaBan);
             List<Dichvu> danhSachDV = new DichVuDAO().getDichVuTheoHoaDon(hd.getMaHD());
 
-            JOptionPane.showMessageDialog(this, "✅ Thanh toán thành công!\nTổng tiền: " + formatVND(tongTien));
+            JOptionPane.showMessageDialog(this, " Thanh toán thành công!\nTổng tiền: " + formatVND(tongTien));
 
             // Reset UI
             currentMaBan = null;
@@ -402,7 +399,7 @@ private String layThoiGianHienTai() {
             jButton16.setEnabled(true);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "❌ Lỗi khi thanh toán: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, " Lỗi khi thanh toán: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -425,17 +422,17 @@ public String taoBillBida(JTextArea txtaBill, String pdfPath) {
         String maBan = currentMaBan;
         Hoadon hd = hoaDonDAO.getHoaDonDangMoByBan(maBan);
         if (hd == null) {
-            return "❌ Không tìm thấy hóa đơn đang mở cho bàn " + currentMaBan + "!";
+            return " Không tìm thấy hóa đơn đang mở cho bàn " + currentMaBan + "!";
         }
 
         Banbida bd = banBidaDAO.getByMaBan(currentMaBan);
         if (bd == null) {
-            return "❌ Không tìm thấy thông tin bàn!";
+            return " Không tìm thấy thông tin bàn!";
         }
 
         List<Chitiethoadon> chiTietList = chiTietDAO.getChiTietByMaHD(hd.getMaHD());
         if (hd.getThoiGianKT() == null || hd.getThoiGianBD() == null) {
-            return "❌ Hóa đơn chưa kết thúc!";
+            return " Hóa đơn chưa kết thúc!";
         }
 
         long millis = hd.getThoiGianKT().getTime() - hd.getThoiGianBD().getTime();
