@@ -51,39 +51,39 @@ tbl.setModel(model);
 
     initComboBoxThangNam();
     loadDuLieuChamCong();
- //   checkQuyen();
+ checkQuyen();
     updateVisibility();
 }
-
+ 
     private TinhLuongService tinhLuongService = new TinhLuongService();
     
     private chamcongdao chamCongDAO = new chamcongdao();
-   // private void checkQuyen() {
-  //  if (!phanquyen.check()) {
+    private void checkQuyen() {
+  if (!phanquyen.check()) {
       
-   //     btnluonh.setEnabled(false);
-    //    txtluongdatinh.setEnabled(false);
-     //   cbbthang.setEnabled(false);
-     //   cbbnam.setEnabled(false);
-   //}//}
+      btnluonh.setEnabled(false);
+      txtluongdatinh.setEnabled(false);
+      cbbthang.setEnabled(false);
+      cbbnam.setEnabled(false);
+   }}
 private void loadDuLieuChamCong() {
-  //  String maNV = phanquyen.user.getMaNV();
-  //  List<chamcong> list = chamCongDAO.findByMaNV(maNV);
-  //  fillTable(list);
+   String maNV = phanquyen.user.getMaNV();
+    List<chamcong> list = chamCongDAO.findByMaNV(maNV);
+   fillTable(list);
 }
 
- //   private void fillTable(List<chamcong> list) {
-  //  DefaultTableModel model = (DefaultTableModel) tbl.getModel();
- //   model.setRowCount(0);
-  //  for (chamcong cc : list) {
-   //     model.addRow(new Object[]{
-   //         cc.getMaCC(),
-    //        cc.getMaNV(),
-    //        cc.getGioVao(),
-     //       cc.getGioRa()
-     //   });
-   // }
-// }
+   private void fillTable(List<chamcong> list) {
+    DefaultTableModel model = (DefaultTableModel) tbl.getModel();
+    model.setRowCount(0);
+    for (chamcong cc : list) {
+        model.addRow(new Object[]{
+            cc.getMaCC(),
+            cc.getMaNV(),
+            cc.getGioVao(),
+            cc.getGioRa()
+        });
+   }
+ }
     private void updateVisibility() {
     boolean isNgay = rdngay.isSelected();
     jDateChooser1.setVisible(isNgay);

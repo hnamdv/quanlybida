@@ -50,17 +50,21 @@
                           <Component id="jLabel1" min="-2" pref="400" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jLabel3" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
-                              <Component id="jLabel2" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
-                              <Component id="txtgiovao" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtgiara" alignment="0" pref="328" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="319" max="-2" attributes="0"/>
                           <Component id="jButton1" min="-2" pref="122" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel4" min="-2" pref="68" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jLabel3" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
+                                  <Component id="txtgiovao" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtgiara" alignment="0" pref="328" max="32767" attributes="0"/>
+                                  <Component id="MAPC" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace pref="348" max="32767" attributes="0"/>
@@ -72,7 +76,11 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" pref="43" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="156" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
+                  <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="MAPC" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="txtgiovao" min="-2" max="-2" attributes="0"/>
@@ -138,6 +146,19 @@
         <Component class="javax.swing.JTextField" name="txtgiovao">
         </Component>
         <Component class="javax.swing.JTextField" name="txtgiara">
+        </Component>
+        <Component class="javax.swing.JTextField" name="MAPC">
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel4">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="14" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="66" green="66" red="0" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="MaPC"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

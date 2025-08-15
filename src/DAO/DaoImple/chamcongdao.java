@@ -181,13 +181,15 @@ public boolean insertChamCong(String maNV, String maPC, Timestamp gioVao) {
 
     public int demSoNgayCong(String maNV, int thang, int nam) {
         int soNgayCong = 0;
-        String sql = """
-            SELECT COUNT(DISTINCT Ngay) FROM ChamCong 
-            WHERE MaNV = ? 
-            AND MONTH(Ngay) = ? 
-            AND YEAR(Ngay) = ? 
-            AND GioVao IS NOT NULL AND GioRa IS NOT NULL
-            """;
+      String sql = """
+    SELECT COUNT(DISTINCT DATE(Ngay)) 
+    FROM ChamCong 
+    WHERE MaNV = ? 
+      AND MONTH(Ngay) = ? 
+      AND YEAR(Ngay) = ? 
+      AND GioVao IS NOT NULL 
+      AND GioRa IS NOT NULL
+""";
 
         try (Connection conn = connect.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

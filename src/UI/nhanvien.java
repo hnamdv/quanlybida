@@ -51,20 +51,19 @@ public class nhanvien extends javax.swing.JFrame {
             );
             lblmnv.setText("Mã NV: " + phanquyen.user.getMaNV());
         }
-
+phanQuyenTheoChucVu();
     }
     private boolean isDarkTheme = false;
 private void phanQuyenTheoChucVu() {
     if (!phanquyen.check()) {
-      //  .setEnabled(false);
-     //  btnNhanVien.setEnabled(false);
-      //  btnChiTietHoaDon.setEnabled(false);
-      //  btnChiTietBooking.setEnabled(false);
-     //   btnSuaChua.setEnabled(false);
-      //  btnQR.setEnabled(false);
-       // các nút khác nếu cần
+        btnChiTietHoaDon.setEnabled(false);
+        jButton11.setEnabled(false);
+        btnDoanhThu.setEnabled(false);
+        btnphanca.setEnabled(false);
+        btnQLBan.setEnabled(false);
     }
 }
+
 
 private void btnChamCongMouseClicked(java.awt.event.MouseEvent evt) {
     // TODO: xử lý khi click chuột vào nút Chấm Công
